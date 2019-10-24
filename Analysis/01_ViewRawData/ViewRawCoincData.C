@@ -222,6 +222,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       //hqB3.DefineDiscriHG(side,pos);      
     }
   }
+#if FC>0
+#endif
 #endif
 
 

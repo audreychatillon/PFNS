@@ -1,3 +1,9 @@
 *~
 data/
 histos/
+*.so
+*.d
+*.pcm
+!Analysis/ClassDef/*.so
+!Analysis/ClassDef/*.d
+!Analysis/ClassDef/*.pcm

@@ -20,7 +20,7 @@ root [0] .L ViewRawCoincData.C+ ou .L ViewRawSourceData.C+
 root [1] run(arg1,arg2,arg3,arg4)
 avec arg1: numéro du premier run à traiter
      arg2: numéro du dernier run à traiter
-     arg3: type de données: "U", "Cf", "BdF", "cs"
+     arg3: type de données: "U", "Cf", "BdF", "Cs"
      arg4: path to the root file, for example "../data/Raw/U235"
 
 

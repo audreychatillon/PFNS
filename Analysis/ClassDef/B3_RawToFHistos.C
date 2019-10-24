@@ -61,31 +61,6 @@ void B3_RawToFHistos::DefineOneAnodeOneDetHG(UShort_t anode, UShort_t side, USho
     fFlagHG[anode-1] = fFlagHG[anode-1] | (1<<(det-1));
   }
 }
-void B3_RawToFHistos::DefineAllAnodesOneDetLG(UShort_t side, UShort_t pos)
-{
-  for(UShort_t anode=1; anode<=FC_nAnodes; anode++) 
-    DefineOneAnodeOneDetLG(anode,side,pos);
-}
-void B3_RawToFHistos::DefineAllAnodesOneDetHG(UShort_t side, UShort_t pos)
-{
-  for(UShort_t anode=1; anode<=FC_nAnodes; anode++) 
-    DefineOneAnodeOneDetHG(anode,side,pos);
-}
-void B3_RawToFHistos::DefineAllAnodesAllDetsLG()
-{
-  for(UShort_t anode=1; anode<=FC_nAnodes; anode++) 
-    for(UShort_t side=1; side<=2; side++) 
-      for(UShort_t pos=1; pos<=2; pos++) 
-	DefineOneAnodeOneDetLG(anode,side,pos);
-}
-void B3_RawToFHistos::DefineAllAnodesAllDetsHG()
-{
-  for(UShort_t anode=1; anode<=FC_nAnodes; anode++) 
-    for(UShort_t side=1; side<=2; side++) 
-      for(UShort_t pos=1; pos<=2; pos++) 
-	DefineOneAnodeOneDetHG(anode,side,pos);
-}
-
 
 void B3_RawToFHistos::FillHistosLG_FCmult1(UShort_t FC_anode, Double_t FC_time, vector<UShort_t>* vN_det, vector<Double_t>*vN_time, UShort_t * Nmult)
 {

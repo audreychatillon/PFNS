@@ -18,12 +18,7 @@ class CHINU_RawToFHistos{
 
   void DefineOneAnodeOneDetLG(UShort_t, UShort_t, UShort_t,UShort_t);
   void DefineOneAnodeOneDetHG(UShort_t, UShort_t, UShort_t,UShort_t);
-  void DefineOneAnodeSideRingLG(UShort_t, UShort_t,UShort_t);
-  void DefineOneAnodeSideRingHG(UShort_t, UShort_t,UShort_t);
-  void DefineAllAnodesOneDetLG(UShort_t, UShort_t, UShort_t);
-  void DefineAllAnodesOneDetHG(UShort_t, UShort_t, UShort_t);
-  void DefineAllAnodesSideRingLG(UShort_t, UShort_t);
-  void DefineAllAnodesSideRingHG(UShort_t, UShort_t);
+
 
   void FillHistosLG_FCmult1(UShort_t, Double_t, vector<UShort_t>*, vector<Double_t>*, UShort_t*);
   void FillHistosHG_FCmult1(UShort_t, Double_t, vector<UShort_t>*, vector<Double_t>*, UShort_t*);
@@ -41,9 +36,9 @@ class CHINU_RawToFHistos{
   UShort_t  GetDet(UShort_t, UShort_t, UShort_t);
   
  private :
-  ULong64_t fFlagLG[FC_nAnodes];
-  ULong64_t fFlagHG[FC_nAnodes];
-  Bool_t    TestDet(UShort_t,ULong64_t);
+  UShort_t fFlagLG[6*FC_nAnodes];
+  UShort_t fFlagHG[6*FC_nAnodes];
+  Bool_t   TestRank(UShort_t,UShort_t);
 };
 
 

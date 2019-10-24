@@ -76,53 +76,11 @@ void B3_RawQHistos::DefineDiscriHG(UShort_t side, UShort_t pos)
   UShort_t det = GetDet(side,pos);
   if(!TestDet(det,fFlagDiscriHG)){
     sprintf(name,"DiscriQ_B3_%s_%s_HG",sideVal[side-1].Data(),posVal[pos-1].Data());
-    h2_DiscriHG[det-1] = new TH2F(name,name,1025,0,524800,1000,0,5);
+    h2_DiscriHG[det-1] = new TH2F(name,name,1025,0,524800,600,0,3);
     fFlagDiscriHG = fFlagDiscriHG | (1<<(det-1));
   }
 }
 
-
-// attention pos and side are 1-based, do not change to 0-base
-void B3_RawQHistos::Define1DSideLG(UShort_t side)
-{
-  for(UShort_t pos=1; pos<=2; pos++)      Define1DLG(side,pos);
-}
-void B3_RawQHistos::Define1DSideHG(UShort_t side)
-{
-  for(UShort_t pos=1; pos<=2; pos++)      Define1DHG(side,pos);
-}
-void B3_RawQHistos::Define1DAllLG()
-{
-  for(UShort_t side=1; side<=2; side++)
-    for(UShort_t pos=1; pos<=2; pos++)
-      Define1DLG(side,pos);
-}
-void B3_RawQHistos::Define1DAllHG()
-{
-  for(UShort_t side=1; side<=2; side++)
-    for(UShort_t pos=1; pos<=2; pos++)
-      Define1DHG(side,pos);
-}
-void B3_RawQHistos::DefineDiscriSideLG(UShort_t side)
-{
-  for(UShort_t pos=1; pos<=2; pos++)      DefineDiscriLG(side,pos);
-}
-void B3_RawQHistos::DefineDiscriSideHG(UShort_t side)
-{
-  for(UShort_t pos=1; pos<=2; pos++)      DefineDiscriHG(side,pos);
-}
-void B3_RawQHistos::DefineDiscriAllLG()
-{
-  for(UShort_t side=1; side<=2; side++)
-    for(UShort_t pos=1; pos<=3; pos++)
-      DefineDiscriLG(side,pos);
-}
-void B3_RawQHistos::DefineDiscriAllHG()
-{
-  for(UShort_t side=1; side<=2; side++)
-    for(UShort_t pos=1; pos<=2; pos++)
-      DefineDiscriHG(side,pos);
-}
 
 
 
@@ -138,7 +96,7 @@ void B3_RawQHistos::FillHistosLG(vector<UShort_t> * vDet, vector<UInt_t> * vQ1, 
       h1_Q2LG[det-1]->Fill(vQ2->at(m));
     }
     if(TestDet(det,fFlagDiscriLG)){
-      if(vQ1->at(m)>0)      ratio = (Float_t)(vQ1->at(m)) / (Float_t)(vQ2->at(m));
+      if(vQ1->at(m)>0)      ratio = (Float_t)(vQ2->at(m)) / (Float_t)(vQ1->at(m));
       else ratio=-1;
       h2_DiscriLG[det-1]->Fill(vQ1->at(m),ratio);
     }
@@ -156,7 +114,7 @@ void B3_RawQHistos::FillHistosHG(vector<UShort_t> * vDet, vector<UInt_t> * vQ1, 
       h1_Q2HG[det-1]->Fill(vQ2->at(m));
     }
     if(TestDet(det,fFlagDiscriHG)){
-      if(vQ1->at(m)>0)      ratio = (Float_t)(vQ1->at(m)) / (Float_t)(vQ2->at(m));
+      if(vQ1->at(m)>0)      ratio = (Float_t)(vQ2->at(m)) / (Float_t)(vQ1->at(m));
       else ratio=-1;
       h2_DiscriHG[det-1]->Fill(vQ1->at(m),ratio);
     }

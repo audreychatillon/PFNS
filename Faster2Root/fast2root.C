@@ -114,12 +114,12 @@ int main (int argc, char** argv) {
   UInt_t                 lsize_data;
   UChar_t                buffer [3000];
   UChar_t                alias_data;
-  UInt_t                 label_data;
+  UShort_t               label_data;
   ULong64_t              clock_data;
   // --- ONLY FOR COINC
   faster_buffer_reader_p buffer_reader;
   faster_data_p          group_data;
-  UInt_t                 label;
+  UShort_t               label;
   ULong64_t              clock;
 #if FC>0
 #if   FC_nQ==1
@@ -200,7 +200,7 @@ int main (int argc, char** argv) {
   // --- Fission Chamber
 #if FC>0
   UShort_t FC_mult[FC_nAnodes];
-  std::vector<UInt_t> vFC_label;
+  std::vector<UShort_t> vFC_label;
   std::vector<UShort_t> vFC_anode;
   std::vector<ULong64_t> vFC_clock;
   std::vector<Double_t> vFC_tdc;
@@ -221,8 +221,8 @@ int main (int argc, char** argv) {
 #if CHINU>0
   UShort_t CHINU_multLG[CHINU_nDets];
   UShort_t CHINU_multHG[CHINU_nDets];
-  std::vector<UInt_t> vCHINUlg_label;
-  std::vector<UInt_t> vCHINUhg_label;
+  std::vector<UShort_t> vCHINUlg_label;
+  std::vector<UShort_t> vCHINUhg_label;
   std::vector<UShort_t> vCHINUlg_det;
   std::vector<UShort_t> vCHINUhg_det;
   std::vector<ULong64_t> vCHINUlg_clock;
@@ -251,8 +251,8 @@ int main (int argc, char** argv) {
 #if B3>0
   UShort_t B3_multLG[B3_nDets];
   UShort_t B3_multHG[B3_nDets];
-  std::vector<UInt_t> vB3lg_label;
-  std::vector<UInt_t> vB3hg_label;
+  std::vector<UShort_t> vB3lg_label;
+  std::vector<UShort_t> vB3hg_label;
   std::vector<UShort_t> vB3lg_det;
   std::vector<UShort_t> vB3hg_det;
   std::vector<ULong64_t> vB3lg_clock;
@@ -279,7 +279,7 @@ int main (int argc, char** argv) {
 
   // --- Pulser
 #if PULSER>0
-  std::vector<UInt_t> vPULSER_label;
+  std::vector<UShort_t> vPULSER_label;
   std::vector<ULong64_t> vPULSER_clock;
   std::vector<Double_t> vPULSER_tdc;
   std::vector<Double_t> vPULSER_time;
@@ -288,7 +288,7 @@ int main (int argc, char** argv) {
 
   // --- HF Beam
 #if HF>0
-  std::vector<UInt_t> vHF_label;
+  std::vector<UShort_t> vHF_label;
   std::vector<ULong64_t> vHF_clock;
   std::vector<Double_t> vHF_tdc;
   std::vector<Double_t> vHF_time;
@@ -297,7 +297,7 @@ int main (int argc, char** argv) {
 
   // --- Macro Pulse
 #if MACRO>0
-  std::vector<UInt_t> vMACRO_label;
+  std::vector<UShort_t> vMACRO_label;
   std::vector<ULong64_t> vMACRO_clock;
   std::vector<Double_t> vMACRO_tdc;
   std::vector<Double_t> vMACRO_time;
@@ -318,7 +318,7 @@ int main (int argc, char** argv) {
 #endif
   // general variables
   t->Branch("Event",&nevents,"Event/i");
-  t->Branch("Label",&label_data,"Label/i");
+  t->Branch("Label",&label_data,"Label/s");
   t->Branch("Clock",&clock_data,"Clock/l");
   // chi-nu ndet 
 #if CHINU>0

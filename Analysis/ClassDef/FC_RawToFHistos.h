@@ -16,7 +16,6 @@ class FC_RawToFHistos{
   ~FC_RawToFHistos();
 
   void DefineOneAnode(UShort_t);
-  void DefineAllAnodes();
 
   void FillHistos_FCmult1(Double_t, UShort_t, Double_t);
 

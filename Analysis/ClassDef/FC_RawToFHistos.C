@@ -36,11 +36,6 @@ void FC_RawToFHistos::DefineOneAnode(UShort_t anode)
   }
 }
 
-void FC_RawToFHistos::DefineAllAnodes()
-{
-  for(UShort_t anode=1; anode<=FC_nAnodes; anode++) 
-    DefineOneAnode(anode);
-}
 
 
 

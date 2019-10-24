@@ -7,8 +7,8 @@
 #define TRIGGER_MODE 1      //0: TRIGGER LESS 1: COINC
 #define LABEL_GROUP 3000
 #define FC_nQ     2
-#define CHINU_nQ  4
-#define B3_nQ     4
+#define CHINU_nQ  2
+#define B3_nQ     2
 #define PULSER_nQ 1
 #define HF_nQ     1
 #define MACRO_nQ  1

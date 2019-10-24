@@ -11,28 +11,19 @@
 class CHINU_RawQHistos{
 
  public :
-  TH1I * h1_Q1LG[54];
-  TH1I * h1_Q2LG[54];
-  TH1I * h1_Q1HG[54];
-  TH1I * h1_Q2HG[54];
-  TH2F * h2_DiscriLG[54];
-  TH2F * h2_DiscriHG[54];
+  TH1I * h1_Q1LG[CHINU_nDets];
+  TH1I * h1_Q2LG[CHINU_nDets];
+  TH1I * h1_Q1HG[CHINU_nDets];
+  TH1I * h1_Q2HG[CHINU_nDets];
+  TH2F * h2_DiscriLG[CHINU_nDets];
+  TH2F * h2_DiscriHG[CHINU_nDets];
 
   CHINU_RawQHistos();
   ~CHINU_RawQHistos();
   void Define1DLG(UShort_t,UShort_t,UShort_t);
   void Define1DHG(UShort_t,UShort_t,UShort_t);
-  void Define1DSideRingLG(UShort_t,UShort_t);
-  void Define1DSideRingHG(UShort_t,UShort_t);
-  void Define1DRankLG(UShort_t);
-  void Define1DRankHG(UShort_t);
-
   void DefineDiscriLG(UShort_t,UShort_t,UShort_t);
   void DefineDiscriHG(UShort_t,UShort_t,UShort_t);
-  void DefineDiscriSideRingLG(UShort_t,UShort_t);
-  void DefineDiscriSideRingHG(UShort_t,UShort_t);
-  void DefineDiscriRankLG(UShort_t);
-  void DefineDiscriRankHG(UShort_t);
 
   void FillHistosLG(vector<UShort_t> *, vector<UInt_t> *, vector<UInt_t> *);
   void FillHistosHG(vector<UShort_t> *, vector<UInt_t> *, vector<UInt_t> *);
@@ -51,13 +42,13 @@ class CHINU_RawQHistos{
   TCanvas* DrawHistosDiscriRankLG(UShort_t);
   TCanvas* DrawHistosDiscriRankHG(UShort_t);
 
- private :
-  ULong64_t fFlag1DLG;
-  ULong64_t fFlag1DHG;
-  ULong64_t fFlagDiscriLG;
-  ULong64_t fFlagDiscriHG;
-  UShort_t  GetDet(UShort_t,UShort_t,UShort_t);
-  Bool_t    TestDet(UShort_t,ULong64_t);
+ public :
+  UShort_t fFlag1DLG[6];
+  UShort_t fFlag1DHG[6];
+  UShort_t fFlagDiscriLG[6];
+  UShort_t fFlagDiscriHG[6];
+  UShort_t GetDet(UShort_t,UShort_t,UShort_t);
+  Bool_t   TestRank(UShort_t,ULong64_t);
 };
 
 #endif //CHINURawQHistos_h

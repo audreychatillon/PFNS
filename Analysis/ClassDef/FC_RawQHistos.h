@@ -18,9 +18,7 @@ class FC_RawQHistos{
   FC_RawQHistos();
   ~FC_RawQHistos();
   void Define1D(UShort_t);
-  void Define1DAll();
   void DefineDiscri(UShort_t);
-  void DefineDiscriAll();
 
   void FillHistos(vector<UShort_t>*, vector<UInt_t>*, vector<UInt_t>*);
 

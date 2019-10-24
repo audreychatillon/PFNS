@@ -52,8 +52,8 @@ void B3_RawMultHistos::FillHistos(vector<UShort_t>*vLG, vector<UShort_t>*vHG)
 
 TCanvas * B3_RawMultHistos::DrawHistos()
 {
-  TCanvas * c = new TCanvas("MultNDETB3","MultNDETB3",0,0,1000,1000);
-  c->Divide(2,3);
+  TCanvas * c = new TCanvas("MultNDETB3","MultNDETB3",0,0,1000,900);
+  c->Divide(2,2);
   c->cd(1);  gPad->SetLogy(); h1_LG->Draw(); 
   c->cd(2);  gPad->SetLogy(); h1_HG->Draw(); 
   c->cd(3);  h1_HGpattern[0]->Draw(); h1_LGpattern[0]->Draw("same");

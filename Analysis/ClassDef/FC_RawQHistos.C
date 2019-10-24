@@ -26,16 +26,14 @@ void FC_RawQHistos::Define1D(UShort_t anode)
   if(!TestAnode(anode,fFlag1D)){
     sprintf(name,"FC_Q1_anode%d",anode);
     h1_Q1[anode-1] = new TH1I(name,name,4100,0,131200);
+    h1_Q1[anode-1]->SetFillColor(kBlue);
     sprintf(name,"FC_Q2_anode%d",anode);
     h1_Q2[anode-1] = new TH1I(name,name,1025,0,32800);
+    h1_Q2[anode-1]->SetFillColor(kRed);
     fFlag1D = fFlag1D | (1<<(anode-1));    
   }
 }
-void FC_RawQHistos::Define1DAll()
-{
-  char name[100];
-  for(UShort_t anode=1; anode<=FC_nAnodes; anode++) Define1D(anode);
-}
+
 
 void FC_RawQHistos::DefineDiscri(UShort_t anode)
 {
@@ -46,11 +44,7 @@ void FC_RawQHistos::DefineDiscri(UShort_t anode)
     fFlagDiscri = fFlagDiscri | (1<<(anode-1));    
   }
 }
-void FC_RawQHistos::DefineDiscriAll()
-{
-  char name[100];
-  for(UShort_t anode=1; anode<=FC_nAnodes; anode++) DefineDiscri(anode);
-}
+
 
 
 
@@ -89,7 +83,7 @@ TCanvas * FC_RawQHistos::Draw1DAllHistos()
   c->Divide(4,3);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     if(TestAnode(anode,fFlag1D)){
-      c->cd(anode); h1_Q1[anode-1]->Draw(); h1_Q2[anode-1]->Draw("same");
+      c->cd(anode); h1_Q2[anode-1]->Draw(); h1_Q1[anode-1]->Draw("same");
     }
   }
   return(c);

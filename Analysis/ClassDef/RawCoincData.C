@@ -7,9 +7,9 @@ RawCoincData::RawCoincData(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../../data/Raw/Cf252/Run20_0001_Cf.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../../data/Raw/Cf252/Run3_0001_Cf.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("../../data/Raw/Cf252/Run20_0001_Cf.root");
+         f = new TFile("../../data/Raw/Cf252/Run3_0001_Cf.root");
       }
       f->GetObject("RawCoincData",tree);
 
@@ -53,6 +53,20 @@ void RawCoincData::Init(TTree *tree)
    // (once per file to be processed).
 
    // Set object pointer
+   vCHINUlg_label = 0;
+   vCHINUhg_label = 0;
+   vCHINUlg_det = 0;
+   vCHINUhg_det = 0;
+   vCHINUlg_clock = 0;
+   vCHINUhg_clock = 0;
+   vCHINUlg_tdc = 0;
+   vCHINUhg_tdc = 0;
+   vCHINUlg_time = 0;
+   vCHINUhg_time = 0;
+   vCHINUlg_Q1 = 0;
+   vCHINUhg_Q1 = 0;
+   vCHINUlg_Q2 = 0;
+   vCHINUhg_Q2 = 0;
    vB3lg_label = 0;
    vB3hg_label = 0;
    vB3lg_det = 0;
@@ -67,10 +81,6 @@ void RawCoincData::Init(TTree *tree)
    vB3hg_Q1 = 0;
    vB3lg_Q2 = 0;
    vB3hg_Q2 = 0;
-   vB3lg_Q3 = 0;
-   vB3hg_Q3 = 0;
-   vB3lg_Q4 = 0;
-   vB3hg_Q4 = 0;
    vFC_label = 0;
    vFC_anode = 0;
    vFC_clock = 0;
@@ -78,6 +88,21 @@ void RawCoincData::Init(TTree *tree)
    vFC_time = 0;
    vFC_Q1 = 0;
    vFC_Q2 = 0;
+   vPULSER_label = 0;
+   vPULSER_clock = 0;
+   vPULSER_tdc = 0;
+   vPULSER_time = 0;
+   vPULSER_Q1 = 0;
+   vHF_label = 0;
+   vHF_clock = 0;
+   vHF_tdc = 0;
+   vHF_time = 0;
+   vHF_Q1 = 0;
+   vMACRO_label = 0;
+   vMACRO_clock = 0;
+   vMACRO_tdc = 0;
+   vMACRO_time = 0;
+   vMACRO_Q1 = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -87,6 +112,22 @@ void RawCoincData::Init(TTree *tree)
    fChain->SetBranchAddress("Event", &Event, &b_Event);
    fChain->SetBranchAddress("Label", &Label, &b_Label);
    fChain->SetBranchAddress("Clock", &Clock, &b_Clock);
+   fChain->SetBranchAddress("CHINUlg_mult", CHINUlg_mult, &b_CHINUlg_mult);
+   fChain->SetBranchAddress("CHINUhg_mult", CHINUhg_mult, &b_CHINUhg_mult);
+   fChain->SetBranchAddress("vCHINUlg_label", &vCHINUlg_label, &b_vCHINUlg_label);
+   fChain->SetBranchAddress("vCHINUhg_label", &vCHINUhg_label, &b_vCHINUhg_label);
+   fChain->SetBranchAddress("vCHINUlg_det", &vCHINUlg_det, &b_vCHINUlg_det);
+   fChain->SetBranchAddress("vCHINUhg_det", &vCHINUhg_det, &b_vCHINUhg_det);
+   fChain->SetBranchAddress("vCHINUlg_clock", &vCHINUlg_clock, &b_vCHINUlg_clock);
+   fChain->SetBranchAddress("vCHINUhg_clock", &vCHINUhg_clock, &b_vCHINUhg_clock);
+   fChain->SetBranchAddress("vCHINUlg_tdc", &vCHINUlg_tdc, &b_vCHINUlg_tdc);
+   fChain->SetBranchAddress("vCHINUhg_tdc", &vCHINUhg_tdc, &b_vCHINUhg_tdc);
+   fChain->SetBranchAddress("vCHINUlg_time", &vCHINUlg_time, &b_vCHINUlg_time);
+   fChain->SetBranchAddress("vCHINUhg_time", &vCHINUhg_time, &b_vCHINUhg_time);
+   fChain->SetBranchAddress("vCHINUlg_Q1", &vCHINUlg_Q1, &b_vCHINUlg_Q1);
+   fChain->SetBranchAddress("vCHINUhg_Q1", &vCHINUhg_Q1, &b_vCHINUhg_Q1);
+   fChain->SetBranchAddress("vCHINUlg_Q2", &vCHINUlg_Q2, &b_vCHINUlg_Q2);
+   fChain->SetBranchAddress("vCHINUhg_Q2", &vCHINUhg_Q2, &b_vCHINUhg_Q2);
    fChain->SetBranchAddress("B3lg_mult", B3lg_mult, &b_B3lg_mult);
    fChain->SetBranchAddress("B3hg_mult", B3hg_mult, &b_B3hg_mult);
    fChain->SetBranchAddress("vB3lg_label", &vB3lg_label, &b_vB3lg_label);
@@ -103,10 +144,6 @@ void RawCoincData::Init(TTree *tree)
    fChain->SetBranchAddress("vB3hg_Q1", &vB3hg_Q1, &b_vB3hg_Q1);
    fChain->SetBranchAddress("vB3lg_Q2", &vB3lg_Q2, &b_vB3lg_Q2);
    fChain->SetBranchAddress("vB3hg_Q2", &vB3hg_Q2, &b_vB3hg_Q2);
-   fChain->SetBranchAddress("vB3lg_Q3", &vB3lg_Q3, &b_vB3lg_Q3);
-   fChain->SetBranchAddress("vB3hg_Q3", &vB3hg_Q3, &b_vB3hg_Q3);
-   fChain->SetBranchAddress("vB3lg_Q4", &vB3lg_Q4, &b_vB3lg_Q4);
-   fChain->SetBranchAddress("vB3hg_Q4", &vB3hg_Q4, &b_vB3hg_Q4);
    fChain->SetBranchAddress("FC_mult", FC_mult, &b_FC_mult);
    fChain->SetBranchAddress("vFC_label", &vFC_label, &b_vFC_label);
    fChain->SetBranchAddress("vFC_anode", &vFC_anode, &b_vFC_anode);
@@ -115,6 +152,21 @@ void RawCoincData::Init(TTree *tree)
    fChain->SetBranchAddress("vFC_time", &vFC_time, &b_vFC_time);
    fChain->SetBranchAddress("vFC_Q1", &vFC_Q1, &b_vFC_Q1);
    fChain->SetBranchAddress("vFC_Q2", &vFC_Q2, &b_vFC_Q2);
+   fChain->SetBranchAddress("vPULSER_label", &vPULSER_label, &b_vPULSER_label);
+   fChain->SetBranchAddress("vPULSER_clock", &vPULSER_clock, &b_vPULSER_clock);
+   fChain->SetBranchAddress("vPULSER_tdc", &vPULSER_tdc, &b_vPULSER_tdc);
+   fChain->SetBranchAddress("vPULSER_time", &vPULSER_time, &b_vPULSER_time);
+   fChain->SetBranchAddress("vPULSER_Q1", &vPULSER_Q1, &b_vPULSER_Q1);
+   fChain->SetBranchAddress("vHF_label", &vHF_label, &b_vHF_label);
+   fChain->SetBranchAddress("vHF_clock", &vHF_clock, &b_vHF_clock);
+   fChain->SetBranchAddress("vHF_tdc", &vHF_tdc, &b_vHF_tdc);
+   fChain->SetBranchAddress("vHF_time", &vHF_time, &b_vHF_time);
+   fChain->SetBranchAddress("vHF_Q1", &vHF_Q1, &b_vHF_Q1);
+   fChain->SetBranchAddress("vMACRO_label", &vMACRO_label, &b_vMACRO_label);
+   fChain->SetBranchAddress("vMACRO_clock", &vMACRO_clock, &b_vMACRO_clock);
+   fChain->SetBranchAddress("vMACRO_tdc", &vMACRO_tdc, &b_vMACRO_tdc);
+   fChain->SetBranchAddress("vMACRO_time", &vMACRO_time, &b_vMACRO_time);
+   fChain->SetBranchAddress("vMACRO_Q1", &vMACRO_Q1, &b_vMACRO_Q1);
    Notify();
 }
 

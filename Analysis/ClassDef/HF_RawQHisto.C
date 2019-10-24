@@ -17,7 +17,7 @@ void HF_RawQHisto::DefineHisto()
   h1_Q1->SetDirectory(0);
 }
 
-void HF_RawQHisto::FillHisto(vector<UShort_t> * vHF)
+void HF_RawQHisto::FillHisto(vector<UInt_t> * vHF)
 {
   for(UShort_t m=0; m<vHF->size();m++)
     h1_Q1->Fill(vHF->at(m));

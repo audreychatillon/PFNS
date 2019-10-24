@@ -17,7 +17,7 @@ class PULSER_RawQHisto{
   PULSER_RawQHisto();
   ~PULSER_RawQHisto();
   void DefineHisto();
-  void FillHisto(vector<UShort_t> *);
+  void FillHisto(vector<UInt_t> *);
   TCanvas * DrawHisto();
 
 };

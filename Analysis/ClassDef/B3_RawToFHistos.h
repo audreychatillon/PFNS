@@ -18,10 +18,6 @@ class B3_RawToFHistos{
 
   void DefineOneAnodeOneDetLG(UShort_t, UShort_t, UShort_t);
   void DefineOneAnodeOneDetHG(UShort_t, UShort_t, UShort_t);
-  void DefineAllAnodesOneDetLG(UShort_t, UShort_t);
-  void DefineAllAnodesOneDetHG(UShort_t, UShort_t);
-  void DefineAllAnodesAllDetsLG();
-  void DefineAllAnodesAllDetsHG();
 
   void FillHistosLG_FCmult1(UShort_t, Double_t, vector<UShort_t>*, vector<Double_t>*, UShort_t*);
   void FillHistosHG_FCmult1(UShort_t, Double_t, vector<UShort_t>*, vector<Double_t>*, UShort_t*);

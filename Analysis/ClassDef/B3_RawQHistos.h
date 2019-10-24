@@ -22,17 +22,8 @@ class B3_RawQHistos{
   ~B3_RawQHistos();
   void Define1DLG(UShort_t,UShort_t);
   void Define1DHG(UShort_t,UShort_t);
-  void Define1DSideLG(UShort_t);
-  void Define1DSideHG(UShort_t);
-  void Define1DAllLG();
-  void Define1DAllHG();
-  
   void DefineDiscriLG(UShort_t,UShort_t);
   void DefineDiscriHG(UShort_t,UShort_t);
-  void DefineDiscriSideLG(UShort_t);
-  void DefineDiscriSideHG(UShort_t);
-  void DefineDiscriAllLG();
-  void DefineDiscriAllHG();
   
   void FillHistosLG(vector<UShort_t> *, vector<UInt_t> *, vector<UInt_t> *);
   void FillHistosHG(vector<UShort_t> *, vector<UInt_t> *, vector<UInt_t> *);

@@ -17,7 +17,7 @@ void PULSER_RawQHisto::DefineHisto()
   h1_Q1->SetDirectory(0);
 }
 
-void PULSER_RawQHisto::FillHisto(vector<UShort_t> * vPULSER)
+void PULSER_RawQHisto::FillHisto(vector<UInt_t> * vPULSER)
 {
   for(UShort_t m=0; m<vPULSER->size();m++)
     h1_Q1->Fill(vPULSER->at(m));

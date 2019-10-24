@@ -4,6 +4,4 @@ histos/
 *.so
 *.d
 *.pcm
-!Analysis/ClassDef/*.so
-!Analysis/ClassDef/*.d
-!Analysis/ClassDef/*.pcm
+Faster2Root/ReadPid/fast2root

@@ -87,7 +87,7 @@ void B3_RawToFHistos::FillHistosHG_FCmult1(UShort_t FC_anode, Double_t FC_time, 
 TCanvas * B3_RawToFHistos::DrawOneAnodeOneDetLG(UShort_t anode, UShort_t side, UShort_t pos)
 {
   char name[100];
-  sprintf(name,"B3_ToFraw_FC%d_%s_%s_LG",anode,sideVal[side-1].Data(),posVal[pos-1].Data());
+  sprintf(name,"ToFraw_FC%d_%s_B3_%s_LG",anode,sideVal[side-1].Data(),posVal[pos-1].Data());
   TCanvas * c = new TCanvas(name,name,700,600);
   UShort_t det=GetDet(side,pos);
   if (TestDet(det,fFlagLG[anode-1])){
@@ -98,7 +98,7 @@ TCanvas * B3_RawToFHistos::DrawOneAnodeOneDetLG(UShort_t anode, UShort_t side, U
 TCanvas * B3_RawToFHistos::DrawOneAnodeOneDetHG(UShort_t anode, UShort_t side, UShort_t pos)
 {
   char name[100];
-  sprintf(name,"B3_ToFraw_FC%d_%s_%s_HG",anode,sideVal[side-1].Data(),posVal[pos-1].Data());
+  sprintf(name,"ToFraw_FC%d_%s_B3_%s_HG",anode,sideVal[side-1].Data(),posVal[pos-1].Data());
   TCanvas * c = new TCanvas(name,name,700,600);
   UShort_t det=GetDet(side,pos);
   if (TestDet(det,fFlagHG[anode-1])){
@@ -106,31 +106,67 @@ TCanvas * B3_RawToFHistos::DrawOneAnodeOneDetHG(UShort_t anode, UShort_t side, U
   }
   return(c);
 }
-
 TCanvas * B3_RawToFHistos::DrawAllAnodesOneDetLG(UShort_t side, UShort_t pos)
 {
   char name[100];
-  sprintf(name,"B3_ToFraw_AllAnodes_%s_%s_LG",sideVal[side-1].Data(),posVal[pos-1].Data());
-  TCanvas * c = new TCanvas(name,name,1200,1200);
+  UShort_t det;
+  sprintf(name,"ToFraw_FCall_%s_B3_%s_LG",sideVal[side-1].Data(),posVal[pos-1].Data());
+  TCanvas * c = new TCanvas(name,name,1200,1100);
   c->Divide(4,3);
-  UShort_t det=GetDet(side,pos);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+    det=GetDet(side,pos);
     if (TestDet(det,fFlagLG[anode-1])){
       c->cd(anode); h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
     }
   }
-  return(c);
+    return(c);
 }
 TCanvas * B3_RawToFHistos::DrawAllAnodesOneDetHG(UShort_t side, UShort_t pos)
 {
   char name[100];
-  sprintf(name,"B3_ToFraw_AllAnodes_%s_%s_HG",sideVal[side-1].Data(),posVal[pos-1].Data());
-  TCanvas * c = new TCanvas(name,name,1200,1200);
+  UShort_t det;
+  sprintf(name,"ToFraw_FCall_%s_B3_%s_HG",sideVal[side-1].Data(),posVal[pos-1].Data());
+  TCanvas * c = new TCanvas(name,name,1200,1100);
   c->Divide(4,3);
-  UShort_t det=GetDet(side,pos);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+    det=GetDet(side,pos);
     if (TestDet(det,fFlagHG[anode-1])){
       c->cd(anode); h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+    }
+  }
+    return(c);
+}
+
+TCanvas * B3_RawToFHistos::DrawOneAnodeAllDetsLG(UShort_t anode)
+{
+  char name[100];
+  UShort_t det;
+  sprintf(name,"ToFraw_FC%d_B3_AllDets_LG",anode);
+  TCanvas * c = new TCanvas(name,name,1200,1200);
+  c->Divide(2,2);
+  for(UShort_t side=1; side<=2; side++){
+    for(UShort_t pos=1; pos<=2; pos++){
+      det=GetDet(side,pos);
+      if (TestDet(det,fFlagLG[anode-1])){
+	c->cd(pos+2*(side-1)); h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
+      }
+    }
+  }
+  return(c);
+}
+TCanvas * B3_RawToFHistos::DrawOneAnodeAllDetsHG(UShort_t anode)
+{
+  char name[100];
+  UShort_t det;
+  sprintf(name,"B3_ToFraw_FC%d_B3_AllDets_HG",anode);
+  TCanvas * c = new TCanvas(name,name,1200,1200);
+  c->Divide(2,2);
+  for(UShort_t side=1; side<=2; side++){
+    for(UShort_t pos=1; pos<=2; pos++){
+      det=GetDet(side,pos);
+      if (TestDet(det,fFlagHG[anode-1])){
+	c->cd(pos+2*(side-1)); h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+      }
     }
   }
   return(c);
@@ -139,7 +175,7 @@ TCanvas * B3_RawToFHistos::DrawAllAnodesAllDetsLG()
 {
   char name[100];
   sprintf(name,"B3_ToFraw_AllAnodes_AllDet_LG");
-  TCanvas * c = new TCanvas(name,name,2000,1200);
+  TCanvas * c = new TCanvas(name,name,1200,1200);
   c->Divide(11,4);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     for(UShort_t det=1; det<=4; det++){

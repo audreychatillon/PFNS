@@ -223,6 +223,32 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     }
   }
 #if FC>0
+  // *** ToF FC-B3 *** //
+  B3_RawToFHistos htB3;
+  // --- define ToFraw histos spectra for one single anode and one single detector --- //
+  htB3.DefineOneAnodeOneDetLG(6,1,2);
+  //htB3.DefineOneAnodeOneDetHG(6,1,2);
+  //--- define all spectra for all anodes and one det --- //
+  //for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+  //  htB3.DefineOneAnodeOneDetLG(anode,2,1);
+  //  //htB3.DefineOneAnodeOneDetHG(anode,2,1);
+  //}
+  //--- define all spectra for one anode and all dets --- //
+  for(UShort_t side=1; side<=2; side++) {
+    for(UShort_t pos=1; pos<=2; pos++) {
+      htB3.DefineOneAnodeOneDetLG(6,side,pos);
+      //htB3.DefineOneAnodeOneDetHG(6,side,pos);
+    }
+  }
+  //--- define all spectra for all anodes --- //
+  //for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+  //  for(UShort_t side=1; side<=2; side++) {
+  //    for(UShort_t pos=1; pos<=2; pos++) {
+  //	htB3.DefineOneAnodeOneDetLG(anode,side,pos);     
+  //	htB3.DefineOneAnodeOneDetHG(anode,side,pos);
+  //    }
+  // }
+  //}
 #endif
 #endif
 
@@ -281,13 +307,16 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     // CHARGE B3 LOW GAIN
     if(!raw.vB3lg_det->empty()){
       hqB3.FillHistosLG(raw.vB3lg_det,raw.vB3lg_Q1,raw.vB3lg_Q2);
+#if FC>0
+      if(raw.vFC_anode->size()==1) 
+	htB3.FillHistosLG_FCmult1(raw.vFC_anode->at(0),raw.vFC_time->at(0),raw.vB3lg_det,raw.vB3lg_time,raw.B3lg_mult);
+#endif
       
     }
     // CHARGE B3 HIGH GAIN
-    //if(!raw.vB3hg_det->empty()){
-    //  hqB3.FillHistosLG(raw.vB3hg_det,raw.vB3hg_Q1,raw.vB3hg_Q2);
-    //}
-
+    if(!raw.vB3hg_det->empty()){
+      hqB3.FillHistosLG(raw.vB3hg_det,raw.vB3hg_Q1,raw.vB3hg_Q2);
+    }
 #endif
   }// end of for(Entry)
 
@@ -352,6 +381,16 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   //TCanvas * can38 = hqB3.DrawHistos1DAllHG();           can38->Write(); // B3 HG charge 1D for all detectors
   TCanvas * can39 = hqB3.DrawHistosDiscriAllLG();       can39->Write(); // B3 LG charge Discri for all detectors
   //TCanvas * can40 = hqB3.DrawHistosDiscriAllHG();       can40->Write(); // B3 HG charge Discri for all detectors
+#if FC>0
+  TCanvas * can41 = htB3.DrawOneAnodeOneDetLG(6,1,2);   can41->Write();  //FC-B3lg ToFraw for one anode and one det
+  //TCanvas * can42 = htB3.DrawOneAnodeOneDetHG(6,1,2);   can42->Write();  //FC-B3hg ToFraw for one anode and one det
+  //TCanvas * can43 = htB3.DrawAllAnodesOneDetLG(1,2);    can43->Write();  //FC-B3lg ToFraw for all anode and one det
+  //TCanvas * can44 = htB3.DrawAllAnodesOneDetHG(1,2);    can44->Write();  //FC-B3hg ToFraw for all anode and one det
+  TCanvas * can45 = htB3.DrawOneAnodeAllDetsLG(6);      can45->Write();  //FC-B3lg ToFraw for one anode and all dets
+  //TCanvas * can46 = htB3.DrawOneAnodeAllDetsHG(6);      can46->Write();  //FC-B3hg ToFraw for one anode and all dets
+  //TCanvas * can47 = htB3.DrawAllAnodesAllDetsLG();      can47->Write();  //FC-B3lg ToFraw for all anodesxs and all dets
+  //TCanvas * can48 = htB3.DrawAllAnodesAllDetsHG();      can48->Write();  //FC-B3hg ToFraw for all anodes and all dets
+#endif
 #endif
 
 

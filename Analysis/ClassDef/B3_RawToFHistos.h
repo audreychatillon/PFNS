@@ -26,6 +26,8 @@ class B3_RawToFHistos{
   TCanvas * DrawOneAnodeOneDetHG(UShort_t, UShort_t, UShort_t);
   TCanvas * DrawAllAnodesOneDetLG(UShort_t, UShort_t);
   TCanvas * DrawAllAnodesOneDetHG(UShort_t, UShort_t);
+  TCanvas * DrawOneAnodeAllDetsLG(UShort_t);
+  TCanvas * DrawOneAnodeAllDetsHG(UShort_t);
   TCanvas * DrawAllAnodesAllDetsLG();
   TCanvas * DrawAllAnodesAllDetsHG();
 

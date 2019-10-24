@@ -4,4 +4,4 @@ histos/
 *.so
 *.d
 *.pcm
-Faster2Root/ReadPid/fast2root
+Faster2Root/fast2root

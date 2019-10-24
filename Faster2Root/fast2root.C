@@ -307,6 +307,8 @@ int main (int argc, char** argv) {
   // === =========== === //
   // === OUTPUT TREE === //
   // === =========== === //
+  TString rootfilename = argv[2];
+  TFile * fsave = new TFile(rootfilename,"recreate");
   TString RunNumber=argv[3];
   TString FileNumber=argv[4];
 #if TRIGGER_MODE==1
@@ -443,6 +445,7 @@ int main (int argc, char** argv) {
   while((data = faster_file_reader_next (file_reader))){
     
     nevents++;
+    if ((nevents%5000000)==0) cout << nevents << endl;
 
     // --- ---------------------------------- --- // 
     // --- INITIALIZATION OF OUTPUT VARIABLES --- //
@@ -1015,13 +1018,12 @@ int main (int argc, char** argv) {
   // === ====================== === //
   // === SAVE TREE IN ROOT FILE === //
   // === ====================== === //
-  TString rootfilename = argv[2];
-  TFile * fsave = new TFile(rootfilename,"recreate");
+  fsave->cd();
   t->Write();
   fsave->ls();
   fsave->Close();
-  delete fsave;
   delete t;
+  delete fsave;
 
   // === =============== === //
   // === SOME STATISTICS === //

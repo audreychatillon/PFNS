@@ -119,7 +119,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   ch->ls();
   RawCoincData raw(ch);
   ULong64_t nentries = ch->GetEntries();
-  
+  cout << "Number of entries : " << nentries << endl;
+
   // === ========================== === //
   // === DECLARATION OF HISTOGRAMMS === //
   // === ========================== === //
@@ -264,7 +265,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     // --- Read each entry of the TChain --- //
     // --- ----------------------------- --- //
     raw.GetEntry(Entry);
-    if((Entry%100000)==0) cout << Entry << endl;
+    if((Entry%5000000)==0) cout << Entry << endl;
 
 #if FC>0
     // MULTIPLICITY FC

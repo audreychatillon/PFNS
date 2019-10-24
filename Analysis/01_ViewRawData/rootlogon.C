@@ -2,7 +2,6 @@
   gStyle->SetPalette(1);
   gStyle->SetLabelSize(0.04,"xyz");
   gSystem->Load("../ClassDef/RawCoincData_C.so");
-  gSystem->Load("../ClassDef/RawSourceData_C.so");
   gSystem->Load("../ClassDef/FC_RawMultHistos_C.so");
   gSystem->Load("../ClassDef/FC_RawQHistos_C.so");
   gSystem->Load("../ClassDef/FC_RawToFHistos_C.so");

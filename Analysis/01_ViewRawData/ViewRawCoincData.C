@@ -125,62 +125,78 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   // === ========================== === //
 
 #if FC>0
-  // MULTIPLICITY FC
+  // *** MULTIPLICITY FC *** //
   FC_RawMultHistos hmFC;
-  // CHARGE FC
+
+  // *** CHARGE FC *** //
   FC_RawQHistos hqFC;
-  hqFC.Define1D(6);
-  hqFC.DefineDiscri(6);
-#if HF>0
-  FC_RawToFHistos htFC;
-  //htFC.DefineOneAnode(6);
-  htFC.DefineAllAnodes();
-#endif
+  // --- define 1D Q1 and Q2 spectra for one single anode --- //
+  hqFC.Define1D(6);      
+  // --- define Discri (Q2vsQ1) spectra for one single anode --- //
+  hqFC.DefineDiscri(6);  
+  // --- the same for all anodes --- //
+  //for(UShort_t anode=1; anode<=FC_nAnodes){
+  //  hqFC.Define1D(anode);
+  //  hqFC.DefineDiscri(anode);
+  //}
 #endif
 
 #if CHINU>0
-  // MULTIPLICITY CHI-NU
+  // *** MULTIPLICITY CHI-NU *** //
   CHINU_RawMultHistos hmCHINU;
-  // CHARGE CHI-NU
+
+  // *** CHARGE CHI-NU *** //
   CHINU_RawQHistos hqCHINU;
-  hqCHINU.Define1DLG(1,2,4); //side, ring, rank
+  // --- define 1D and discri spectra for one single detector --- //
+  hqCHINU.Define1DLG(1,2,4);     // side, ring, rank
   hqCHINU.Define1DHG(1,2,4);
   hqCHINU.DefineDiscriLG(1,2,4);
   hqCHINU.DefineDiscriHG(1,2,4);
+  //--- define all spectra for one rank --- //
+  for(UShort_t side=1; side<=2; side++) {
+    for(UShort_t ring=1; ring<=3; ring++) {
+      hqCHINU.Define1DLG(side,ring,7);     
+      hqCHINU.Define1DHG(side,ring,7);
+      hqCHINU.DefineDiscriLG(side,ring,7);
+      hqCHINU.DefineDiscriHG(side,ring,7);
+    }
+  }
+  //--- define all spectra for one ring --- //
+  for(UShort_t rank=1; rank<=9; rank++) {
+    hqCHINU.Define1DLG(2,3,rank);     
+    hqCHINU.Define1DHG(2,3,rank);
+    hqCHINU.DefineDiscriLG(2,3,rank);
+    hqCHINU.DefineDiscriHG(2,3,rank);
+  }
+
 #if FC>0
-  // raw ToF FC-CHINU
+  // *** raw ToF FC-CHINU *** //
   CHINU_RawToFHistos htCHINU;
+  // --- define ToFraw histos spectra for one single anode and one single detector --- //
   htCHINU.DefineOneAnodeOneDetLG(6,1,2,4);
   htCHINU.DefineOneAnodeOneDetHG(6,1,2,4);
+  //--- define all spectra for all anodes and one det --- //
+  for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+    htCHINU.DefineOneAnodeOneDetLG(anode,2,1,2);
+    htCHINU.DefineOneAnodeOneDetHG(anode,2,1,2);
+  }
+  //--- define all spectra for one anode and one rank --- //
+  for(UShort_t side=1; side<=2; side++) {
+    for(UShort_t ring=1; ring<=3; ring++) {
+      htCHINU.DefineOneAnodeOneDetLG(6,side,ring,7);     
+      htCHINU.DefineOneAnodeOneDetHG(6,side,ring,7);
+    }
+  }
+  //--- define all spectra for one anode and one ring --- //
+  for(UShort_t rank=1; rank<=9; rank++) {
+    htCHINU.DefineOneAnodeOneDetLG(6,2,3,rank);     
+    htCHINU.DefineOneAnodeOneDetHG(6,2,3,rank);
+  }
 #endif
-#endif  
-
-#if B3>0
-  // MULTIPLICITY B3
-  B3_RawMultHistos hmB3;
-  // CHARGE B3
-  B3_RawQHistos hqB3;
-  hqB3.Define1DLG(1,1); //side, pos
-  hqB3.Define1DHG(1,1);
-  hqB3.DefineDiscriLG(1,1);
-  hqB3.DefineDiscriHG(1,1);
-#if FC>0
-  // raw ToF FC-B3
-  B3_RawToFHistos htB3;
-  htB3.DefineOneAnodeOneDetLG(6,1,1);
-  htB3.DefineOneAnodeOneDetHG(6,1,1);
-#endif
-#endif  
-
-#if HF>0
-  HF_RawMultHistos hmHF;
-  HF_RawQHisto hqHF;
 #endif
 
-#if PULSER>0
-  PULSER_RawMultHistos hmPULSER;
-  PULSER_RawQHisto hqPULSER;
-#endif
+
+
 
   // === ===================== === //
   // === LOOP OVER THE ENTRIES === //
@@ -200,16 +216,15 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     hmFC.FillHistos(raw.vFC_anode,raw.FC_mult);
     // CHARGE FC
     hqFC.FillHistos(raw.vFC_anode,raw.vFC_Q1,raw.vFC_Q2);
-#if HF>0
-    if((raw.vFC_anode->size()==1) && (raw.vHF_time->size()==1))
-      htFC.FillHistos(raw.vHF_time->at(0),raw.vFC_anode->at(0),raw.vFC_time->at(0));
 #endif
-#endif
+
+
+
 
 #if CHINU>0
     // MULTIPLICITY CHI-NU
     hmCHINU.FillHistos(raw.vCHINUlg_det,raw.vCHINUhg_det);
-    // CHARGE AND TOF CHI-NU
+    // CHARGE CHI-NU LOW GAIN
     if(!raw.vCHINUlg_det->empty()){
       cpt_NDETlg++;
       hqCHINU.FillHistosLG(raw.vCHINUlg_det,raw.vCHINUlg_Q1,raw.vCHINUlg_Q2);
@@ -218,46 +233,15 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	htCHINU.FillHistosLG_FCmult1(raw.vFC_anode->at(0),raw.vFC_time->at(0),raw.vCHINUlg_det,raw.vCHINUlg_time,raw.CHINUlg_mult);
 #endif
     }
+    // CHARGE CHI-NU HIG GAIN
     if(!raw.vCHINUhg_det->empty()){
-      cpt_NDEThg++;
+      cpt_NDETlg++;
       hqCHINU.FillHistosHG(raw.vCHINUhg_det,raw.vCHINUhg_Q1,raw.vCHINUhg_Q2);
 #if FC>0
       if(raw.vFC_anode->size()==1) 
 	htCHINU.FillHistosHG_FCmult1(raw.vFC_anode->at(0),raw.vFC_time->at(0),raw.vCHINUhg_det,raw.vCHINUhg_time,raw.CHINUhg_mult);
 #endif
     }
-#endif
-
-#if B3>0
-    // MULTIPLICITY CHI-NU
-    hmB3.FillHistos(raw.vB3lg_det,raw.vB3hg_det);
-    // CHARGE AND TOF CHI-NU
-    if(!raw.vB3lg_det->empty()){
-      cpt_NDETlg++;
-      hqB3.FillHistosLG(raw.vB3lg_det,raw.vB3lg_Q1,raw.vB3lg_Q2);
-#if FC>0
-      if(raw.vFC_anode->size()==1) 
-	htB3.FillHistosLG_FCmult1(raw.vFC_anode->at(0),raw.vFC_time->at(0),raw.vB3lg_det,raw.vB3lg_time,raw.B3lg_mult);
-#endif
-    }
-    if(!raw.vB3hg_det->empty()){
-      cpt_NDEThg++;
-      hqB3.FillHistosHG(raw.vB3hg_det,raw.vB3hg_Q1,raw.vB3hg_Q2);
-#if FC>0
-      if(raw.vFC_anode->size()==1) 
-	htB3.FillHistosHG_FCmult1(raw.vFC_anode->at(0),raw.vFC_time->at(0),raw.vB3hg_det,raw.vB3hg_time,raw.B3hg_mult);
-#endif
-    }
-#endif    
-
-#if HF>0
-    hmHF.FillHistos(raw.vHF_label);
-    hqHF.FillHisto(raw.vHF_Q1);
-#endif
-
-#if PULSER>0
-    hmPULSER.FillHistos(raw.vPULSER_label);
-    hqPULSER.FillHisto(raw.vPULSER_Q1);
 #endif
 
   }// end of for(Entry)
@@ -268,63 +252,47 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   sprintf(name,"../../histos/Raw/R%dtoR%d.root",runFirst,runLast);
   TFile * fsave = new TFile(name,"update");
   fsave->cd();
+
 #if FC>0
-  TCanvas * can1 = hmFC.Draw1DHistos();                        can1->Write();
-  TCanvas * can2 = hmFC.Draw2DHistos();                        can2->Write();
-  TCanvas * can3 = hqFC.Draw1DHistos(6);                       can3->Write();
-  TCanvas * can4 = hqFC.DrawDiscriHisto(6);                    can4->Write();
-#if HF>0
-  TCanvas * can5 = htFC.DrawAllAnodes();                       can5->Write();
-#endif
+  // FC mult
+  TCanvas * can1 = hmFC.Draw1DHistos();                   can1->Write(); // FC multiplicity 1D spectra
+  TCanvas * can2 = hmFC.Draw2DHistos();                   can2->Write(); // FC multiplicity 2D spectra
+  // FC charge
+  TCanvas * can3 = hqFC.Draw1DHistos(6);                  can3->Write(); // FC charge 1D spectrum for one anode
+  TCanvas * can4 = hqFC.DrawDiscriHisto(6);               can4->Write(); // FC charge 2D spectrum for one anode
+  //TCanvas * can5 = hqFC.Draw1DAllHistos();                can5->Write(); // FC charge 1D spectra for all anodes
+  //TCanvas * can6 = hqFC.DrawDiscriAllHistos();            can6->Write(); // FC charge 2D spectra for all anodes
 #endif
 #if CHINU>0
-  TCanvas * can6 = hmCHINU.DrawHistos();                       can6->Write();
-  TCanvas * can7 = hqCHINU.DrawHistos1DLG(1,2,4);              can7->Write();
-  TCanvas * can8 = hqCHINU.DrawHistos1DHG(1,2,4);              can8->Write();
-  TCanvas * can9 = hqCHINU.DrawHistoDiscriLG(1,2,4);           can9->Write();
-  TCanvas * can10 = hqCHINU.DrawHistoDiscriHG(1,2,4);          can10->Write();
-  TCanvas * can11 = hqCHINU.DrawHistos1DSideRingLG(1,2);       can11->Write();
-  TCanvas * can12 = hqCHINU.DrawHistos1DSideRingHG(1,2);       can12->Write();
-  TCanvas * can13 = hqCHINU.DrawHistos1DRankLG(4);             can13->Write();
-  TCanvas * can14 = hqCHINU.DrawHistos1DRankHG(4);             can14->Write();
-  TCanvas * can15 = hqCHINU.DrawHistosDiscriSideRingLG(1,2);   can15->Write();
-  TCanvas * can16 = hqCHINU.DrawHistosDiscriSideRingHG(1,2);   can16->Write();
-  TCanvas * can17 = hqCHINU.DrawHistosDiscriRankLG(4);         can17->Write();
-  TCanvas * can18 = hqCHINU.DrawHistosDiscriRankHG(4);         can18->Write();
+  //  CHINU mult
+  TCanvas * can7 = hmCHINU.DrawHistos();                     can7->Write(); // CHINU mult spectra
+  // CHINU charge
+  TCanvas * can8 = hqCHINU.DrawHistos1DLG(1,2,4);            can8->Write(); // CHINU LG charge 1D for one detector
+  TCanvas * can9 = hqCHINU.DrawHistos1DHG(1,2,4);            can9->Write(); // CHINU HG charge 1D for one detector
+  TCanvas * can10 = hqCHINU.DrawHistoDiscriLG(1,2,4);        can10->Write(); // CHINU LG charge Discri for one detector
+  TCanvas * can11 = hqCHINU.DrawHistoDiscriHG(1,2,4);        can11->Write(); // CHINU HG charge Discri for one detector
+  TCanvas * can12 = hqCHINU.DrawHistos1DRankLG(7);           can12->Write(); // CHINU LG charge 1D for 6 detectors on the same rank
+  TCanvas * can13 = hqCHINU.DrawHistos1DRankHG(7);           can13->Write(); // CHINU HG charge 1D for 6 detectors on the same rank
+  TCanvas * can14 = hqCHINU.DrawHistosDiscriRankLG(7);       can14->Write(); // CHINU LG charge Discri for 6 detectors on the same rank
+  TCanvas * can15 = hqCHINU.DrawHistosDiscriRankHG(7);       can15->Write(); // CHINU HG charge Discri for 6 detectors on the same rank
+  TCanvas * can16 = hqCHINU.DrawHistos1DSideRingLG(2,3);     can16->Write(); // CHINU LG charge 1D for 9 detectors on the same ring
+  TCanvas * can17 = hqCHINU.DrawHistos1DSideRingHG(2,3);     can17->Write(); // CHINU HG charge 1D for 9 detectors on the same ring
+  TCanvas * can18 = hqCHINU.DrawHistosDiscriSideRingLG(2,3); can18->Write(); // CHINU LG charge Discri for 9 detectors on the same ring
+  TCanvas * can19 = hqCHINU.DrawHistosDiscriSideRingHG(2,3); can19->Write(); // CHINU HG charge Discri for 9 detectors on the same ring
 #if FC>0
-  TCanvas * can19 = htCHINU.DrawOneAnodeOneDetLG(6,1,2,4);     can19->Write();
-  TCanvas * can20 = htCHINU.DrawOneAnodeOneDetHG(6,1,2,4);     can20->Write();
-  TCanvas * can21 = htCHINU.DrawOneAnodeSideRingLG(6,1,2);     can21->Write();
-  TCanvas * can22 = htCHINU.DrawOneAnodeSideRingHG(6,1,2);     can22->Write();
-  TCanvas * can23 = htCHINU.DrawAllAnodesOneDetLG(1,2,4);      can23->Write();
-  TCanvas * can24 = htCHINU.DrawAllAnodesOneDetHG(1,2,4);      can24->Write();
+  TCanvas * can20 = htCHINU.DrawOneAnodeOneDetLG(6,1,2,4);   can20->Write(); //FC-CHINUlg ToFraw for one anode and one det
+  TCanvas * can21 = htCHINU.DrawOneAnodeOneDetHG(6,1,2,4);   can21->Write(); //FC-CHINUhg ToFraw for one anode and one det
+  TCanvas * can22 = htCHINU.DrawAllAnodesOneDetLG(2,1,2);    can22->Write(); //FC-CHINUlg ToFraw for all anodes and one det
+  TCanvas * can23 = htCHINU.DrawAllAnodesOneDetHG(2,1,2);    can23->Write(); //FC-CHINUhg ToFraw for all anodes and one det
+  TCanvas * can24 = htCHINU.DrawOneAnodeSideRingLG(6,2,3);   can24->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can25 = htCHINU.DrawOneAnodeSideRingHG(6,2,3);   can25->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can26 = htCHINU.DrawOneAnodeRankLG(6,7);         can26->Write(); //FC-CHINUlg ToFraw for one anode and 6 dets on one rank
+  TCanvas * can27 = htCHINU.DrawOneAnodeRankHG(6,7);         can27->Write(); //FC-CHINUhg ToFraw for one anode and 6 dets on one rank
 #endif
 #endif
-#if B3>0
-  TCanvas * can25 = hmB3.DrawHistos();                         can25->Write();
-  TCanvas * can26 = hqB3.DrawHistos1DLG(1,1);                  can26->Write();
-  TCanvas * can27 = hqB3.DrawHistos1DHG(1,1);                  can27->Write();
-  TCanvas * can28 = hqB3.DrawHistoDiscriLG(1,1);               can28->Write();
-  TCanvas * can29 = hqB3.DrawHistoDiscriHG(1,1);               can29->Write();
-  TCanvas * can30 = hqB3.DrawHistos1DAllLG();                  can30->Write();
-  TCanvas * can31 = hqB3.DrawHistos1DAllHG();                  can31->Write();
-  TCanvas * can32 = hqB3.DrawHistosDiscriAllLG();              can32->Write();
-  TCanvas * can33 = hqB3.DrawHistosDiscriAllHG();              can33->Write();
-#if FC>0
-  TCanvas * can34 = htB3.DrawOneAnodeOneDetLG(6,1,1);          can34->Write();
-  TCanvas * can35 = htB3.DrawOneAnodeOneDetHG(6,1,1);          can35->Write();
-  TCanvas * can36 = htB3.DrawAllAnodesAllDetsLG();             can36->Write();
-  TCanvas * can37 = htB3.DrawAllAnodesAllDetsHG();             can37->Write();
-#endif
-#endif
-#if HF>0
-  TCanvas * can38 = hmHF.DrawHistos();                         can38->Write();
-  TCanavs * can39 = hqHF.DrawHisto();                          can39->Write();
-#endif 
- #if PULSER>0
-  TCanvas * can40 = hmPULSER.DrawHistos();                     can40->Write();
-  TCanavs * can41 = hqPULSER.DrawHisto();                      can41->Write();
-#endif
+
+
+
  fsave->Close();
   // === ========== === //
   // === STATISTICS === //

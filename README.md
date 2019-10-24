@@ -13,3 +13,13 @@ Ce code permet de
 
 * transformer les données brutes en donn<E9>es calibrées en ToF
 --> 03_Raw2Cal UNDER CONSTRUCTION  
+
+* ATTENTION !!!!!
+
+POUR UN PREMIER TELECHARGEMENT DU CODE SUR UNE NOUVELLE MACHINE
+ 
+AVANT TOUTES CHOSES, IL FAUT COMPILER LES LIBRAIRIES DANS :
+
+	cd Analysis/ClassDef
+
+	root Process.C

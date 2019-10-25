@@ -94,15 +94,19 @@
 #include "../SetupSpecific/setup_specific.h"
 
 
+#define CHINU_mult_max 15
+#define B3_mult_max 4
+
+
 using namespace std;
 
 int main (int argc, char** argv) {
 
-  char name[100];
-  UInt_t nevents_coinc=0;
-  UInt_t nevents_source=0;
-  UInt_t nevents_counters=0;
-  UInt_t detType, detSubType;
+  char     name[100];
+  UInt_t   nevents_coinc=0;
+  UInt_t   nevents_source=0;
+  UInt_t   nevents_counters=0;
+  UShort_t detType, detSubType, detId;
 
   // === ================ === //
   // === FASTER VARIABLES === //
@@ -199,7 +203,7 @@ int main (int argc, char** argv) {
   
   // --- Fission Chamber
 #if FC>0
-  UShort_t FC_multTot;
+  UShort_t FC_mult_tot;
   UShort_t FC_mult[FC_nAnodes];
   UShort_t FC_label;
   UShort_t FC_anode;
@@ -220,66 +224,71 @@ int main (int argc, char** argv) {
 
   // --- Chi-Nu Neutron detectors
 #if CHINU>0
+  UShort_t CHINU_multLG_tot;
+  UShort_t CHINU_multHG_tot;
   UShort_t CHINU_multLG[CHINU_nDets];
   UShort_t CHINU_multHG[CHINU_nDets];
-  std::vector<UShort_t> vCHINUlg_label;
-  std::vector<UShort_t> vCHINUhg_label;
-  std::vector<UShort_t> vCHINUlg_det;
-  std::vector<UShort_t> vCHINUhg_det;
-  //std::vector<ULong64_t> vCHINUlg_clock;
-  //std::vector<ULong64_t> vCHINUhg_clock;
-  //std::vector<Double_t> vCHINUlg_tdc;
-  //std::vector<Double_t> vCHINUhg_tdc;
-  std::vector<Double_t> vCHINUlg_time;
-  std::vector<Double_t> vCHINUhg_time;
-  std::vector<UInt_t> vCHINUlg_Q1;
-  std::vector<UInt_t> vCHINUhg_Q1;
+  UShort_t CHINUlg_label[CHINU_mult_max];
+  UShort_t CHINUhg_label[CHINU_mult_max];
+  UShort_t CHINUlg_det[CHINU_mult_max];
+  UShort_t CHINUhg_det[CHINU_mult_max];
+  //ULong64_t CHINUlg_clock[CHINU_mult_max];
+  //ULong64_t CHINUhg_clock[CHINU_mult_max];
+  //Double_t CHINUlg_tdc[CHINU_mult_max];
+  //Double_t CHINUhg_tdc[CHINU_mult_max];
+  Double_t CHINUlg_time[CHINU_mult_max];
+  Double_t CHINUhg_time[CHINU_mult_max];
+  UInt_t CHINUlg_Q1[CHINU_mult_max];
+  UInt_t CHINUhg_Q1[CHINU_mult_max];
 #if CHINU_nQ>1
-  std::vector<UInt_t> vCHINUlg_Q2;
-  std::vector<UInt_t> vCHINUhg_Q2;
+  UInt_t CHINUlg_Q2[CHINU_mult_max];
+  UInt_t CHINUhg_Q2[CHINU_mult_max];
 #endif
 #if CHINU_nQ>2
-  std::vector<UInt_t> vCHINUlg_Q3;
-  std::vector<UInt_t> vCHINUhg_Q3;
+  UInt_t CHINUlg_Q3[CHINU_mult_max];
+  UInt_t CHINUhg_Q3[CHINU_mult_max];
 #endif
 #if CHINU_nQ>3
-  std::vector<UInt_t> vCHINUlg_Q4;
-  std::vector<UInt_t> vCHINUhg_Q4;
+  UInt_t CHINUlg_Q4[CHINU_mult_max];
+  UInt_t CHINUhg_Q4[CHINU_mult_max];
 #endif
 #endif
 
   // --- B3 Neutron detectors
 #if B3>0
+  UShort_t B3_multLG_tot;
+  UShort_t B3_multHG_tot;
   UShort_t B3_multLG[B3_nDets];
   UShort_t B3_multHG[B3_nDets];
-  std::vector<UShort_t> vB3lg_label;
-  std::vector<UShort_t> vB3hg_label;
-  std::vector<UShort_t> vB3lg_det;
-  std::vector<UShort_t> vB3hg_det;
-  //std::vector<ULong64_t> vB3lg_clock;
-  //std::vector<ULong64_t> vB3hg_clock;
-  //std::vector<Double_t> vB3lg_tdc;
-  //std::vector<Double_t> vB3hg_tdc;
-  std::vector<Double_t> vB3lg_time;
-  std::vector<Double_t> vB3hg_time;
-  std::vector<UInt_t> vB3lg_Q1;
-  std::vector<UInt_t> vB3hg_Q1;
+  UShort_t B3lg_label[B3_mult_max];
+  UShort_t B3hg_label[B3_mult_max];
+  UShort_t B3lg_det[B3_mult_max];
+  UShort_t B3hg_det[B3_mult_max];
+  //ULong64_t B3lg_clock[B3_mult_max];
+  //ULong64_t B3hg_clock[B3_mult_max];
+  //Double_t B3lg_tdc[B3_mult_max];
+  //Double_t B3hg_tdc[B3_mult_max];
+  Double_t B3lg_time[B3_mult_max];
+  Double_t B3hg_time[B3_mult_max];
+  UInt_t B3lg_Q1[B3_mult_max];
+  UInt_t B3hg_Q1[B3_mult_max];
 #if B3_nQ>1
-  std::vector<UInt_t> vB3lg_Q2;
-  std::vector<UInt_t> vB3hg_Q2;
+  UInt_t B3lg_Q2[B3_mult_max];
+  UInt_t B3hg_Q2[B3_mult_max];
 #endif
 #if B3_nQ>2
-  std::vector<UInt_t> vB3lg_Q3;
-  std::vector<UInt_t> vB3hg_Q3;
+  UInt_t B3lg_Q3[B3_mult_max];
+  UInt_t B3hg_Q3[B3_mult_max];
 #endif
 #if B3_nQ>3
-  std::vector<UInt_t> vB3lg_Q4;
-  std::vector<UInt_t> vB3hg_Q4;
+  UInt_t B3lg_Q4[B3_mult_max];
+  UInt_t B3hg_Q4[B3_mult_max];
 #endif
 #endif
 
   // --- Pulser
 #if PULSER>0
+  UShort_t PULSER_mult;
   UShort_t PULSER_label;
   //ULong64_t PULSER_clock;
   //ULong64_t PULSER_tdc;
@@ -289,6 +298,7 @@ int main (int argc, char** argv) {
 
   // --- HF Beam
 #if HF>0
+  UShort_t HF_mult;
   UShort_t HF_label;
   //ULong64_t HF_clock;
   //ULong64_t HF_tdc;
@@ -298,6 +308,7 @@ int main (int argc, char** argv) {
 
   // --- Macro Pulse
 #if MACRO>0
+  UShort_t MACRO_mult;
   UShort_t MACRO_label;
   //ULong64_t MACRO_clock;
   //ULong64_t MACRO_tdc;
@@ -310,6 +321,7 @@ int main (int argc, char** argv) {
   // === =========== === //
   TString rootfilename = argv[2];
   TFile * fsave = new TFile(rootfilename,"recreate");
+  fsave->ls();
   TString RunNumber=argv[3];
   TString FileNumber=argv[4];
 #if TRIGGER_MODE==1
@@ -325,107 +337,114 @@ int main (int argc, char** argv) {
   //t->Branch("Clock",&clock_data,"Clock/l");
   // chi-nu ndet 
 #if CHINU>0
+  t->Branch("CHINUlg_mult_tot",&CHINU_multLG_tot,"CHINUlg_mult_tot/s");
+  t->Branch("CHINUhg_mult_tot",&CHINU_multHG_tot,"CHINUhg_mult_tot/s");
   t->Branch("CHINUlg_mult",CHINU_multLG,"CHINUlg_mult[54]/s");
   t->Branch("CHINUhg_mult",CHINU_multHG,"CHINUhg_mult[54]/s");
-  t->Branch("vCHINUlg_label",&vCHINUlg_label);
-  t->Branch("vCHINUhg_label",&vCHINUhg_label);
-  t->Branch("vCHINUlg_det",&vCHINUlg_det);
-  t->Branch("vCHINUhg_det",&vCHINUhg_det);
-  //t->Branch("vCHINUlg_clock",&vCHINUlg_clock);
-  //t->Branch("vCHINUhg_clock",&vCHINUhg_clock);
-  //t->Branch("vCHINUlg_tdc",&vCHINUlg_tdc);
-  //t->Branch("vCHINUhg_tdc",&vCHINUhg_tdc);
-  t->Branch("vCHINUlg_time",&vCHINUlg_time);
-  t->Branch("vCHINUhg_time",&vCHINUhg_time);
-  t->Branch("vCHINUlg_Q1",&vCHINUlg_Q1);
-  t->Branch("vCHINUhg_Q1",&vCHINUhg_Q1);
+  t->Branch("CHINUlg_label",CHINUlg_label,"CHINUlg_label[15]/s");
+  t->Branch("CHINUhg_label",CHINUhg_label,"CHINUhg_label[15]/s");
+  t->Branch("CHINUlg_det",CHINUlg_det,"CHINUlg_det[15]/s");
+  t->Branch("CHINUhg_det",CHINUhg_det,"CHINUhg_det[15]/s");
+  //t->Branch("CHINUlg_clock",CHINUlg_clock,"CHINUlg_clock[15]/l");
+  //t->Branch("CHINUhg_clock",CHINUhg_clock,"CHINUhg_clock[15]/l");
+  //t->Branch("CHINUlg_tdc",CHINUlg_tdc,"CHINUlg_tdc[15]/l");
+  //t->Branch("CHINUhg_tdc",CHINUhg_tdc,"CHINUhg_tdc[15]/l");
+  t->Branch("CHINUlg_time",CHINUlg_time,"CHINUlg_time[15]/D");
+  t->Branch("CHINUhg_time",CHINUhg_time,"CHINUhg_time[15]/D");
+  t->Branch("CHINUlg_Q1",CHINUlg_Q1,"CHINUlg_Q1[15]/i");
+  t->Branch("CHINUhg_Q1",CHINUhg_Q1,"CHINUhg_Q1[15]/i");
 #if CHINU_nQ>1
-  t->Branch("vCHINUlg_Q2",&vCHINUlg_Q2);
-  t->Branch("vCHINUhg_Q2",&vCHINUhg_Q2);
+  t->Branch("CHINUlg_Q2",CHINUlg_Q2,"CHINUlg_Q2[15]/i");
+  t->Branch("CHINUhg_Q2",CHINUhg_Q2,"CHINUhg_Q2[15]/i");
 #endif
 #if CHINU_nQ>2
-  t->Branch("vCHINUlg_Q3",&vCHINUlg_Q3);
-  t->Branch("vCHINUhg_Q3",&vCHINUhg_Q3);
+  t->Branch("CHINUlg_Q3",CHINUlg_Q3,"CHINUlg_Q3[15]/i");
+  t->Branch("CHINUhg_Q3",CHINUhg_Q3,"CHINUhg_Q3[15]/i");
 #endif
 #if CHINU_nQ>3
-  t->Branch("vCHINUlg_Q4",&vCHINUlg_Q4);
-  t->Branch("vCHINUhg_Q4",&vCHINUhg_Q4);
+  t->Branch("CHINUlg_Q4",CHINUlg_Q4,"CHINUlg_Q4[15]/i");
+  t->Branch("CHINUhg_Q4",CHINUhg_Q4,"CHINUhg_Q4[15]/i");
 #endif
 #endif
   // B3 ndet 
 #if B3>0
+  t->Branch("B3lg_mult_tot",&B3_multLG_tot,"B3lg_mult_tot/s");
+  t->Branch("B3hg_mult_tot",&B3_multHG_tot,"B3hg_mult_tot/s");
   t->Branch("B3lg_mult",B3_multLG,"B3lg_mult[4]/s");
   t->Branch("B3hg_mult",B3_multHG,"B3hg_mult[4]/s");
-  t->Branch("vB3lg_label",&vB3lg_label);
-  t->Branch("vB3hg_label",&vB3hg_label);
-  t->Branch("vB3lg_det",&vB3lg_det);
-  t->Branch("vB3hg_det",&vB3hg_det);
-  //t->Branch("vB3lg_clock",&vB3lg_clock);
-  //t->Branch("vB3hg_clock",&vB3hg_clock);
-  //t->Branch("vB3lg_tdc",&vB3lg_tdc);
-  //t->Branch("vB3hg_tdc",&vB3hg_tdc);
-  t->Branch("vB3lg_time",&vB3lg_time);
-  t->Branch("vB3hg_time",&vB3hg_time);
-  t->Branch("vB3lg_Q1",&vB3lg_Q1);
-  t->Branch("vB3hg_Q1",&vB3hg_Q1);
+  t->Branch("B3lg_label",B3lg_label,"B3lg_label[4]/s");
+  t->Branch("B3hg_label",B3hg_label,"B3hg_label[4]/s");
+  t->Branch("B3lg_det",B3lg_det,"B3lg_det[4]/s");
+  t->Branch("B3hg_det",B3hg_det,"B3hg_det[4]/s");
+  //t->Branch("B3lg_clock",B3lg_clock,"B3lg_clock[4]/l");
+  //t->Branch("B3hg_clock",B3hg_clock,"B3hg_clock[4]/l");
+  //t->Branch("B3lg_tdc",B3lg_tdc,"B3lg_tdc[4]/l");
+  //t->Branch("B3hg_tdc",B3hg_tdc,"B3hg_tdc[4]/l");
+  t->Branch("B3lg_time",B3lg_time,"B3lg_time[4]/D");
+  t->Branch("B3hg_time",B3hg_time,"B3hg_time[4]/D");
+  t->Branch("B3lg_Q1",B3lg_Q1,"B3lg_Q1[4]/i");
+  t->Branch("B3hg_Q1",B3hg_Q1,"B3hg_Q1[4]/i");
 #if B3_nQ>1
-  t->Branch("vB3lg_Q2",&vB3lg_Q2);
-  t->Branch("vB3hg_Q2",&vB3hg_Q2);
+  t->Branch("B3lg_Q2",B3lg_Q2,"B3lg_Q2[4]/i");
+  t->Branch("B3hg_Q2",B3hg_Q2,"B3hg_Q2[4]/i");
 #endif
 #if B3_nQ>2
-  t->Branch("vB3lg_Q3",&vB3lg_Q3);
-  t->Branch("vB3hg_Q3",&vB3hg_Q3);
+  t->Branch("B3lg_Q3",B3lg_Q3,"B3lg_Q3[4]/i");
+  t->Branch("B3hg_Q3",B3hg_Q3,"B3hg_Q3[4]/i");
 #endif
 #if B3_nQ>3
-  t->Branch("vB3lg_Q4",&vB3lg_Q4);
-  t->Branch("vB3hg_Q4",&vB3hg_Q4);
+  t->Branch("B3lg_Q4",B3lg_Q4,"B3lg_Q4[4]/i");
+  t->Branch("B3hg_Q4",B3hg_Q4,"B3hg_Q4[4]/i");
 #endif
 #endif
 #if TRIGGER_MODE==1 
   // dans le cas des données prises en coinc, on rajoute toutes les voies à l'arbre
   // fission chamber
 #if FC>0
-  t->Branch("FC_multTot",&FC_multTot,"FC_multTot/s");
+  t->Branch("FC_mult_tot",&FC_mult_tot,"FC_mult_tot/s");
   t->Branch("FC_mult",FC_mult,"FC_mult[11]/s");
-  t->Branch("FC_label",&FC_label,"");
-  t->Branch("FC_anode",&FC_anode,"");
-  //t->Branch("FC_clock",FC_clock);
-  //t->Branch("FC_tdc",FC_tdc);
-  t->Branch("vFC_time",&vFC_time);
-  t->Branch("vFC_Q1",&vFC_Q1);
+  t->Branch("FC_label",&FC_label,"FC_label/s");
+  t->Branch("FC_anode",&FC_anode,"FC_anode/s");
+  //t->Branch("FC_clock",FC_clock,"FC_clock/l");
+  //t->Branch("FC_tdc",FC_tdc,"FC_tdc/l");
+  t->Branch("FC_time",&FC_time,"FC_time/D");
+  t->Branch("FC_Q1",&FC_Q1,"FC_Q1/i");
 #if FC_nQ>1
-  t->Branch("vFC_Q2",&vFC_Q2);
+  t->Branch("FC_Q2",&FC_Q2,"FC_Q2/i");
 #endif
 #if FC_nQ>2
-  t->Branch("vFC_Q3",&vFC_Q3);
+  t->Branch("FC_Q3",&FC_Q3,"FC_Q3/i");
 #endif
 #if FC_nQ>3
-  t->Branch("vFC_Q4",&vFC_Q4);
+  t->Branch("FC_Q4",&FC_Q4,"FC_Q4/i");
 #endif
 #endif
   // Pulser
 #if PULSER>0
-  t->Branch("vPULSER_label",&vPULSER_label);
-  //t->Branch("vPULSER_clock",&vPULSER_clock);
-  //t->Branch("vPULSER_tdc",&vPULSER_tdc);
-  t->Branch("vPULSER_time",&vPULSER_time);
-  t->Branch("vPULSER_Q1",&vPULSER_Q1);
+  t->Branch("PULSER_mult",&PULSER_mult,"PULSER_mult/i");
+  t->Branch("PULSER_label",&PULSER_label,"PULSER_label/i");
+  //t->Branch("PULSER_clock",&PULSER_clock,"PULSER_time/D");
+  //t->Branch("PULSER_tdc",&PULSER_tdc,"PULSER_tdc/l");
+  t->Branch("PULSER_time",&PULSER_time,"PULSER_time/D");
+  t->Branch("PULSER_Q1",&PULSER_Q1,"PULSER_Q1/i");
 #endif
   // HF Beam
 #if HF>0
-  t->Branch("vHF_label",&vHF_label);
-  //t->Branch("vHF_clock",&vHF_clock);
-  //t->Branch("vHF_tdc",&vHF_tdc);
-  t->Branch("vHF_time",&vHF_time);
-  t->Branch("vHF_Q1",&vHF_Q1);
+  t->Branch("HF_mult",&HF_mult,"HF_mult/s");
+  t->Branch("HF_label",&HF_label,"HF_label/s");
+  //t->Branch("HF_clock",&HF_clock,"HF_clock/D");
+  //t->Branch("HF_tdc",&HF_tdc,"HF_tdc/D");
+  t->Branch("HF_time",&HF_time,"HF_time/D");
+  t->Branch("HF_Q1",&HF_Q1,"HF_Q1/i");
 #endif
   // Macro Pulse
 #if MACRO>0
-  t->Branch("vMACRO_label",&vMACRO_label);
-  //t->Branch("vMACRO_clock",&vMACRO_clock);
-  //t->Branch("vMACRO_tdc",&vMACRO_tdc);
-  t->Branch("vMACRO_time",&vMACRO_time);
-  t->Branch("vMACRO_Q1",&vMACRO_Q1);
+  t->Branch("MACRO_mult",&MACRO_mult,"MACRO_mult/s");
+  t->Branch("MACRO_label",&MACRO_label,"MACRO_label/s");
+  //t->Branch("MACRO_clock",&MACRO_clock,"MACRO_clock/D");
+  //t->Branch("MACRO_tdc",vMACRO_tdc,"MACRO_tdc/D");
+  t->Branch("MACRO_time",&MACRO_time,"MACRO_time/D");
+  t->Branch("MACRO_Q1",&MACRO_Q1,"MACRO_Q1/i");
 #endif
 #endif 
 
@@ -446,117 +465,131 @@ int main (int argc, char** argv) {
   // === ================== === //
   while((data = faster_file_reader_next (file_reader))){
     
-    nevents++;
+    nevents++; 
     if ((nevents%5000000)==0) cout << nevents << endl;
 
     // --- ---------------------------------- --- // 
     // --- INITIALIZATION OF OUTPUT VARIABLES --- //
     // --- ---------------------------------- --- // 
+
+
     // *** Fission Chamber *** //
 #if FC>0
+    FC_mult_tot=0;
     for(UShort_t anode=0; anode<FC_nAnodes; anode++) FC_mult[anode]=0;
-    vFC_label.clear();
-    vFC_anode.clear();
-    //vFC_clock.clear();
-    //vFC_tdc.clear();
-    vFC_time.clear();
-    vFC_Q1.clear();
+    FC_label=0;
+    FC_anode=0;
+    //FC_clock=0;
+    //FC_tdc=0;
+    FC_time=0;
+    FC_Q1=0;
 #if FC_nQ>1
-    vFC_Q2.clear();
+    FC_Q2=0;
 #endif
 #if FC_nQ>2
-    vFC_Q3.clear();
+    FC_Q3=0;
 #endif
 #if FC_nQ>3
-    vFC_Q4.clear();
+    FC_Q4=0;
 #endif
 #endif
+
+
     // *** Chi-Nu Neutron Detectors *** //
 #if CHINU>0
-    for(UShort_t det=0; det<CHINU_nDets; det++) {CHINU_multLG[det]=0; CHINU_multHG[det]=0;}
-    vCHINUlg_label.clear();
-    vCHINUhg_label.clear();
-    vCHINUlg_det.clear();
-    vCHINUhg_det.clear();
-    //vCHINUlg_clock.clear();
-    //vCHINUhg_clock.clear();
-    //vCHINUlg_tdc.clear();
-    //vCHINUhg_tdc.clear();
-    vCHINUlg_time.clear();
-    vCHINUhg_time.clear();
-    vCHINUlg_Q1.clear();
-    vCHINUhg_Q1.clear();
+    CHINU_multLG_tot=0;
+    CHINU_multHG_tot=0;
+    for(UShort_t det=0; det<CHINU_nDets; det++) 
+      {
+	CHINU_multLG[det]=0; 
+	CHINU_multHG[det]=0;
+      }
+    for(UShort_t m=0; m<CHINU_mult_max; m++){
+      CHINUlg_label[m]=0;      CHINUhg_label[m]=0;
+      CHINUlg_det[m]=0;        CHINUhg_det[m]=0;
+      //CHINUlg_clock[m]=0;    CHINUhg_clock[m]=0;
+      //CHINUlg_tdc[m]=0;      CHINUhg_tdc[m]=0;
+      CHINUlg_time[m]=0;       CHINUhg_time[m]=0;
+      CHINUlg_Q1[m]=0;         CHINUhg_Q1[m]=0;
 #if CHINU_nQ>1
-    vCHINUlg_Q2.clear();
-    vCHINUhg_Q2.clear();
+      CHINUlg_Q2[m]=0;         CHINUhg_Q2[m]=0;
 #endif
 #if CHINU_nQ>2
-    vCHINUlg_Q3.clear();
-    vCHINUhg_Q3.clear();
+      CHINUlg_Q3[m]=0;         CHINUhg_Q3[m]=0;
 #endif
 #if CHINU_nQ>3
-    vCHINUlg_Q4.clear();
-    vCHINUhg_Q4.clear();
+      CHINUlg_Q4[m]=0;         CHINUhg_Q4[m]=0;
 #endif
+    }
 #endif
+
+
     // *** B3 Neutron Detectors *** //
 #if B3>0
-    for(UShort_t det=0; det<B3_nDets; det++) {B3_multLG[det]=0; B3_multHG[det]=0;}
-    vB3lg_label.clear();
-    vB3hg_label.clear();
-    vB3lg_det.clear();
-    vB3hg_det.clear();
-    //vB3lg_clock.clear();
-    //vB3hg_clock.clear();
-    //vB3lg_tdc.clear();
-    //vB3hg_tdc.clear();
-    vB3lg_time.clear();
-    vB3hg_time.clear();
-    vB3lg_Q1.clear();
-    vB3hg_Q1.clear();
+    B3_multLG_tot=0;
+    B3_multHG_tot=0;
+    for(UShort_t det=0; det<B3_nDets; det++) 
+      {
+	B3_multLG[det]=0; 
+	B3_multHG[det]=0;
+      }
+    for(UShort_t m=0; m<B3_mult_max; m++){
+      B3lg_label[m]=0;      B3hg_label[m]=0;
+      B3lg_det[m]=0;        B3hg_det[m]=0;
+      //B3lg_clock[m]=0;    B3hg_clock[m]=0;
+      //B3lg_tdc[m]=0;      B3hg_tdc[m]=0;
+      B3lg_time[m]=0;       B3hg_time[m]=0;
+      B3lg_Q1[m]=0;         B3hg_Q1[m]=0;
 #if B3_nQ>1
-    vB3lg_Q2.clear();
-    vB3hg_Q2.clear();
+      B3lg_Q2[m]=0;         B3hg_Q2[m]=0;
 #endif
 #if B3_nQ>2
-    vB3lg_Q3.clear();
-    vB3hg_Q3.clear();
+      B3lg_Q3[m]=0;         B3hg_Q3[m]=0;
 #endif
 #if B3_nQ>3
-    vB3lg_Q4.clear();
-    vB3hg_Q4.clear();
+      B3lg_Q4[m]=0;         B3hg_Q4[m]=0;
 #endif
+    }
 #endif
+
+
     // *** Pulser *** //
 #if PULSER>0
-    vPULSER_label.clear();
-    //vPULSER_clock.clear();
-    //vPULSER_tdc.clear();
-    vPULSER_time.clear();
-    vPULSER_Q1.clear();
+    PULSER_mult=0;
+    PULSER_label=0;
+    //PULSER_clock=0;
+    //PULSER_tdc=0;
+    PULSER_time=0;
+    PULSER_Q1=0;
 #endif
+
+
     // *** HF Beam *** //
 #if HF>0
-    vHF_label.clear();
-    //vHF_clock.clear();
-    //vHF_tdc.clear();
-    vHF_time.clear();
-    vHF_Q1.clear();
+    HF_mult=0;
+    HF_label=0;
+    //HF_clock=0;
+    //HF_tdc=0;
+    HF_time=0;
+    HF_Q1=0;
 #endif
+
+
     // *** Macro Pulse *** //
 #if MACRO>0
-    vMACRO_label.clear();
-    //vMACRO_clock.clear();
-    //vMACRO_tdc.clear();
-    vMACRO_time.clear();
-    vMACRO_Q1.clear();
+    MACRO_mult=0;
+    MACRO_label=0;
+    //MACRO_clock=0;
+    //MACRO_tdc=0;
+    MACRO_time=0;
+    MACRO_Q1=0;
 #endif
 
     // --- -------------------------------------- --- //
     // --- IDENTIFICATION OF THE TYPE OF THE DATA --- //
     // --- -------------------------------------- --- //
     alias_data  = faster_data_type_alias (data);
-    label_data  = faster_data_label (data);
+    label_data  = (UShort_t)(faster_data_label (data));
     clock_data  = faster_data_clock_ns(data);
     
     switch(alias_data){
@@ -581,28 +614,30 @@ int main (int argc, char** argv) {
       // --- ---------------- --- //
       if(label_data!=LABEL_GROUP) cout << "WARNING !!! SEEMS TO HAVE A MISMATCH BETWEEN GROUP_ALIAS AND GROUP_LABEL" << endl;
       while ((group_data = faster_buffer_reader_next (buffer_reader)) != NULL){
-	label = faster_data_label (group_data);
+	label = (UShort_t)(faster_data_label (group_data));
 	clock = faster_data_clock_ns (group_data);
-	detType = DetType[label-1];
+	detType = (UShort_t)(DetType[label-1]);
 	switch (detType)
 	  {
 #if FC>0
 	  case 1: //--- FISSION CHAMBER --- //
 	    faster_data_load(group_data,&FCdata);
-	    vFC_label.push_back(label);
-	    vFC_anode.push_back(Label2Ch[label-1]); FC_mult[Label2Ch[label-1]-1]++;
-	    //vFC_clock.push_back(clock);
-	    //vFC_tdc.push_back(FCdata.tdc);
-	    vFC_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(FCdata.tdc)));
-	    vFC_Q1.push_back(FCdata.q1);
+	    FC_mult_tot++;
+	    FC_label = label;
+	    FC_anode = (UShort_t)(Label2Ch[label-1]); 
+	    FC_mult[FC_anode-1]++;
+	    //FC_clock=clock;
+	    //vFC_tdc=FCdata.tdc;
+	    FC_time = (double)(clock)+(double)(qdc_conv_dt_ns(FCdata.tdc));
+	    FC_Q1=(UInt_t)(FCdata.q1);
 #if FC_nQ>1
-	    vFC_Q2.push_back(FCdata.q2);
+	    FC_Q2=(UInt_t)(FCdata.q2);
 #endif
 #if FC_nQ>2
-	    vFC_Q3.push_back(FCdata.q3);
+	    FC_Q3=(UInt_t)(FCdata.q3);
 #endif
 #if FC_nQ>3
-	    vFC_Q4.push_back(FCdata.q4);
+	    FC_Q4=(UInt_t)(FCdata.q4);
 #endif
 	    break;
 #endif
@@ -610,90 +645,104 @@ int main (int argc, char** argv) {
 	  case 2: //--- CHI-NU NEUTRON DETECTORS --- //
 	    faster_data_load(group_data,&CHINUdata);
 	    detSubType = DetSubType[label-1];
+	    detId      = (UShort_t)Label2Ch[label-1];
 	    switch(detSubType)
 	      {
 	      case 21: // LOW GAIN 
-		CHINU_multLG[Label2Ch[label-1]]++;
-		vCHINUlg_label.push_back(label);
-		vCHINUlg_det.push_back(Label2Ch[label-1]);
-		//vCHINUlg_clock.push_back(clock);
-		//vCHINUlg_tdc.push_back(CHINUdata.tdc);
-		vCHINUlg_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
-		vCHINUlg_Q1.push_back(CHINUdata.q1);
+		CHINU_multLG[detId-1]++;
+		if(CHINU_multLG_tot<CHINU_mult_max){
+		  CHINUlg_label[CHINU_multLG_tot] = label;
+		  CHINUlg_det[CHINU_multLG_tot] = detId;
+		  //CHINUlg_clock[CHINU_multLG_tot] = clock;
+		  //CHINUlg_tdc[CHINU_multLG_tot] = CHINUdata.tdc;
+		  CHINUlg_time[CHINU_multLG_tot] = (double)(clock)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)) ;
+		  CHINUlg_Q1[CHINU_multLG_tot] = CHINUdata.q1;
 #if CHINU_nQ>1
-		vCHINUlg_Q2.push_back(CHINUdata.q2);
+		  CHINUlg_Q2[CHINU_multLG_tot] = CHINUdata.q2;
 #endif
 #if CHINU_nQ>2
-		vCHINUlg_Q3.push_back(CHINUdata.q3);
+		  CHINUlg_Q3[CHINU_multLG_tot] = CHINUdata.q3;
 #endif
 #if CHINU_nQ>3
-		vCHINUlg_Q4.push_back(CHINUdata.q4);
+		  CHINUlg_Q4[CHINU_multLG_tot] = CHINUdata.q4;
 #endif
+		}
+		CHINU_multLG_tot++;
 		break;
 	      case 22: // HIGH GAIN
-		CHINU_multHG[Label2Ch[label-1]]++;
-		vCHINUhg_label.push_back(label);
-		vCHINUhg_det.push_back(Label2Ch[label-1]);
-		//vCHINUhg_clock.push_back(clock);
-		//vCHINUhg_tdc.push_back(CHINUdata.tdc);
-		vCHINUhg_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
-		vCHINUhg_Q1.push_back(CHINUdata.q1);
+		CHINU_multHG[detId-1]++;
+		if(CHINU_multHG_tot<CHINU_mult_max){
+		  CHINUhg_label[CHINU_multHG_tot] = label;
+		  CHINUhg_det[CHINU_multHG_tot] = detId;
+		  //CHINUhg_clock[CHINU_multHG_tot] = clock;
+		  //CHINUhg_tdc[CHINU_multHG_tot] = CHINUdata.tdc ;
+		  CHINUhg_time[CHINU_multHG_tot] = (double)(clock)+(double)(qdc_conv_dt_ns(CHINUdata.tdc));
+		  CHINUhg_Q1[CHINU_multHG_tot] = CHINUdata.q1;
 #if CHINU_nQ>1
-		vCHINUhg_Q2.push_back(CHINUdata.q2);
+		  CHINUhg_Q2[CHINU_multHG_tot] = CHINUdata.q2;
 #endif
 #if CHINU_nQ>2
-		vCHINUhg_Q3.push_back(CHINUdata.q3);
+		  CHINUhg_Q3[CHINU_multHG_tot] = CHINUdata.q3;
 #endif
 #if CHINU_nQ>3
-		vCHINUhg_Q4.push_back(CHINUdata.q4);
+		  CHINUhg_Q4[CHINU_multHG_tot] = CHINUdata.q4;
 #endif
+		}
+		CHINU_multHG_tot++;
 		break;
 	      default:
 		break;
-	      }//end of switch(detSubType)
+	      }//end of switch(detSubType)	    
 	    break;
 #endif
 #if B3>0
 	  case 3: //--- B3 NEUTRON DETECTORS --- //
 	    faster_data_load(group_data,&B3data);
+	    detId      = (UShort_t)Label2Ch[label-1];
 	    detSubType = DetSubType[label-1];
 	    switch(detSubType)
 	      {
 	      case 21: // LOW GAIN 
-		B3_multLG[Label2Ch[label-1]]++;
-		vB3lg_label.push_back(label);
-		vB3lg_det.push_back(Label2Ch[label-1]);
-		//vB3lg_clock.push_back(clock);
-		//vB3lg_tdc.push_back(B3data.tdc);
-		vB3lg_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(B3data.tdc)));
-		vB3lg_Q1.push_back(B3data.q1);
+		B3_multLG[detId-1]++;
+		if(B3_multLG_tot<B3_mult_max){
+		  B3lg_label[B3_multLG_tot]=label;
+		  B3lg_det[B3_multLG_tot]=detId;
+		  //B3lg_clock[B3_multLG_tot]=clock;
+		  //B3lg_tdc[B3_multLG_tot]=B3data.tdc;
+		  B3lg_time[B3_multLG_tot]=(double)(clock)+(double)(qdc_conv_dt_ns(B3data.tdc));
+		  B3lg_Q1[B3_multLG_tot]=B3data.q1;
 #if B3_nQ>1
-		vB3lg_Q2.push_back(B3data.q2);
+		  B3lg_Q2[B3_multLG_tot]=B3data.q2;
 #endif
 #if B3_nQ>2
-		vB3lg_Q3.push_back(B3data.q3);
+		  B3lg_Q3[B3_multLG_tot]=B3data.q3;
 #endif
 #if B3_nQ>3
-		vB3lg_Q4.push_back(B3data.q4);
+		  B3lg_Q4[B3_multLG_tot]=B3data.q4;
 #endif
+		}
+		B3_multLG_tot++;
 		break;
 	      case 22: // HIGH GAIN
-		B3_multHG[Label2Ch[label-1]]++;
-		vB3hg_label.push_back(label);
-		vB3hg_det.push_back(Label2Ch[label-1]);
-		//vB3hg_clock.push_back(clock);
-		//vB3hg_tdc.push_back(B3data.tdc);
-		vB3hg_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(B3data.tdc)));
-		vB3hg_Q1.push_back(B3data.q1);
+		B3_multHG[detId-1]++;
+		if(B3_multHG_tot<B3_mult_max){
+		  B3hg_label[B3_multHG_tot]=label;
+		  B3hg_det[B3_multHG_tot]=detId;
+		  //B3hg_clock[B3_multHG_tot]=cloc);
+		  //B3hg_tdc[B3_multHG_tot]=B3data.tdc;
+		  B3hg_time[B3_multHG_tot]=(double)(clock)+(double)(qdc_conv_dt_ns(B3data.tdc));
+		  B3hg_Q1[B3_multHG_tot]=B3data.q1;
 #if B3_nQ>1
-		vB3hg_Q2.push_back(B3data.q2);
+		  B3hg_Q2[B3_multHG_tot]=B3data.q2;
 #endif
 #if B3_nQ>2
-		vB3hg_Q3.push_back(B3data.q3);
+		  B3hg_Q3[B3_multHG_tot]=B3data.q3;
 #endif
 #if B3_nQ>3
-		vB3hg_Q4.push_back(B3data.q4);
+		  B3hg_Q4[B3_multHG_tot]=B3data.q4;
 #endif
+		}
+		B3_multHG_tot++;
 		break;
 	      default:
 		break;
@@ -703,31 +752,32 @@ int main (int argc, char** argv) {
 #if PULSER>0
 	  case 4: //--- PULSER --- //
 	    faster_data_load(group_data,&PULSERdata);
-	    vPULSER_label.push_back(label);
-	    //vPULSER_clock.push_back(clock);
-	    //vPULSER_tdc.push_back(PULSERdata.tdc);
-	    vPULSER_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(PULSERdata.tdc)));
-	    vPULSER_Q1.push_back(PULSERdata.q1);
+	    PULSER_mult++;
+	    PULSER_label=label;
+	    //PULSER_clock=clock;
+	    //PULSER_tdc=PULSERdata.tdc;
+	    PULSER_time=(double)(clock)+(double)(qdc_conv_dt_ns(PULSERdata.tdc));
+	    PULSER_Q1=PULSERdata.q1;
 	    break;
 #endif
 #if HF>0
 	  case 5: //--- HF BEAM--- //
 	    faster_data_load(group_data,&HFdata);
-	    vHF_label.push_back(label);
-	    //vHF_clock.push_back(clock);
-	    //vHF_tdc.push_back(HFdata.tdc);
-	    vHF_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(HFdata.tdc)));
-	    vHF_Q1.push_back(HFdata.q1);
+	    HF_label=label;
+	    //HF_clock=clock;
+	    //HF_tdc=HFdata.tdc;
+	    HF_time=(double)(clock)+(double)(qdc_conv_dt_ns(HFdata.tdc));
+	    HF_Q1=HFdata.q1;
 	    break;
 #endif
 #if MACRO>0
 	  case 6: //--- MACRO PULSE --- //
 	    faster_data_load(group_data,&MACROdata);
-	    vMACRO_label.push_back(label);
-	    //vMACRO_clock.push_back(clock);
-	    //vMACRO_tdc.push_back(MACROdata.tdc);
-	    vMACRO_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(MACROdata.tdc)));
-	    vMACRO_Q1.push_back(MACROdata.q1);
+	    MACRO_label=label;
+	    //vMACRO_clock=clock;
+	    //vMACRO_tdc=MACROdata.tdc;
+	    MACRO_time=(double)(clock)+(double)(qdc_conv_dt_ns(MACROdata.tdc));
+	    MACRO_Q1=MACROdata.q1;
 	    break;
 #endif
 	  default:
@@ -743,266 +793,12 @@ int main (int argc, char** argv) {
       // --- ------------- --- //
       // --- FILL THE TREE --- //
       // --- ------------- --- //
+
       t->Fill();
       break;// END OF COINC DATA
       
-#if (CHINU_nQ==B3_nQ)
-      
-#if CHINU_nQ==1
-    case QDC_TDC_X1_TYPE_ALIAS:
-#elif CHINU_nQ==2
-    case QDC_TDC_X2_TYPE_ALIAS:
-#elif CHINU_nQ==3
-    case QDC_TDC_X3_TYPE_ALIAS:
-#else
-    case QDC_TDC_X4_TYPE_ALIAS:
-#endif
-      nevents_source++; cout << nevents_source << endl;
-      if(TRIGGER_MODE!=0) cout << "ERROR, QDC_TDC_X"<<CHINU_nQ<<"_TYPE_ALIAS FOUND WITH TRIGGER_MODE = "<< TRIGGER_MODE << " DIFFERENT OF THE EXPECTED 0 VALUE" << endl;
-      detType = DetType[label_data-1];
-      switch (detType)
-	{
-#if CHINU>0
-	case 2:
-	  faster_data_load(data,&CHINUdata);
-	  detSubType = DetSubType[label_data-1];
-	  switch(detSubType)
-	    {
-	    case 21: // LOW GAIN 
-	      CHINU_multLG[Label2Ch[label_data-1]]++;
-	      vCHINUlg_label.push_back(label_data);
-	      vCHINUlg_det.push_back(Label2Ch[label_data-1]);
-	      //vCHINUlg_clock.push_back(clock_data);
-	      //vCHINUlg_tdc.push_back(CHINUdata.tdc);
-	      vCHINUlg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
-	      vCHINUlg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
-	      vCHINUlg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-	      vCHINUlg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-	      vCHINUlg_Q4.push_back(CHINUdata.q4);
-#endif
-	      break;
-	    case 22: // HIGH GAIN
-	      CHINU_multHG[Label2Ch[label_data-1]]++;
-	      vCHINUhg_label.push_back(label_data);
-	      vCHINUhg_det.push_back(Label2Ch[label_data-1]);
-	      //vCHINUhg_clock.push_back(clock_data);
-	      //vCHINUhg_tdc.push_back(CHINUdata.tdc);
-	      vCHINUhg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
-	      vCHINUhg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
-	      vCHINUhg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-	      vCHINUhg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-	      vCHINUhg_Q4.push_back(CHINUdata.q4);
-#endif
-	      break;
-	    default:
-	      break;
-	    }//end of switch(detSubType)
-	  break;
-#endif
-#if B3>0
-	case 3:
-	  faster_data_load(data,&B3data);
-	  detSubType = DetSubType[label_data-1];
-	  switch(detSubType)
-	    {
-	    case 21: // LOW GAIN 
-	      B3_multLG[Label2Ch[label_data-1]]++;
-	      vB3lg_label.push_back(label_data);
-	      vB3lg_det.push_back(Label2Ch[label_data-1]);
-	      //vB3lg_clock.push_back(clock_data);
-	      //vB3lg_tdc.push_back(B3data.tdc);
-	      vB3lg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(B3data.tdc)));
-	      vB3lg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
-	      vB3lg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-	      vB3lg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-	      vB3lg_Q4.push_back(B3data.q4);
-#endif
-	      break;
-	    case 22: // HIGH GAIN
-	      B3_multHG[Label2Ch[label_data-1]]++;
-	      vB3hg_label.push_back(label_data);
-	      vB3hg_det.push_back(Label2Ch[label_data-1]);
-	      //vB3hg_clock.push_back(clock_data);
-	      //vB3hg_tdc.push_back(B3data.tdc);
-	      vB3hg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(B3data.tdc)));
-	      vB3hg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
-	      vB3hg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-	      vB3hg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-	      vB3hg_Q4.push_back(B3data.q4);
-#endif
-	      break;
-	    default:
-	      break;
-	    }//end of switch(detSubType)
-	  break;
-#endif
-	default:
-	  //cout << "ERROR TRIGGERLESS MODE: CHI-NU DETECTOR DATA TYPE (2) OR B3 DETECTOR DATA TYPE (3) EXPECTED BUT GET " << detType << endl;	  
-	  break;
-	}// end of switch(detType)
-      t->Fill();
-      break; // END OF TRIGGERLESS DATA FOR CHI-NU AND B3 NEUTRON DETECTORS
-      
-#else // CHINU_nQ DIFFERS FROM B3_nQ
-#if CHINU>0
-#if CHINU_nQ==1
-    case QDC_TDC_X1_TYPE_ALIAS:
-#elif CHINU_nQ==2
-    case QDC_TDC_X2_TYPE_ALIAS:
-#elif CHINU_nQ==3
-    case QDC_TDC_X3_TYPE_ALIAS:
-#else
-    case QDC_TDC_X4_TYPE_ALIAS:
-#endif
-      nevents_source++;
-      detType = DetType[label_data-1];  
-      switch(detType)
-	{
-	case 2:
-	  if(TRIGGER_MODE!=0) cout << "ERROR QDC_TDC_X"<<CHINU_nQ<<"_TYPE_ALIAS FOUND WITH TRIGGER_MODE = "<< TRIGGER_MODE << " DIFFERENT OF THE EXPECTED 0 VALUE" << endl;
-	  faster_data_load(data,&CHINUdata);
-	  detSubType = DetSubType[label_data-1];
-	  switch(detSubType)
-	    {
-	    case 21: // LOW GAIN 
-	      CHINU_multLG[Label2Ch[label_data-1]]++;
-	      vCHINUlg_label.push_back(label_data);
-	      vCHINUlg_det.push_back(Label2Ch[label_data-1]);
-	      //vCHINUlg_clock.push_back(clock_data);
-	      //vCHINUlg_tdc.push_back(CHINUdata.tdc);
-	      vCHINUlg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
-	      vCHINUlg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
-	      vCHINUlg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-	      vCHINUlg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-	      vCHINUlg_Q4.push_back(CHINUdata.q4);
-#endif
-	      break;
-	    case 22: // HIGH GAIN
-	      CHINU_multHG[Label2Ch[label_data-1]]++;
-	      vCHINUhg_label.push_back(label_data);
-	      vCHINUhg_det.push_back(Label2Ch[label_data-1]);
-	      //vCHINUhg_clock.push_back(clock_data);
-	      //vCHINUhg_tdc.push_back(CHINUdata.tdc);
-	      vCHINUhg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
-	      vCHINUhg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
-	      vCHINUhg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-	      vCHINUhg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-	      vCHINUhg_Q4.push_back(CHINUdata.q4);
-#endif
-	      break;
-	    default:
-	      break;
-	    }//end of switch(detSubType)
-	  
-	  break;
-	default:
-	  //cout << "ERROR TRIGGERLESS MODE: CHI-NU DETECTOR TYPE DATA EXPECTED (2) BUT GET " << detType << endl;
-	  break;
-	}// end of switch(detType)
-      t->Fill();
-      break; // END OF TRIGGERLESS DATA FROM CHI-NU NDET
-#endif
-#if B3>0
-#if B3_nQ==1
-    case QDC_TDC_X1_TYPE_ALIAS:
-#elif B3_nQ==2
-    case QDC_TDC_X2_TYPE_ALIAS:
-#elif B3_nQ==3
-    case QDC_TDC_X3_TYPE_ALIAS:
-#else
-    case QDC_TDC_X4_TYPE_ALIAS:
-#endif
-      nevents_source++;
-      detType = DetType[label_data-1];    
-      switch(detType)
-	{
-	case 3:
-	  if(TRIGGER_MODE!=0) cout << "ERROR QDC_TDC_X"<<B3_nQ<<"_TYPE_ALIAS FOUND WITH TRIGGER_MODE = "<< TRIGGER_MODE << " DIFFERENT OF THE EXPECTED 0 VALUE" << endl;
-	  faster_data_load(data,&B3data);
-	  detSubType = DetSubType[label_data-1];
-	  switch(detSubType)
-	    {
-	    case 21: // LOW GAIN 
-	      B3_multLG[Label2Ch[label_data-1]]++;
-	      vB3lg_label.push_back(label_data);
-	      vB3lg_det.push_back(Label2Ch[label_data-1]);
-	      //vB3lg_clock.push_back(clock_data);
-	      //vB3lg_tdc.push_back(B3data.tdc);
-	      vB3lg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(B3data.tdc)));
-	      vB3lg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
-	      vB3lg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-	      vB3lg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-	      vB3lg_Q4.push_back(B3data.q4);
-#endif
-	      break;
-	    case 22: // HIGH GAIN
-	      B3_multHG[Label2Ch[label_data-1]]++;
-	      vB3hg_label.push_back(label_data);
-	      vB3hg_det.push_back(Label2Ch[label_data-1]);
-	      //vB3hg_clock.push_back(clock_data);
-	      //vB3hg_tdc.push_back(B3data.tdc);
-	      vB3hg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(B3data.tdc)));
-	      vB3hg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
-	      vB3hg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-	      vB3hg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-	      vB3hg_Q4.push_back(B3data.q4);
-#endif
-	      break;
-	    default:
-	      break;
-	    }//end of switch(detSubType)
-	  break;
-	default:
-	  //cout << "TRIGGERLESS MODE: B3 DETECTOR TYPE DATA EXPECTED (3) BUT GET " << detType << endl;
-	  break;
-	}//end of switch(detType)
-      t->Fill();
-      break; // END OF TRIGGERLESS DATA FOR B3 NDET
-#endif
-      
-#endif // COMPARISON OF NDET_nQ AND B3_nQ FOR TRIGGERLESS MODE
-      
     default: 
+      nevents_source++;
       break;
     }// end of switch(alias)
     
@@ -1010,20 +806,23 @@ int main (int argc, char** argv) {
 
   }//end of while data
 
-
-  // === ======================== === //
-  // === CLOSE FASTER FILE READER === //
-  // === ======================== === //
-  faster_file_reader_close (file_reader);
-
+  cout << "END OF LOOP OVER THE DATA, READY TO SAVE " << endl;
 
   // === ====================== === //
   // === SAVE TREE IN ROOT FILE === //
   // === ====================== === //
+  fsave->ls();
   fsave->cd();
   t->Write();
   fsave->ls();
   fsave->Close();
+
+  // === ======================== === //
+  // === CLOSE FASTER FILE READER === //
+  // === ======================== === //
+  //faster_file_reader_close (file_reader);
+  cout << "faster_file_reader_close (file_reader)" << endl;
+
 
   // === =============== === //
   // === SOME STATISTICS === //

@@ -186,7 +186,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 
 #if FC>0
   // *** raw ToF FC-CHINU *** //
-  //CHINU_RawToFHistos htCHINU;
+  CHINU_RawToFHistos htCHINU;
   // --- define ToFraw histos spectra for one single anode and one single detector --- //
   //htCHINU.DefineOneAnodeOneDetLG(6,1,2,4);
   //htCHINU.DefineOneAnodeOneDetHG(6,1,2,4);
@@ -208,14 +208,14 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   //htCHINU.DefineOneAnodeOneDetHG(6,2,3,rank);
   //}
   // --- define all spectra for one anode and all detectors --- //
-  //for(UShort_t side=1; side<=2; side++) {
-  //  for(UShort_t ring=1; ring<=3; ring++) {
-  //    for(UShort_t rank=1; rank<=9; rank++) {
-  //	htCHINU.DefineOneAnodeOneDetLG(6,side,ring,rank);     
-  //	htCHINU.DefineOneAnodeOneDetHG(6,side,ring,rank);
-  //    }
-  //  }
-  //}
+  for(UShort_t side=1; side<=2; side++) {
+    for(UShort_t ring=1; ring<=3; ring++) {
+      for(UShort_t rank=1; rank<=9; rank++) {
+  	htCHINU.DefineOneAnodeOneDetLG(6,side,ring,rank);     
+  	htCHINU.DefineOneAnodeOneDetHG(6,side,ring,rank);
+      }
+    }
+  }
 #endif
 #endif
 
@@ -282,8 +282,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   // === ===================== === //
   UInt_t cpt_NDETlg=0;
   UInt_t cpt_NDEThg=0;
-  //  for(ULong64_t Entry=0; Entry<1000000; Entry++){
-  for(ULong64_t Entry=0; Entry<nentries; Entry++){
+  for(ULong64_t Entry=0; Entry<20000000; Entry++){
+  //  for(ULong64_t Entry=0; Entry<nentries; Entry++){
     
     // --- ----------------------------- --- //
     // --- Read each entry of the TChain --- //
@@ -309,8 +309,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       cpt_NDETlg++;
       hqCHINU.FillHistosLG(raw.vCHINUlg_det,raw.vCHINUlg_Q1,raw.vCHINUlg_Q2);
 #if FC>0
-      //if(raw.vFC_anode->size()==1) 
-      //	htCHINU.FillHistosLG_FCmult1(raw.vFC_anode->at(0),raw.vFC_time->at(0),raw.vCHINUlg_det,raw.vCHINUlg_time,raw.CHINUlg_mult);
+      if(raw.vFC_anode->size()==1) 
+      	htCHINU.FillHistosLG_FCmult1(raw.vFC_anode->at(0),raw.vFC_time->at(0),raw.vCHINUlg_det,raw.vCHINUlg_time,raw.CHINUlg_mult);
 #endif
     }
     // CHARGE CHI-NU HIGH GAIN
@@ -318,8 +318,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       cpt_NDEThg++;
       hqCHINU.FillHistosHG(raw.vCHINUhg_det,raw.vCHINUhg_Q1,raw.vCHINUhg_Q2);
 #if FC>0
-      //if(raw.vFC_anode->size()==1) 
-      //	htCHINU.FillHistosHG_FCmult1(raw.vFC_anode->at(0),raw.vFC_time->at(0),raw.vCHINUhg_det,raw.vCHINUhg_time,raw.CHINUhg_mult);
+      if(raw.vFC_anode->size()==1) 
+      	htCHINU.FillHistosHG_FCmult1(raw.vFC_anode->at(0),raw.vFC_time->at(0),raw.vCHINUhg_det,raw.vCHINUhg_time,raw.CHINUhg_mult);
 #endif
     }
 #endif
@@ -408,18 +408,18 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   //TCanvas * can21 = htCHINU.DrawOneAnodeOneDetHG(6,1,2,4);   can21->Write(); //FC-CHINUhg ToFraw for one anode and one det
   //TCanvas * can22 = htCHINU.DrawAllAnodesOneDetLG(2,1,2);    can22->Write(); //FC-CHINUlg ToFraw for all anodes and one det
   //TCanvas * can23 = htCHINU.DrawAllAnodesOneDetHG(2,1,2);    can23->Write(); //FC-CHINUhg ToFraw for all anodes and one det
-  //TCanvas * can24a = htCHINU.DrawOneAnodeSideRingLG(6,1,1);   can24a->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can25a = htCHINU.DrawOneAnodeSideRingHG(6,1,1);   can25a->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can24b = htCHINU.DrawOneAnodeSideRingLG(6,1,2);   can24b->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can25b = htCHINU.DrawOneAnodeSideRingHG(6,1,2);   can25b->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can24c = htCHINU.DrawOneAnodeSideRingLG(6,1,3);   can24c->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can25c = htCHINU.DrawOneAnodeSideRingHG(6,1,3);   can25c->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can24d = htCHINU.DrawOneAnodeSideRingLG(6,2,1);   can24d->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can25d = htCHINU.DrawOneAnodeSideRingHG(6,2,1);   can25d->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can24e = htCHINU.DrawOneAnodeSideRingLG(6,2,2);   can24e->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can25e = htCHINU.DrawOneAnodeSideRingHG(6,2,2);   can25e->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can24f = htCHINU.DrawOneAnodeSideRingLG(6,2,3);   can24f->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
-  //TCanvas * can25f = htCHINU.DrawOneAnodeSideRingHG(6,2,3);   can25f->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can24a = htCHINU.DrawOneAnodeSideRingLG(6,1,1);   can24a->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can25a = htCHINU.DrawOneAnodeSideRingHG(6,1,1);   can25a->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can24b = htCHINU.DrawOneAnodeSideRingLG(6,1,2);   can24b->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can25b = htCHINU.DrawOneAnodeSideRingHG(6,1,2);   can25b->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can24c = htCHINU.DrawOneAnodeSideRingLG(6,1,3);   can24c->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can25c = htCHINU.DrawOneAnodeSideRingHG(6,1,3);   can25c->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can24d = htCHINU.DrawOneAnodeSideRingLG(6,2,1);   can24d->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can25d = htCHINU.DrawOneAnodeSideRingHG(6,2,1);   can25d->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can24e = htCHINU.DrawOneAnodeSideRingLG(6,2,2);   can24e->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can25e = htCHINU.DrawOneAnodeSideRingHG(6,2,2);   can25e->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can24f = htCHINU.DrawOneAnodeSideRingLG(6,2,3);   can24f->Write(); //FC-CHINUlg ToFraw for one anode and 9 dets on one ring
+  TCanvas * can25f = htCHINU.DrawOneAnodeSideRingHG(6,2,3);   can25f->Write(); //FC-CHINUhg ToFraw for one anode and 9 dets on one ring
   //TCanvas * can26 = htCHINU.DrawOneAnodeRankLG(6,7);         can26->Write(); //FC-CHINUlg ToFraw for one anode and 6 dets on one rank
   //TCanvas * can27 = htCHINU.DrawOneAnodeRankHG(6,7);         can27->Write(); //FC-CHINUhg ToFraw for one anode and 6 dets on one rank
 #endif

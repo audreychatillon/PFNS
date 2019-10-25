@@ -15,6 +15,7 @@
 #include "../ClassDef/CHINU_RawToFHistos.h"
 #include "../ClassDef/B3_RawToFHistos.h"
 
+#define SPEED_OF_LIGHT_MNS       0.299792458       // m.ns-1
 
 void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 {
@@ -112,12 +113,13 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   // ToF FC-CHINU
 #if FC>0 && CHINU>0
   CHINU_RawToFHistos htCHINU;
-  for(UShort_t side=1; side<=2; side++)
-    for(UShort_t ring=1; ring<=3; ring++)
-      for(UShort_t rank=1; rank<=9; rank++){
-	htCHINU.DefineAllAnodesOneDetLG(side,ring,rank);
-	htCHINU.DefineAllAnodesOneDetHG(side,ring,rank);
-      }
+  for(UShort_t anode=1; anode<=FC_nAnodes; anode++)
+    for(UShort_t side=1; side<=2; side++)
+      for(UShort_t ring=1; ring<=3; ring++)
+	for(UShort_t rank=1; rank<=9; rank++){
+	  htCHINU.DefineOneAnodeOneDetLG(anode,side,ring,rank);
+	  htCHINU.DefineOneAnodeOneDetHG(anode,side,ring,rank);
+	}
 #endif
 
   // === ===================================================================================== === //
@@ -126,9 +128,13 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 
   // ToF FC-B3NDET
 #if FC>0 && B3>0
-  B3_RawToFHistos htPFNB3;
-  htB3.DefineAllAnodesAllDetsLG();
-  htB3.DefineAllAnodesAllDetsHG();
+  B3_RawToFHistos htB3;
+  for(UShort_t anode=1; anode<=FC_nAnodes; anode++)
+    for(UShort_t side=1; side<=2; side++)
+      for(UShort_t pos=1; pos<=2; pos++){
+	htB3.DefineOneAnodeOneDetLG(anode,side,pos);
+	htB3.DefineOneAnodeOneDetHG(anode,side,pos);
+      }
 #endif
 
 
@@ -138,7 +144,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   // === ====================================================== === //
   for(ULong64_t Entry=0; Entry<nentries; Entry++){
     raw.GetEntry(Entry);
-    if((Entry%100000)==0) cout << Entry << endl;
+    if((Entry%1000000)==0) cout << Entry << endl;
     
 #if FC>0
     if(raw.vFC_anode->size()!=1) continue;    
@@ -169,153 +175,277 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   UShort_t det;
   Int_t    binMax;
 
+
 #if FC>0 && CHINU>0
   ofstream CHINU_GammaPeakLG("../../SetupSpecific/FC_to_CHINUlg_GammaPeak.h",ios::out | ios::trunc);
   ofstream CHINU_GammaPeakHG("../../SetupSpecific/FC_to_CHINUhg_GammaPeak.h",ios::out | ios::trunc);
-  CHINU_GammaPeakLG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl<<endl;
+  ofstream CHINU_OffsetToFLG("../../SetupSpecific/CHINUlg_OffsetToF.h",ios::out | ios::trunc);
+  ofstream CHINU_OffsetToFHG("../../SetupSpecific/CHINUhg_OffsetToF.h",ios::out | ios::trunc);
   Float_t GammaPeak_LG_Mean[CHINU_nDets*FC_nAnodes];
   Float_t GammaPeak_HG_Mean[CHINU_nDets*FC_nAnodes];
-  for(UShort_t anode=1; anode<=11; anode++){
-    for(UShort_t side=1; side<=2; side ++){
-      for(UShort_t ring=1; ring<=3; ring++){
-	for(UShort_t rank=1; rank<=9; rank++){
-	  det=htCHINU.GetDet(side,ring,rank);
-	  GammaPeak_LG_Mean[det-1+CHINU_nDets*(anode-1)]=0.;
-	  GammaPeak_HG_Mean[det-1+CHINU_nDets*(anode-1)]=0.;
-	  if((htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->Integral())>0) {
-	    binMax=htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetMaximumBin();
-	    htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->Fit("gaus","","",htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)-1.5,htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)+1.5);
-	    TF1 * fGaussianLG = (TF1*)gDirectory->FindObject("gaus");
-	    sprintf(name,"FitGammaPeakLG_CHINU_%s_%s_%d_FC%d",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank,anode);
-	    fGaussianLG->SetName(name);
-	    fGaussianLG->SetTitle(name);
-	    GammaPeak_LG_Mean[det-1+CHINU_nDets*(anode-1)]=fGaussianLG->GetParameter(1);
-	    delete fGaussianLG;
-	  }// end of if(histo)
-	  if((htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Integral())>0) {
-	    binMax=htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetMaximumBin();
-	    htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Fit("gaus","","",htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)-1.5,htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)+1.5);
-	    TF1 * fGaussianHG = (TF1*)gDirectory->FindObject("gaus");
-	    sprintf(name,"FitGammaPeakHG_CHINU_%s_%s_%d_FC%d",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank,anode);
-	    fGaussianHG->SetName(name);
-	    fGaussianHG->SetTitle(name);
-	    GammaPeak_HG_Mean[det-1+CHINU_nDets*(anode-1)]=fGaussianHG->GetParameter(1);
-	    delete fGaussianHG;
-	  }// end of if(histo)
-	}//end of for(rank)
+  Double_t RealTimeCHINU[CHINU_nDets];
+  Double_t OffsetCHINULG[CHINU_nDets*FC_nAnodes];
+  Double_t OffsetCHINUHG[CHINU_nDets*FC_nAnodes];
+  for(UShort_t side=1; side<=2; side ++){
+    for(UShort_t ring=1; ring<=3; ring++){
+      for(UShort_t rank=1; rank<=9; rank++){
+	det=htCHINU.GetDet(side,ring,rank);
+	RealTimeCHINU[det-1] = Distance_FC_ChiNu[det-1]/SPEED_OF_LIGHT_MNS;
+	  for(UShort_t anode=1; anode<=11; anode++){
+	    OffsetCHINULG[det-1+CHINU_nDets*(anode-1)] = 0;
+	    OffsetCHINUHG[det-1+CHINU_nDets*(anode-1)] = 0;
+	    GammaPeak_LG_Mean[det-1+CHINU_nDets*(anode-1)]=0.;
+	    GammaPeak_HG_Mean[det-1+CHINU_nDets*(anode-1)]=0.;
+	    if((htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->Integral())>100) {
+	      binMax=htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetMaximumBin();
+	      htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->Fit("gaus","","",htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)-1.5,htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)+1.5);
+	      TF1 * fGaussianLG = (TF1*)gDirectory->FindObject("gaus");
+	      sprintf(name,"FitGammaPeakLG_CHINU_%s_%s_%d_FC%d",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank,anode);
+	      fGaussianLG->SetName(name);
+	      fGaussianLG->SetTitle(name);
+	      GammaPeak_LG_Mean[det-1+CHINU_nDets*(anode-1)]=fGaussianLG->GetParameter(1);
+	      OffsetCHINULG[det-1+CHINU_nDets*(anode-1)]=RealTimeCHINU[det-1]-GammaPeak_LG_Mean[det-1+CHINU_nDets*(anode-1)];
+	      delete fGaussianLG;
+	    }// end of if(histo)
+	    if((htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Integral())>100) {
+	      binMax=htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetMaximumBin();
+	      htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Fit("gaus","","",htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)-1.5,htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)+1.5);
+	      TF1 * fGaussianHG = (TF1*)gDirectory->FindObject("gaus");
+	      sprintf(name,"FitGammaPeakHG_CHINU_%s_%s_%d_FC%d",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank,anode);
+	      fGaussianHG->SetName(name);
+	      fGaussianHG->SetTitle(name);
+	      GammaPeak_HG_Mean[det-1+CHINU_nDets*(anode-1)]=fGaussianHG->GetParameter(1);
+	      delete fGaussianHG;
+	    }// end of if(histo)
+	  }//end of for(rank)
       }//end of for(ring)
     }//end of for(side)
   }//end of for(anode)
+
+  // --- write Gamma peak mean LG --- //
+  CHINU_GammaPeakLG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl<<endl;
   CHINU_GammaPeakLG << "#ifndef _FCCHINULG_GAMMA_PEAK__H_" << endl;
   CHINU_GammaPeakLG << "#define _FCCHINULG_GAMMA_PEAK__H_" << endl;
   CHINU_GammaPeakLG << "Float_t CHINU_GammaPeakLG["<<CHINU_nDets*FC_nAnodes<<"] = {" << endl;
-  for(UShort_t anode=0; anode<FC_nAnodes; anode++){
-    CHINU_GammaPeakLG << GammaPeak_LG_Mean[0] ;
-    for(UShort_t det=1; det<CHINU_nDets; det++)  CHINU_GammaPeakLG << ", " <<GammaPeak_LG_Mean[det+CHINU_nDets*anode] ;
+  for(UShort_t anode=0; anode<FC_nAnodes-1; anode++){
+    for(UShort_t det=0; det<CHINU_nDets; det++)  CHINU_GammaPeakLG << GammaPeak_LG_Mean[det+CHINU_nDets*anode] << "," ;
     CHINU_GammaPeakLG << endl;
   }
+  for(UShort_t det=0; det<CHINU_nDets-1; det++)  CHINU_GammaPeakLG << GammaPeak_LG_Mean[det+CHINU_nDets*(FC_nAnodes-1)] << "," ;
+  CHINU_GammaPeakHG <<  GammaPeak_LG_Mean[CHINU_nDets-1+CHINU_nDets*(FC_nAnodes-1)] << endl;
   CHINU_GammaPeakLG << "};" << endl;
   CHINU_GammaPeakLG <<  endl;
   CHINU_GammaPeakLG << "#endif //_FCCHINULG_GAMMA_PEAK__H_" << endl;
 
+  // --- write Offset ToF LG --- //
+  CHINU_OffsetToFLG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl<<endl;
+  CHINU_OffsetToFLG << "#ifndef _CHINULG_OFFSET_TOF__H_" << endl;
+  CHINU_OffsetToFLG << "#define _CHINULG_OFFSET_TOF__H_" << endl;
+  CHINU_OffsetToFLG << "Float_t CHINU_OffsetToFLG["<<CHINU_nDets*FC_nAnodes<<"] = {" << endl;
+  for(UShort_t anode=0; anode<FC_nAnodes-1; anode++){
+    for(UShort_t det=0; det<CHINU_nDets; det++)  CHINU_OffsetToFLG << OffsetCHINULG[det+CHINU_nDets*anode] << "," ;
+    CHINU_OffsetToFLG << endl;
+  }
+  for(UShort_t det=0; det<CHINU_nDets-1; det++)  CHINU_OffsetToFLG << OffsetCHINULG[det+CHINU_nDets*(FC_nAnodes-1)] << "," ;
+  CHINU_OffsetToFLG <<  OffsetCHINULG[CHINU_nDets-1+CHINU_nDets*(FC_nAnodes-1)] << endl;
+  CHINU_OffsetToFLG << "};" << endl;
+  CHINU_OffsetToFLG <<  endl;
+  CHINU_OffsetToFLG << "#endif //_FCCHINULG_GAMMA_PEAK__H_" << endl;
+
+  // --- write Gamma peak mean HG --- //
   CHINU_GammaPeakHG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl;
   CHINU_GammaPeakHG << "#ifndef _FCCHINUHG_GAMMA_PEAK__H_" << endl;
   CHINU_GammaPeakHG << "#define _FCCHINUHG_GAMMA_PEAK__H_" << endl;
-  for(UShort_t anode=0; anode<FC_nAnodes; anode++){
-    CHINU_GammaPeakHG << GammaPeak_HG_Mean[0] ;
-    for(UShort_t det=1; det<CHINU_nDets; det++)  CHINU_GammaPeakHG << ", " <<GammaPeak_HG_Mean[det+CHINU_nDets*anode] ;
+  CHINU_GammaPeakHG << "Float_t CHINU_GammaPeakHG["<<CHINU_nDets*FC_nAnodes<<"] = {" << endl;
+  for(UShort_t anode=0; anode<FC_nAnodes-1; anode++){
+    for(UShort_t det=0; det<CHINU_nDets; det++)  CHINU_GammaPeakHG << GammaPeak_HG_Mean[det+CHINU_nDets*anode] << "," ;
     CHINU_GammaPeakHG << endl;
   }
+  for(UShort_t det=0; det<CHINU_nDets-1; det++)  CHINU_GammaPeakHG << GammaPeak_HG_Mean[det+CHINU_nDets*(FC_nAnodes-1)] << "," ;
+  CHINU_GammaPeakHG <<  GammaPeak_HG_Mean[CHINU_nDets-1+CHINU_nDets*(FC_nAnodes-1)] << endl;
   CHINU_GammaPeakHG << "};" << endl;
   CHINU_GammaPeakHG <<  endl;
   CHINU_GammaPeakHG << "#endif //_FCCHINUHG_GAMMA_PEAK__H_" << endl;
-  TCanvas * can1 = new TCanvas("FitGammaPeak_FC6_CHINUlg","FitGammaPeak_FC6_CHINUlg",0,0,2000,1600);
-  can1->Divide(9,6);
-  TCanvas * can2 = new TCanvas("FitGammaPeak_FC6_CHINUhg","FitGammaPeak_FC6_CHINUhg",0,0,2000,1600);
-  can2->Divide(9,6);
-  for(UShort_t det=1; det<=CHINU_nDets; det++){
-    htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->SetDirectory(0);
-    binMax=htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->GetMaximumBin();
-    can1->cd(det); htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->Draw();  htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->GetXaxis()->SetRangeUser(htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)-5,htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)+5);
-    htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->SetDirectory(0);
-    binMax=htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->GetMaximumBin();
-    can2->cd(det); htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->Draw();  htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->GetXaxis()->SetRangeUser(htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)-5,htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)+5);
+
+  // --- write Offset ToF HG --- //
+  CHINU_OffsetToFHG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl;
+  CHINU_OffsetToFHG << "#ifndef _CHINUHG_OFFSET_TOF__H_" << endl;
+  CHINU_OffsetToFHG << "#define _CHINUHG_OFFSET_TOF__H_" << endl;
+  CHINU_OffsetToFHG << "Float_t CHINU_OffsetToFHG["<<CHINU_nDets*FC_nAnodes<<"] = {" << endl;
+  for(UShort_t anode=0; anode<FC_nAnodes-1; anode++){
+    for(UShort_t det=0; det<CHINU_nDets; det++)  CHINU_OffsetToFHG << OffsetCHINUHG[det+CHINU_nDets*anode] << "," ;
+    CHINU_OffsetToFHG << endl;
   }
+  for(UShort_t det=0; det<CHINU_nDets-1; det++)  CHINU_OffsetToFHG << OffsetCHINUHG[det+CHINU_nDets*(FC_nAnodes-1)] << "," ;
+  CHINU_OffsetToFHG <<  OffsetCHINUHG[CHINU_nDets-1+CHINU_nDets*(FC_nAnodes-1)] << endl;
+  CHINU_OffsetToFHG << "};" << endl;
+  CHINU_OffsetToFHG <<  endl;
+  CHINU_OffsetToFHG << "#endif //_FCCHINUHG_GAMMA_PEAK__H_" << endl;
 #endif
   
 #if FC>0 && B3>0
-  ofstream B3_GammaPeakLG("../../SetupSpecific/B3_LG_GammaPeak.h",ios::out | ios::trunc);
-  ofstream B3_GammaPeakHG("../../SetupSpecific/B3_HG_GammaPeak.h",ios::out | ios::trunc);
-  B3_GammaPeakLG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl<<endl;
-  Float_t GammaPeak_LG_Mean[B3_nDets*FC_nAnodes];
-  Float_t GammaPeak_HG_Mean[B3_nDets*FC_nAnodes];
-  for(UShort_t anode=1; anode<=11; anode++){
-    for(UShort_t side=1; side<=2; side ++){
-      for(UShort_t pos=1; pos<=2; pos++){
-	det=htB3.GetDet(side,pos);
-	GammaPeak_LG_Mean[det-1+B3_nDets*(anode-1)]=0.;
-	GammaPeak_HG_Mean[det-1+B3_nDets*(anode-1)]=0.;
-	if((htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->Integral())>0) {
+  ofstream B3_GammaPeakLG("../../SetupSpecific/FC_to_B3lg_GammaPeak.h",ios::out | ios::trunc);
+  ofstream B3_GammaPeakHG("../../SetupSpecific/FC_to_B3hg_GammaPeak.h",ios::out | ios::trunc);
+  ofstream B3_OffsetToFLG("../../SetupSpecific/B3lg_OffsetToF.h",ios::out | ios::trunc);
+  ofstream B3_OffsetToFHG("../../SetupSpecific/B3hg_OffsetToF.h",ios::out | ios::trunc);
+  Float_t GammaPeak_B3LG_Mean[B3_nDets*FC_nAnodes];
+  Float_t GammaPeak_B3HG_Mean[B3_nDets*FC_nAnodes];
+  Double_t RealTimeB3[B3_nDets];
+  Double_t OffsetB3LG[B3_nDets*FC_nAnodes];
+  Double_t OffsetB3HG[B3_nDets*FC_nAnodes];
+  for(UShort_t side=1; side<=2; side ++){
+    for(UShort_t pos=1; pos<=2; pos++){
+      det=htB3.GetDet(side,pos);
+      RealTimeB3[det-1] = Distance_FC_B3[det-1]/SPEED_OF_LIGHT_MNS;
+      for(UShort_t anode=1; anode<=11; anode++){
+	OffsetB3LG[det-1+B3_nDets*(anode-1)] = 0;
+	OffsetB3HG[det-1+B3_nDets*(anode-1)] = 0;
+	GammaPeak_B3LG_Mean[det-1+B3_nDets*(anode-1)]=0.;
+	GammaPeak_B3HG_Mean[det-1+B3_nDets*(anode-1)]=0.;
+	if((htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->Integral())>100) {
 	  binMax=htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetMaximumBin();
 	  htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->Fit("gaus","","",htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)-1.5,htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)+1.5);
 	  TF1 * fGaussianLG = (TF1*)gDirectory->FindObject("gaus");
 	  sprintf(name,"FitGammaPeakLG_B3_%s_%s_FC%d",sideVal[side-1].Data(),posVal[pos-1].Data(),anode);
 	  fGaussianLG->SetName(name);
 	  fGaussianLG->SetTitle(name);
-	  GammaPeak_LG_Mean[det-1+B3_nDets*(anode-1)]=fGaussianLG->GetParameter(1);
+	  GammaPeak_B3LG_Mean[det-1+B3_nDets*(anode-1)]=fGaussianLG->GetParameter(1);
+	  OffsetB3LG[det-1+B3_nDets*(anode-1)]=RealTimeB3[det-1]-GammaPeak_B3LG_Mean[det-1+B3_nDets*(anode-1)];
 	  delete fGaussianLG;
 	}// end of if(histo)
-	if((htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->Integral())>0) {
+	if((htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->Integral())>100) {
 	  binMax=htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetMaximumBin();
 	  htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->Fit("gaus","","",htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)-1.5,htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)+1.5);
 	  TF1 * fGaussianHG = (TF1*)gDirectory->FindObject("gaus");
 	  sprintf(name,"FitGammaPeakHG_B3_%s_%s_FC%d",sideVal[side-1].Data(),posVal[pos-1].Data(),anode);
 	  fGaussianHG->SetName(name);
 	  fGaussianHG->SetTitle(name);
-	  GammaPeak_HG_Mean[det-1+B3_nDets*(anode-1)]=fGaussianHG->GetParameter(1);
+	  GammaPeak_B3HG_Mean[det-1+B3_nDets*(anode-1)]=fGaussianHG->GetParameter(1);
+	  OffsetB3HG[det-1+B3_nDets*(anode-1)]=RealTimeB3[det-1]-GammaPeak_B3HG_Mean[det-1+B3_nDets*(anode-1)];
 	  delete fGaussianHG;
 	}// end of if(histo)
       }//end of for(pos)
     }//end of for(side)
   }//end of for(anode)
+
+  // --- write Gamma peak mean LG --- //
+  B3_GammaPeakLG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl<<endl;
   B3_GammaPeakLG << "#ifndef _FCB3LG_GAMMA_PEAK__H_" << endl;
   B3_GammaPeakLG << "#define _FCB3LG_GAMMA_PEAK__H_" << endl;
   B3_GammaPeakLG << "Float_t B3_GammaPeakLG["<<B3_nDets*FC_nAnodes<<"] = {" << endl;
-  for(UShort_t anode=0; anode<FC_nAnodes; anode++){
-    B3_GammaPeakLG << GammaPeak_LG_Mean[0] ;
-    for(UShort_t det=1; det<B3_nDets; det++)  B3_GammaPeakLG << ", " <<GammaPeak_LG_Mean[det+B3_nDets*anode] ;
+  for(UShort_t anode=0; anode<FC_nAnodes-1; anode++){
+    for(UShort_t det=0; det<B3_nDets; det++)  B3_GammaPeakLG << GammaPeak_B3LG_Mean[det+B3_nDets*anode] << "," ;
     B3_GammaPeakLG << endl;
   }
+  for(UShort_t det=0; det<B3_nDets-1; det++)  B3_GammaPeakLG << GammaPeak_B3LG_Mean[det+B3_nDets*(FC_nAnodes-1)] << "," ;
+  B3_GammaPeakLG <<  GammaPeak_B3LG_Mean[B3_nDets-1+B3_nDets*(FC_nAnodes-1)] << endl;
   B3_GammaPeakLG << "};" << endl;
   B3_GammaPeakLG <<  endl;
   B3_GammaPeakLG << "#endif //_FCB3LG_GAMMA_PEAK__H_" << endl;
+
+  // --- write Offset ToF B3LG --- //
+  B3_OffsetToFLG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl<<endl;
+  B3_OffsetToFLG << "#ifndef _B3LG_OFFSET_TOF__H_" << endl;
+  B3_OffsetToFLG << "#define _B3LG_OFFSET_TOF__H_" << endl;
+  B3_OffsetToFLG << "Float_t B3_OffsetToFLG["<<B3_nDets*FC_nAnodes<<"] = {" << endl;
+  for(UShort_t anode=0; anode<FC_nAnodes-1; anode++){
+    for(UShort_t det=0; det<B3_nDets; det++)  B3_OffsetToFLG << OffsetB3LG[det+B3_nDets*anode] << "," ;
+    B3_OffsetToFLG << endl;
+  }
+  for(UShort_t det=0; det<B3_nDets-1; det++)  B3_OffsetToFLG << OffsetB3LG[det+B3_nDets*(FC_nAnodes-1)] << "," ;
+  B3_OffsetToFLG <<  OffsetB3LG[B3_nDets-1+B3_nDets*(FC_nAnodes-1)] << endl;
+  B3_OffsetToFLG << "};" << endl;
+  B3_OffsetToFLG <<  endl;
+  B3_OffsetToFLG << "#endif //_FCB3LG_GAMMA_PEAK__H_" << endl;
   
+  // --- write Gamma peak mean HG --- //
   B3_GammaPeakHG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl;
   B3_GammaPeakHG << "#ifndef _FCB3HG_GAMMA_PEAK__H_" << endl;
   B3_GammaPeakHG << "#define _FCB3HG_GAMMA_PEAK__H_" << endl;
+  B3_GammaPeakLG << "Float_t B3_GammaPeakLG["<<B3_nDets*FC_nAnodes<<"] = {" << endl;
   for(UShort_t anode=0; anode<FC_nAnodes; anode++){
-    B3_GammaPeakHG << GammaPeak_HG_Mean[0] ;
-    for(UShort_t det=1; det<B3_nDets; det++)  B3_GammaPeakHG << ", " <<GammaPeak_HG_Mean[det+B3_nDets*anode] ;
+    B3_GammaPeakHG << GammaPeak_B3HG_Mean[0] ;
+    for(UShort_t det=1; det<B3_nDets; det++)  B3_GammaPeakHG << ", " <<GammaPeak_B3HG_Mean[det+B3_nDets*anode] ;
     B3_GammaPeakHG << endl;
   }
   B3_GammaPeakHG << "};" << endl;
   B3_GammaPeakHG <<  endl;
   B3_GammaPeakHG << "#endif //_FCB3HG_GAMMA_PEAK__H_" << endl;
+
+  // --- write Offset ToF B3HG --- //
+  B3_OffsetToFHG << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl<<endl;
+  B3_OffsetToFHG << "#ifndef _B3HG_OFFSET_TOF__H_" << endl;
+  B3_OffsetToFHG << "#define _B3HG_OFFSET_TOF__H_" << endl;
+  B3_OffsetToFHG << "Float_t B3_OffsetToFHG["<<B3_nDets*FC_nAnodes<<"] = {" << endl;
+  for(UShort_t anode=0; anode<FC_nAnodes-1; anode++){
+    for(UShort_t det=0; det<B3_nDets; det++)  B3_OffsetToFHG << OffsetB3HG[det+B3_nDets*anode] << "," ;
+    B3_OffsetToFHG << endl;
+  }
+  for(UShort_t det=0; det<B3_nDets-1; det++)  B3_OffsetToFHG << OffsetB3HG[det+B3_nDets*(FC_nAnodes-1)] << "," ;
+  B3_OffsetToFHG <<  OffsetB3HG[B3_nDets-1+B3_nDets*(FC_nAnodes-1)] << endl;
+  B3_OffsetToFHG << "};" << endl;
+  B3_OffsetToFHG <<  endl;
+  B3_OffsetToFHG << "#endif //_FCB3HG_GAMMA_PEAK__H_" << endl;
+#endif
+
+
+
+  // --- DRAW --- //
+#if CHINU>0 && FC>0
+  TCanvas * can1 = new TCanvas("FitGammaPeak_FC6_CHINUlg","FitGammaPeak_FC6_CHINUlg",0,0,2000,1600);
+  can1->Divide(9,6);
+  TCanvas * can2 = new TCanvas("FitGammaPeak_FC6_CHINUhg","FitGammaPeak_FC6_CHINUhg",0,0,2000,1600);
+  can2->Divide(9,6);
+  for(UShort_t det=1; det<=CHINU_nDets; det++){
+
+    htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->SetDirectory(0);
+    binMax=htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->GetMaximumBin();
+    can1->cd(det); 
+    htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->Draw();  
+    htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->GetXaxis()->SetRangeUser(htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)-5,htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)+5);
+
+    htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->SetLineColor(kBlack);
+    htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->SetDirectory(0);
+    binMax=htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->GetMaximumBin();
+    can2->cd(det); 
+    htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->Draw();  
+    htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->GetXaxis()->SetRangeUser(htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)-5,htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)+5);
+  }
+
+
+  det=htCHINU.GetDet(1,2,5);
+  TCanvas * can5 = new TCanvas("FitGammaPeak_AllFC_CHINUlg_L_II_5","FitGammaPeak_AllFC_CHINUlg_L_II_5",0,0,2000,1600);
+  can5->Divide(4,3);
+  TCanvas * can6 = new TCanvas("FitGammaPeak_AllFC_CHINUhg_L_II_5","FitGammaPeak_AllFC_CHINUhg_L_II_5",0,0,2000,1600);
+  can6->Divide(4,3);
+  for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+    can5->cd(anode);
+    htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->Draw();  
+    can6->cd(anode);
+    htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Draw();  
+  }
+#endif
+
+
+#if B3>0 && FC>0
   TCanvas * can3 = new TCanvas("FitGammaPeak_FC_B3lg","FitGammaPeak_FC_B3lg",0,0,2000,1000);
-  can1->Divide(11,4);
+  can3->Divide(11,4);
   TCanvas * can4 = new TCanvas("FitGammaPeak_FC_B3hg","FitGammaPeak_FC_B3hg",0,0,2000,1000);
-  can2->Divide(11,4);
+  can4->Divide(11,4);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     for(UShort_t det=1; det<=B3_nDets; det++){
+
       binMax=htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetMaximumBin();
       htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetXaxis()->SetRangeUser(htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)-5,htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)+5);
       can3->cd(anode+11*(det-1)); htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->Draw();
+
       binMax=htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetMaximumBin();
       htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetXaxis()->SetRangeUser(htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)-5,htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)+5);
       can4->cd(anode+11*(det-1)); htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->Draw();
     }
   }
 #endif
+
 
 
 }

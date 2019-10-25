@@ -6,7 +6,7 @@
 // *** You should change the following define *** //
 #define TRIGGER_MODE 1      //0: TRIGGER LESS 1: COINC
 #define LABEL_GROUP 3000
-#define FC_nQ     4
+#define FC_nQ     3
 #define CHINU_nQ  2
 #define B3_nQ     2
 #define PULSER_nQ 1
@@ -36,8 +36,8 @@ static float Distance_FC_ChiNu[CHINU_nDets] = {
 static int Side_B3[B3_nDets] = {1,1,2,2};
 static int Pos_B3[B3_nDets] = {1,2,1,2};
 static float Distance_FC_B3[B3_nDets] = {
-  1., 1., // LEFT
-  1., 1.  // RIGHT
+  1.3, 1.3, // LEFT
+  1.3, 1.3  // RIGHT
 };
 
 // FOR DETECTOR NAMEING PURPOSE

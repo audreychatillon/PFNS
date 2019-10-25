@@ -54,6 +54,7 @@ void CHINU_RawToFHistos::DefineOneAnodeOneDetLG(UShort_t anode, UShort_t side, U
     h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->GetXaxis()->SetTitle("raw ToF [ns, 100ps/bin]");
     h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->GetXaxis()->SetTitleOffset(1.4);
     h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->SetLineColor(kBlue);
+    h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
     fFlagLG[ring-1+3*(side-1)+6*(anode-1)] = fFlagLG[ring-1+3*(side-1)+6*(anode-1)] | (1<<(rank-1));
   }
 }
@@ -67,6 +68,7 @@ void CHINU_RawToFHistos::DefineOneAnodeOneDetHG(UShort_t anode, UShort_t side, U
     h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->GetXaxis()->SetTitle("raw ToF [ns, 100ps/bin]");
     h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->GetXaxis()->SetTitleOffset(1.4);
     h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->SetLineColor(kRed);
+    h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
     fFlagHG[ring-1+3*(side-1)+6*(anode-1)] = fFlagHG[ring-1+3*(side-1)+6*(anode-1)] | (1<<(rank-1));
   }
 }

@@ -101,6 +101,9 @@ int main (int argc, char** argv) {
   unsigned int nevents_source=0;
   unsigned int nevents_counters=0;
   int    detType, detSubType;
+  int tdc;
+  double dt;
+  
 
   // === ================ === //
   // === FASTER VARIABLES === //
@@ -109,16 +112,16 @@ int main (int argc, char** argv) {
   faster_file_reader_p   file_reader;
   // --- DATA
   faster_data_p          data;
-  unsigned int                 lsize_data;
+  unsigned int           lsize_data;
   UChar_t                buffer [3000];
   UChar_t                alias_data;
-  unsigned short               label_data;
-  unsigned long long              clock_data;
+  unsigned short         label_data;
+  unsigned long long     clock_data;
   // --- ONLY FOR COINC
   faster_buffer_reader_p buffer_reader;
   faster_data_p          group_data;
-  unsigned short               label;
-  unsigned long long              clock;
+  unsigned short         label;
+  unsigned long long     clock;
 #if FC>0
 #if   FC_nQ==1
   qdc_t_x1               FCdata;
@@ -231,18 +234,8 @@ int main (int argc, char** argv) {
   std::vector<Double_t> vCHINUhg_time;
   std::vector<unsigned int> vCHINUlg_Q1;
   std::vector<unsigned int> vCHINUhg_Q1;
-#if CHINU_nQ>1
   std::vector<unsigned int> vCHINUlg_Q2;
   std::vector<unsigned int> vCHINUhg_Q2;
-#endif
-#if CHINU_nQ>2
-  std::vector<unsigned int> vCHINUlg_Q3;
-  std::vector<unsigned int> vCHINUhg_Q3;
-#endif
-#if CHINU_nQ>3
-  std::vector<unsigned int> vCHINUlg_Q4;
-  std::vector<unsigned int> vCHINUhg_Q4;
-#endif
 #endif
 
   // --- B3 Neutron detectors
@@ -261,18 +254,8 @@ int main (int argc, char** argv) {
   std::vector<Double_t> vB3hg_time;
   std::vector<unsigned int> vB3lg_Q1;
   std::vector<unsigned int> vB3hg_Q1;
-#if B3_nQ>1
   std::vector<unsigned int> vB3lg_Q2;
   std::vector<unsigned int> vB3hg_Q2;
-#endif
-#if B3_nQ>2
-  std::vector<unsigned int> vB3lg_Q3;
-  std::vector<unsigned int> vB3hg_Q3;
-#endif
-#if B3_nQ>3
-  std::vector<unsigned int> vB3lg_Q4;
-  std::vector<unsigned int> vB3hg_Q4;
-#endif
 #endif
 
   // --- Pulser
@@ -337,23 +320,13 @@ int main (int argc, char** argv) {
   t->Branch("vCHINUhg_time",&vCHINUhg_time);
   t->Branch("vCHINUlg_Q1",&vCHINUlg_Q1);
   t->Branch("vCHINUhg_Q1",&vCHINUhg_Q1);
-#if CHINU_nQ>1
   t->Branch("vCHINUlg_Q2",&vCHINUlg_Q2);
   t->Branch("vCHINUhg_Q2",&vCHINUhg_Q2);
-#endif
-#if CHINU_nQ>2
-  t->Branch("vCHINUlg_Q3",&vCHINUlg_Q3);
-  t->Branch("vCHINUhg_Q3",&vCHINUhg_Q3);
-#endif
-#if CHINU_nQ>3
-  t->Branch("vCHINUlg_Q4",&vCHINUlg_Q4);
-  t->Branch("vCHINUhg_Q4",&vCHINUhg_Q4);
-#endif
 #endif
   // B3 ndet 
 #if B3>0
   t->Branch("B3lg_mult",B3_multLG,"B3lg_mult[4]/s");
-  //t->Branch("B3hg_mult",B3_multHG,"B3hg_mult[4]/s");
+  t->Branch("B3hg_mult",B3_multHG,"B3hg_mult[4]/s");
   t->Branch("vB3lg_label",&vB3lg_label);
   t->Branch("vB3hg_label",&vB3hg_label);
   t->Branch("vB3lg_det",&vB3lg_det);
@@ -366,18 +339,8 @@ int main (int argc, char** argv) {
   t->Branch("vB3hg_time",&vB3hg_time);
   t->Branch("vB3lg_Q1",&vB3lg_Q1);
   t->Branch("vB3hg_Q1",&vB3hg_Q1);
-#if B3_nQ>1
   t->Branch("vB3lg_Q2",&vB3lg_Q2);
   t->Branch("vB3hg_Q2",&vB3hg_Q2);
-#endif
-#if B3_nQ>2
-  t->Branch("vB3lg_Q3",&vB3lg_Q3);
-  t->Branch("vB3hg_Q3",&vB3hg_Q3);
-#endif
-#if B3_nQ>3
-  t->Branch("vB3lg_Q4",&vB3lg_Q4);
-  t->Branch("vB3hg_Q4",&vB3hg_Q4);
-#endif
 #endif
 #if TRIGGER_MODE==1 
   // dans le cas des données prises en coinc, on rajoute toutes les voies à l'arbre
@@ -390,15 +353,7 @@ int main (int argc, char** argv) {
   //t->Branch("vFC_tdc",&vFC_tdc);
   t->Branch("vFC_time",&vFC_time);
   t->Branch("vFC_Q1",&vFC_Q1);
-#if FC_nQ>1
   t->Branch("vFC_Q2",&vFC_Q2);
-#endif
-#if FC_nQ>2
-  t->Branch("vFC_Q3",&vFC_Q3);
-#endif
-#if FC_nQ>3
-  t->Branch("vFC_Q4",&vFC_Q4);
-#endif
 #endif
   // Pulser
 #if PULSER>0
@@ -424,7 +379,7 @@ int main (int argc, char** argv) {
   t->Branch("vMACRO_time",&vMACRO_time);
   t->Branch("vMACRO_Q1",&vMACRO_Q1);
 #endif
-#endif 
+#endif // endif TRIGGER_MODE==1
 
 
   // === ======================= === //
@@ -456,15 +411,7 @@ int main (int argc, char** argv) {
     //vFC_tdc.clear();
     vFC_time.clear();
     vFC_Q1.clear();
-#if FC_nQ>1
     vFC_Q2.clear();
-#endif
-#if FC_nQ>2
-    vFC_Q3.clear();
-#endif
-#if FC_nQ>3
-    vFC_Q4.clear();
-#endif
 #endif
     // *** Chi-Nu Neutron Detectors *** //
 #if CHINU>0
@@ -481,18 +428,8 @@ int main (int argc, char** argv) {
     vCHINUhg_time.clear();
     vCHINUlg_Q1.clear();
     vCHINUhg_Q1.clear();
-#if CHINU_nQ>1
     vCHINUlg_Q2.clear();
     vCHINUhg_Q2.clear();
-#endif
-#if CHINU_nQ>2
-    vCHINUlg_Q3.clear();
-    vCHINUhg_Q3.clear();
-#endif
-#if CHINU_nQ>3
-    vCHINUlg_Q4.clear();
-    vCHINUhg_Q4.clear();
-#endif
 #endif
     // *** B3 Neutron Detectors *** //
 #if B3>0
@@ -509,18 +446,8 @@ int main (int argc, char** argv) {
     vB3hg_time.clear();
     vB3lg_Q1.clear();
     vB3hg_Q1.clear();
-#if B3_nQ>1
     vB3lg_Q2.clear();
     vB3hg_Q2.clear();
-#endif
-#if B3_nQ>2
-    vB3lg_Q3.clear();
-    vB3hg_Q3.clear();
-#endif
-#if B3_nQ>3
-    vB3lg_Q4.clear();
-    vB3hg_Q4.clear();
-#endif
 #endif
     // *** Pulser *** //
 #if PULSER>0
@@ -552,7 +479,7 @@ int main (int argc, char** argv) {
     // --- -------------------------------------- --- //
     alias_data  = faster_data_type_alias (data);
     label_data  = (unsigned short)(faster_data_label (data));
-    clock_data  = (double)faster_data_clock_ns(data);
+    clock_data  = faster_data_clock_ns(data);
     
     switch(alias_data){
 
@@ -590,17 +517,11 @@ int main (int argc, char** argv) {
 	    FC_mult[Label2Ch[label-1]-1]++;
 	    //vFC_clock.push_back(clock);
 	    //vFC_tdc.push_back(FCdata.tdc);
-	    vFC_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(FCdata.tdc)));
+	    tdc = (int)FCdata.tdc;
+	    dt  = (double)qdc_conv_dt_ns(tdc);
+	    vFC_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (FCdata.tdc)));
 	    vFC_Q1.push_back(FCdata.q1);
-#if FC_nQ>1
 	    vFC_Q2.push_back(FCdata.q2);
-#endif
-#if FC_nQ>2
-	    vFC_Q3.push_back(FCdata.q3);
-#endif
-#if FC_nQ>3
-	    vFC_Q4.push_back(FCdata.q4);
-#endif
 	    break;
 #endif
 #if CHINU>0
@@ -615,17 +536,11 @@ int main (int argc, char** argv) {
 		vCHINUlg_det.push_back(Label2Ch[label-1]);
 		//vCHINUlg_clock.push_back(clock);
 		//vCHINUlg_tdc.push_back(CHINUdata.tdc);
-		vCHINUlg_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
+		tdc = (int)CHINUdata.tdc;
+		dt  = (double)qdc_conv_dt_ns(tdc);
+		vCHINUlg_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (CHINUdata.tdc)));
 		vCHINUlg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
 		vCHINUlg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-		vCHINUlg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-		vCHINUlg_Q4.push_back(CHINUdata.q4);
-#endif
 		break;
 	      case 22: // HIGH GAIN
 		CHINU_multHG[Label2Ch[label-1]-1]++;
@@ -633,17 +548,11 @@ int main (int argc, char** argv) {
 		vCHINUhg_det.push_back(Label2Ch[label-1]);
 		//vCHINUhg_clock.push_back(clock);
 		//vCHINUhg_tdc.push_back(CHINUdata.tdc);
-		vCHINUhg_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
+		tdc = (int)CHINUdata.tdc;
+		dt  = (double)qdc_conv_dt_ns(tdc);
+		vCHINUhg_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (CHINUdata.tdc)));
 		vCHINUhg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
 		vCHINUhg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-		vCHINUhg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-		vCHINUhg_Q4.push_back(CHINUdata.q4);
-#endif
 		break;
 	      default:
 		break;
@@ -662,17 +571,11 @@ int main (int argc, char** argv) {
 		vB3lg_det.push_back(Label2Ch[label-1]);
 		//vB3lg_clock.push_back(clock);
 		//vB3lg_tdc.push_back(B3data.tdc);
-		vB3lg_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(B3data.tdc)));
+		tdc = (int)B3data.tdc;
+		dt  = (double)qdc_conv_dt_ns(tdc);
+		vB3lg_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (B3data.tdc)));
 		vB3lg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
 		vB3lg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-		vB3lg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-		vB3lg_Q4.push_back(B3data.q4);
-#endif
 		break;
 	      case 22: // HIGH GAIN
 		B3_multHG[Label2Ch[label-1]-1]++;
@@ -680,17 +583,11 @@ int main (int argc, char** argv) {
 		vB3hg_det.push_back(Label2Ch[label-1]);
 		//vB3hg_clock.push_back(clock);
 		//vB3hg_tdc.push_back(B3data.tdc);
-		vB3hg_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(B3data.tdc)));
+		tdc = (int)B3data.tdc;
+		dt  = (double)qdc_conv_dt_ns(tdc);
+		vB3hg_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (B3data.tdc)));
 		vB3hg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
 		vB3hg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-		vB3hg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-		vB3hg_Q4.push_back(B3data.q4);
-#endif
 		break;
 	      default:
 		break;
@@ -704,7 +601,7 @@ int main (int argc, char** argv) {
 	    vPULSER_label.push_back(label);
 	    //vPULSER_clock.push_back(clock);
 	    //vPULSER_tdc.push_back(PULSERdata.tdc);
-	    vPULSER_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(PULSERdata.tdc)));
+	    vPULSER_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (PULSERdata.tdc)));
 	    vPULSER_Q1.push_back(PULSERdata.q1);
 	    break;
 #endif
@@ -714,7 +611,7 @@ int main (int argc, char** argv) {
 	    vHF_label.push_back(label);
 	    //vHF_clock.push_back(clock);
 	    //vHF_tdc.push_back(HFdata.tdc);
-	    vHF_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(HFdata.tdc)));
+	    vHF_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (HFdata.tdc)));
 	    vHF_Q1.push_back(HFdata.q1);
 	    break;
 #endif
@@ -724,7 +621,7 @@ int main (int argc, char** argv) {
 	    vMACRO_label.push_back(label);
 	    //vMACRO_clock.push_back(clock);
 	    //vMACRO_tdc.push_back(MACROdata.tdc);
-	    vMACRO_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(MACROdata.tdc)));
+	    vMACRO_time.push_back((Double_t)(clock)+(Double_t)(qdc_conv_dt_ns((int)MACROdata.tdc)));
 	    vMACRO_Q1.push_back(MACROdata.q1);
 	    break;
 #endif
@@ -776,15 +673,7 @@ int main (int argc, char** argv) {
 	      //vCHINUlg_tdc.push_back(CHINUdata.tdc);
 	      vCHINUlg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
 	      vCHINUlg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
 	      vCHINUlg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-	      vCHINUlg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-	      vCHINUlg_Q4.push_back(CHINUdata.q4);
-#endif
 	      break;
 	    case 22: // HIGH GAIN
 	      CHINU_multHG[Label2Ch[label_data-1]-1]++;
@@ -794,15 +683,7 @@ int main (int argc, char** argv) {
 	      //vCHINUhg_tdc.push_back(CHINUdata.tdc);
 	      vCHINUhg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
 	      vCHINUhg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
 	      vCHINUhg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-	      vCHINUhg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-	      vCHINUhg_Q4.push_back(CHINUdata.q4);
-#endif
 	      break;
 	    default:
 	      break;
@@ -823,15 +704,7 @@ int main (int argc, char** argv) {
 	      //vB3lg_tdc.push_back(B3data.tdc);
 	      vB3lg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(B3data.tdc)));
 	      vB3lg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
 	      vB3lg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-	      vB3lg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-	      vB3lg_Q4.push_back(B3data.q4);
-#endif
 	      break;
 	    case 22: // HIGH GAIN
 	      B3_multHG[Label2Ch[label_data-1]-1]++;
@@ -841,15 +714,7 @@ int main (int argc, char** argv) {
 	      //vB3hg_tdc.push_back(B3data.tdc);
 	      vB3hg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(B3data.tdc)));
 	      vB3hg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
 	      vB3hg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-	      vB3hg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-	      vB3hg_Q4.push_back(B3data.q4);
-#endif
 	      break;
 	    default:
 	      break;
@@ -892,15 +757,7 @@ int main (int argc, char** argv) {
 	      //vCHINUlg_tdc.push_back(CHINUdata.tdc);
 	      vCHINUlg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
 	      vCHINUlg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
 	      vCHINUlg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-	      vCHINUlg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-	      vCHINUlg_Q4.push_back(CHINUdata.q4);
-#endif
 	      break;
 	    case 22: // HIGH GAIN
 	      CHINU_multHG[Label2Ch[label_data-1]-1]++;
@@ -910,15 +767,7 @@ int main (int argc, char** argv) {
 	      //vCHINUhg_tdc.push_back(CHINUdata.tdc);
 	      vCHINUhg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(CHINUdata.tdc)));
 	      vCHINUhg_Q1.push_back(CHINUdata.q1);
-#if CHINU_nQ>1
 	      vCHINUhg_Q2.push_back(CHINUdata.q2);
-#endif
-#if CHINU_nQ>2
-	      vCHINUhg_Q3.push_back(CHINUdata.q3);
-#endif
-#if CHINU_nQ>3
-	      vCHINUhg_Q4.push_back(CHINUdata.q4);
-#endif
 	      break;
 	    default:
 	      break;
@@ -960,15 +809,7 @@ int main (int argc, char** argv) {
 	      //vB3lg_tdc.push_back(B3data.tdc);
 	      vB3lg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(B3data.tdc)));
 	      vB3lg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
 	      vB3lg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-	      vB3lg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-	      vB3lg_Q4.push_back(B3data.q4);
-#endif
 	      break;
 	    case 22: // HIGH GAIN
 	      B3_multHG[Label2Ch[label_data-1]-1]++;
@@ -978,15 +819,7 @@ int main (int argc, char** argv) {
 	      //vB3hg_tdc.push_back(B3data.tdc);
 	      vB3hg_time.push_back((double)(clock_data)+(double)(qdc_conv_dt_ns(B3data.tdc)));
 	      vB3hg_Q1.push_back(B3data.q1);
-#if B3_nQ>1
 	      vB3hg_Q2.push_back(B3data.q2);
-#endif
-#if B3_nQ>2
-	      vB3hg_Q3.push_back(B3data.q3);
-#endif
-#if B3_nQ>3
-	      vB3hg_Q4.push_back(B3data.q4);
-#endif
 	      break;
 	    default:
 	      break;

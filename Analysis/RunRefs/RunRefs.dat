@@ -1,4 +1,6 @@
 # COL 1        COL 2:            COL 3  
 # run number   number of files   data type
    3         | 1               | Cf       
-   5         | 5               | Cf       
+   5         | 1               | Cf  
+  10         | 1               | Cf     
+  17         | 1               | Cf     

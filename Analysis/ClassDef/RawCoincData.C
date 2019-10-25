@@ -7,9 +7,9 @@ RawCoincData::RawCoincData(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../../data/Raw/Cf252/Run5_0001_Cf.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../../data/Raw/Cf252/Run10_0001_Cf.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("../../data/Raw/Cf252/Run5_0001_Cf.root");
+         f = new TFile("../../data/Raw/Cf252/Run10_0001_Cf.root");
       }
       f->GetObject("RawCoincData",tree);
 

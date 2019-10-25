@@ -199,21 +199,22 @@ int main (int argc, char** argv) {
   
   // --- Fission Chamber
 #if FC>0
+  UShort_t FC_multTot;
   UShort_t FC_mult[FC_nAnodes];
-  std::vector<UShort_t> vFC_label;
-  std::vector<UShort_t> vFC_anode;
-  //std::vector<ULong64_t> vFC_clock;
-  //std::vector<Double_t> vFC_tdc;
-  std::vector<Double_t> vFC_time;
-  std::vector<UInt_t> vFC_Q1;
+  UShort_t FC_label;
+  UShort_t FC_anode;
+  Double_t FC_time;
+  UInt_t   FC_Q1;
+  //ULong64_t clock;
+  //ULong64_t tdc;
 #if FC_nQ>1
-  std::vector<UInt_t> vFC_Q2;
+  UInt_t FC_Q2;
 #endif
 #if FC_nQ>2
-  std::vector<UInt_t> vFC_Q3;
+  UInt_t FC_Q3;
 #endif
 #if FC_nQ>3
-  std::vector<UInt_t> vFC_Q4;
+  UInt_t FC_Q4;
 #endif
 #endif
 
@@ -279,29 +280,29 @@ int main (int argc, char** argv) {
 
   // --- Pulser
 #if PULSER>0
-  std::vector<UShort_t> vPULSER_label;
-  //std::vector<ULong64_t> vPULSER_clock;
-  //std::vector<Double_t> vPULSER_tdc;
-  std::vector<Double_t> vPULSER_time;
-  std::vector<UInt_t> vPULSER_Q1;
+  UShort_t PULSER_label;
+  //ULong64_t PULSER_clock;
+  //ULong64_t PULSER_tdc;
+  Double_t PULSER_time;
+  UInt_t PULSER_Q1;
 #endif
 
   // --- HF Beam
 #if HF>0
-  std::vector<UShort_t> vHF_label;
-  //std::vector<ULong64_t> vHF_clock;
-  //std::vector<Double_t> vHF_tdc;
-  std::vector<Double_t> vHF_time;
-  std::vector<UInt_t> vHF_Q1;
+  UShort_t HF_label;
+  //ULong64_t HF_clock;
+  //ULong64_t HF_tdc;
+  Double_t HF_time;
+  UInt_t HF_Q1;
 #endif
 
   // --- Macro Pulse
 #if MACRO>0
-  std::vector<UShort_t> vMACRO_label;
-  //std::vector<ULong64_t> vMACRO_clock;
-  //std::vector<Double_t> vMACRO_tdc;
-  std::vector<Double_t> vMACRO_time;
-  std::vector<UInt_t> vMACRO_Q1;
+  UShort_t MACRO_label;
+  //ULong64_t MACRO_clock;
+  //ULong64_t MACRO_tdc;
+  Double_t MACRO_time;
+  UInt_t MACRO_Q1;
 #endif
 
   // === =========== === //
@@ -384,11 +385,12 @@ int main (int argc, char** argv) {
   // dans le cas des données prises en coinc, on rajoute toutes les voies à l'arbre
   // fission chamber
 #if FC>0
+  t->Branch("FC_multTot",&FC_multTot,"FC_multTot/s");
   t->Branch("FC_mult",FC_mult,"FC_mult[11]/s");
-  t->Branch("vFC_label",&vFC_label);
-  t->Branch("vFC_anode",&vFC_anode);
-  //t->Branch("vFC_clock",&vFC_clock);
-  //t->Branch("vFC_tdc",&vFC_tdc);
+  t->Branch("FC_label",&FC_label,"");
+  t->Branch("FC_anode",&FC_anode,"");
+  //t->Branch("FC_clock",FC_clock);
+  //t->Branch("FC_tdc",FC_tdc);
   t->Branch("vFC_time",&vFC_time);
   t->Branch("vFC_Q1",&vFC_Q1);
 #if FC_nQ>1

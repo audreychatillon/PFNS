@@ -56,7 +56,9 @@ TCanvas * FC_RawToFHistos::DrawOneAnode(UShort_t anode)
   sprintf(name,"BeamToFraw_FC%d_HF",anode);
   TCanvas * c = new TCanvas(name,name,700,600);
   if (TestAnode(anode,fFlag)){
-    c->cd(); h1_RawToF[anode-1]->Draw();
+    c->cd(); 
+    h1_RawToF[anode-1]->Draw();
+    h1_RawToF[anode-1]->SetDirectory(0);
   }
   return(c);
 }
@@ -69,7 +71,9 @@ TCanvas * FC_RawToFHistos::DrawAllAnodes()
   c->Divide(4,3);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     if (TestAnode(anode,fFlag)){
-      c->cd(anode); h1_RawToF[anode-1]->Draw();
+      c->cd(anode); 
+      h1_RawToF[anode-1]->Draw();
+      h1_RawToF[anode-1]->SetDirectory(0);
     }
   }
   return(c);

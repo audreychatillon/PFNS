@@ -14,7 +14,6 @@ void PULSER_RawQHisto::DefineHisto()
 {
   char name[100];
   h1_Q1 = new TH1I("PULSER_Q1","PULSER_Q1",1025,0,32800);
-  h1_Q1->SetDirectory(0);
 }
 
 void PULSER_RawQHisto::FillHisto(vector<UInt_t> * vPULSER)
@@ -26,7 +25,8 @@ void PULSER_RawQHisto::FillHisto(vector<UInt_t> * vPULSER)
 TCanvas * PULSER_RawQHisto::DrawHisto()
 {
   TCanvas * c = new TCanvas("Q1PULSER","Q1PULSER",0,0,500,500);
-  c->cd();  gPad->SetLogy(); h1_Q1->Draw(); 
+  c->cd();  gPad->SetLogy(); h1_Q1->Draw();   h1_Q1->SetDirectory(0);
+
   return(c);
 }
 

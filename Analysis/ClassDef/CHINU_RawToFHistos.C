@@ -110,7 +110,9 @@ TCanvas * CHINU_RawToFHistos::DrawOneAnodeOneDetLG(UShort_t anode, UShort_t side
   TCanvas * c = new TCanvas(name,name,700,600);
   UShort_t det=GetDet(side,ring,rank);
   if (TestRank(rank,fFlagLG[ring-1+3*(side-1)+6*(anode-1)])){
-    c->cd(); h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+    c->cd(); 
+    h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+    h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
   }
   return(c);
 }
@@ -121,7 +123,9 @@ TCanvas * CHINU_RawToFHistos::DrawOneAnodeOneDetHG(UShort_t anode, UShort_t side
   TCanvas * c = new TCanvas(name,name,700,600);
   UShort_t det=GetDet(side,ring,rank);
   if (TestRank(rank,fFlagHG[ring-1+3*(side-1)+6*(anode-1)])){
-    c->cd(); h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+    c->cd(); 
+    h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+    h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
   }
   return(c);
 }
@@ -137,6 +141,7 @@ TCanvas * CHINU_RawToFHistos::DrawOneAnodeSideRingLG(UShort_t anode, UShort_t si
     if (TestRank(rank,fFlagLG[ring-1+3*(side-1)+6*(anode-1)])){
       c->cd(rank); 
       h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+      h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
     }
   }
   return(c);
@@ -153,6 +158,7 @@ TCanvas * CHINU_RawToFHistos::DrawOneAnodeSideRingHG(UShort_t anode, UShort_t si
     if (TestRank(rank,fFlagHG[ring-1+3*(side-1)+6*(anode-1)])){
       c->cd(rank); 
       h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+      h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
     }
   }
   return(c);
@@ -170,6 +176,7 @@ TCanvas * CHINU_RawToFHistos::DrawOneAnodeRankLG(UShort_t anode, UShort_t rank)
       if (TestRank(rank,fFlagLG[ring-1+3*(side-1)+6*(anode-1)])){
 	c->cd(ring+3*(side-1)); 
 	h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+	h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
       }
     }
   }
@@ -188,6 +195,7 @@ TCanvas * CHINU_RawToFHistos::DrawOneAnodeRankHG(UShort_t anode, UShort_t rank)
       if (TestRank(rank,fFlagHG[ring-1+3*(side-1)+6*(anode-1)])){
 	c->cd(ring+3*(side-1)); 
 	h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+	h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
       }
     }
   }
@@ -202,7 +210,9 @@ TCanvas * CHINU_RawToFHistos::DrawAllAnodesOneDetLG(UShort_t side, UShort_t ring
   UShort_t det=GetDet(side,ring,rank);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     if (TestRank(rank,fFlagLG[ring-1+3*(side-1)+6*(anode-1)])){
-      c->cd(anode); h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+      c->cd(anode); 
+      h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+      h1_RawToF_LG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
     }
   }
   return(c);
@@ -216,7 +226,9 @@ TCanvas * CHINU_RawToFHistos::DrawAllAnodesOneDetHG(UShort_t side, UShort_t ring
   UShort_t det=GetDet(side,ring,rank);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     if (TestRank(rank,fFlagHG[ring-1+3*(side-1)+6*(anode-1)])){
-      c->cd(anode); h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+      c->cd(anode); 
+      h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->Draw();
+      h1_RawToF_HG[(det-1)+CHINU_nDets*(anode-1)]->SetDirectory(0);
     }
   }
   return(c);

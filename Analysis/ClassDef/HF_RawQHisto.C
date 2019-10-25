@@ -14,7 +14,6 @@ void HF_RawQHisto::DefineHisto()
 {
   char name[100];
   h1_Q1 = new TH1I("HF_Q1","HF_Q1",1025,0,32800);
-  h1_Q1->SetDirectory(0);
 }
 
 void HF_RawQHisto::FillHisto(vector<UInt_t> * vHF)
@@ -26,7 +25,8 @@ void HF_RawQHisto::FillHisto(vector<UInt_t> * vHF)
 TCanvas * HF_RawQHisto::DrawHisto()
 {
   TCanvas * c = new TCanvas("Q1HF","Q1HF",0,0,500,500);
-  c->cd();  gPad->SetLogy(); h1_Q1->Draw(); 
+  c->cd();  gPad->SetLogy(); h1_Q1->Draw();   h1_Q1->SetDirectory(0);
+
   return(c);
 }
 

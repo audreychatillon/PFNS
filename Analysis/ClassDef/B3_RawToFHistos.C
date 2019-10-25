@@ -91,7 +91,9 @@ TCanvas * B3_RawToFHistos::DrawOneAnodeOneDetLG(UShort_t anode, UShort_t side, U
   TCanvas * c = new TCanvas(name,name,700,600);
   UShort_t det=GetDet(side,pos);
   if (TestDet(det,fFlagLG[anode-1])){
-    c->cd(); h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
+    c->cd(); 
+    h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
+    h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->SetDirectory(0);
   }
   return(c);
 }
@@ -102,7 +104,9 @@ TCanvas * B3_RawToFHistos::DrawOneAnodeOneDetHG(UShort_t anode, UShort_t side, U
   TCanvas * c = new TCanvas(name,name,700,600);
   UShort_t det=GetDet(side,pos);
   if (TestDet(det,fFlagHG[anode-1])){
-    c->cd(); h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+    c->cd(); 
+    h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+    h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->SetDirectory(0);
   }
   return(c);
 }
@@ -116,7 +120,9 @@ TCanvas * B3_RawToFHistos::DrawAllAnodesOneDetLG(UShort_t side, UShort_t pos)
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     det=GetDet(side,pos);
     if (TestDet(det,fFlagLG[anode-1])){
-      c->cd(anode); h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
+      c->cd(anode); 
+      h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
+      h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->SetDirectory(0);
     }
   }
     return(c);
@@ -131,7 +137,9 @@ TCanvas * B3_RawToFHistos::DrawAllAnodesOneDetHG(UShort_t side, UShort_t pos)
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     det=GetDet(side,pos);
     if (TestDet(det,fFlagHG[anode-1])){
-      c->cd(anode); h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+      c->cd(anode); 
+      h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+      h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->SetDirectory(0);
     }
   }
     return(c);
@@ -148,7 +156,9 @@ TCanvas * B3_RawToFHistos::DrawOneAnodeAllDetsLG(UShort_t anode)
     for(UShort_t pos=1; pos<=2; pos++){
       det=GetDet(side,pos);
       if (TestDet(det,fFlagLG[anode-1])){
-	c->cd(pos+2*(side-1)); h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
+	c->cd(pos+2*(side-1)); 
+	h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
+	h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->SetDirectory(0);	
       }
     }
   }
@@ -165,7 +175,9 @@ TCanvas * B3_RawToFHistos::DrawOneAnodeAllDetsHG(UShort_t anode)
     for(UShort_t pos=1; pos<=2; pos++){
       det=GetDet(side,pos);
       if (TestDet(det,fFlagHG[anode-1])){
-	c->cd(pos+2*(side-1)); h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+	c->cd(pos+2*(side-1)); 
+	h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+	h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->SetDirectory(0);
       }
     }
   }
@@ -180,7 +192,9 @@ TCanvas * B3_RawToFHistos::DrawAllAnodesAllDetsLG()
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     for(UShort_t det=1; det<=4; det++){
       if (TestDet(det,fFlagLG[anode-1])){
-	c->cd(anode+FC_nAnodes*(det-1)); h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
+	c->cd(anode+FC_nAnodes*(det-1)); 
+	h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->Draw();
+	h1_RawToF_LG[(det-1)+B3_nDets*(anode-1)]->SetDirectory(0);
       }
     }
   }
@@ -195,7 +209,9 @@ TCanvas * B3_RawToFHistos::DrawAllAnodesAllDetsHG()
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     for(UShort_t det=1; det<=4; det++){
       if (TestDet(det,fFlagHG[anode-1])){
-	c->cd(anode+FC_nAnodes*(det-1)); h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+	c->cd(anode+FC_nAnodes*(det-1)); 
+	h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->Draw();
+	h1_RawToF_HG[(det-1)+B3_nDets*(anode-1)]->SetDirectory(0);
       }
     }
   }

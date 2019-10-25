@@ -444,7 +444,6 @@ int main (int argc, char** argv) {
   while((data = faster_file_reader_next (file_reader))){
     nevents++;
     if ((nevents%5000000)==0) cout << nevents << endl;
-    cout << "NEW EVENT : nevents = " << nevents << endl;
     // --- ---------------------------------- --- // 
     // --- INITIALIZATION OF OUTPUT VARIABLES --- //
     // --- ---------------------------------- --- // 
@@ -566,7 +565,6 @@ int main (int argc, char** argv) {
       // COINC DATA
       if(TRIGGER_MODE!=1) cout << "ERROR, GROUP_TYPE_ALIAS FOUND WITH TRIGGER_MODE = "<< TRIGGER_MODE << " DIFFERENT OF THE EXPECTED 1 VALUE, CHECK setup_specific.h" << endl;
       nevents_coinc++;
-      cout << "      nevents_coinc = " << nevents_coinc << endl;
 
       // --- ----------------------------- --- //
       // --- OPEN THE FASTER BUFFER READER --- //
@@ -582,26 +580,18 @@ int main (int argc, char** argv) {
 	label = (unsigned short)(faster_data_label (group_data));
 	clock = faster_data_clock_ns (group_data);
 	detType = DetType[label-1];
-	cout << "label = " << label << " : detType = " << detType << endl;
 	switch (detType)
 	  {
 #if FC>0
 	  case 1: //--- FISSION CHAMBER --- //
 	    faster_data_load(group_data,&FCdata);
-	    cout << "1/ FISSION CHAMBER label = " << label << ",  anode = " << Label2Ch[label-1] << ", Q1 = " << FCdata.q1 << ", Q2 = " << FCdata.q2 << ", time = " << (double)(clock)+(double)(qdc_conv_dt_ns(FCdata.tdc)) << endl;
-	    cout << "vFC_label.size() = " << vFC_label.size() << endl;
 	    vFC_label.push_back(label);
-	    cout << "2/ FISSION CHAMBER label = " << label << "  anode = " << Label2Ch[label-1] << endl;
 	    vFC_anode.push_back(Label2Ch[label-1]); 
-	    cout << "3/ FISSION CHAMBER label = " << label << "  anode = " << Label2Ch[label-1] << endl;
 	    FC_mult[Label2Ch[label-1]-1]++;
-	    cout << "FC_mult = " << FC_mult[Label2Ch[label-1]-1]++ << endl;
 	    //vFC_clock.push_back(clock);
 	    //vFC_tdc.push_back(FCdata.tdc);
 	    vFC_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(FCdata.tdc)));
-	    cout << "time = " << (double)(clock)+(double)(qdc_conv_dt_ns(FCdata.tdc)) << endl;
 	    vFC_Q1.push_back(FCdata.q1);
-	    cout << "Q1 = " << FCdata.q1 << endl;
 #if FC_nQ>1
 	    vFC_Q2.push_back(FCdata.q2);
 #endif
@@ -744,17 +734,16 @@ int main (int argc, char** argv) {
 	  }//end of switch(detType)
 
       }// end of while(group)
+
+      // --- ------------- --- //
+      // --- FILL THE TREE --- //
+      // --- ------------- --- //
+      t->Fill();
+
       // --- ------------------------------ --- //
       // --- CLOSE THE FASTER BUFFER READER --- //
       // --- ------------------------------ --- //
       faster_buffer_reader_close(buffer_reader);
-      cout << "faster_buffer_reader_close(buffer_reader) done !" << endl;
-      // --- ------------- --- //
-      // --- FILL THE TREE --- //
-      // --- ------------- --- //
-      cout << "Fill the tree " << endl;
-      t->Fill();
-      cout << "Tree filled" << endl;
       break;// END OF COINC DATA
       
 #if (CHINU_nQ==B3_nQ)
@@ -1017,16 +1006,7 @@ int main (int argc, char** argv) {
       break;
     }// end of switch(alias)
     
-    cout << "nevents = " << nevents << " ready for the next event" << endl << endl;
-
   }//end of while data
-
-
-  // === ======================== === //
-  // === CLOSE FASTER FILE READER === //
-  // === ======================== === //
-  faster_file_reader_close (file_reader);
-
 
   // === ====================== === //
   // === SAVE TREE IN ROOT FILE === //
@@ -1035,6 +1015,11 @@ int main (int argc, char** argv) {
   t->Write();
   fsave->ls();
   fsave->Close();
+
+  // === ======================== === //
+  // === CLOSE FASTER FILE READER === //
+  // === ======================== === //
+  faster_file_reader_close (file_reader);
 
   // === =============== === //
   // === SOME STATISTICS === //

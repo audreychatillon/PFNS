@@ -1,5 +1,3 @@
-#include "../SetupSpecific/setup_specific.h"
-
 //=============================================================== //
 // NUMBER OF CHANNELS AND NAME OF CHANNELS                        //
 //=============================================================== //
@@ -99,10 +97,10 @@ using namespace std;
 int main (int argc, char** argv) {
 
   char name[100];
-  UInt_t nevents_coinc=0;
-  UInt_t nevents_source=0;
-  UInt_t nevents_counters=0;
-  UInt_t detType, detSubType;
+  unsigned int nevents_coinc=0;
+  unsigned int nevents_source=0;
+  unsigned int nevents_counters=0;
+  int    detType, detSubType;
 
   // === ================ === //
   // === FASTER VARIABLES === //
@@ -111,16 +109,16 @@ int main (int argc, char** argv) {
   faster_file_reader_p   file_reader;
   // --- DATA
   faster_data_p          data;
-  UInt_t                 lsize_data;
+  unsigned int                 lsize_data;
   UChar_t                buffer [3000];
   UChar_t                alias_data;
-  UShort_t               label_data;
-  ULong64_t              clock_data;
+  unsigned short               label_data;
+  unsigned long long              clock_data;
   // --- ONLY FOR COINC
   faster_buffer_reader_p buffer_reader;
   faster_data_p          group_data;
-  UShort_t               label;
-  ULong64_t              clock;
+  unsigned short               label;
+  unsigned long long              clock;
 #if FC>0
 #if   FC_nQ==1
   qdc_t_x1               FCdata;
@@ -195,113 +193,113 @@ int main (int argc, char** argv) {
   // === ================ === //
 
   // --- General 
-  UInt_t nevents=0;;
+  unsigned int nevents=0;;
   
   // --- Fission Chamber
 #if FC>0
-  UShort_t FC_mult[FC_nAnodes];
-  std::vector<UShort_t> vFC_label;
-  std::vector<UShort_t> vFC_anode;
-  //std::vector<ULong64_t> vFC_clock;
+  unsigned short FC_mult[FC_nAnodes];
+  std::vector<unsigned short> vFC_label;
+  std::vector<unsigned short> vFC_anode;
+  //std::vector<unsigned long long> vFC_clock;
   //std::vector<Double_t> vFC_tdc;
   std::vector<Double_t> vFC_time;
-  std::vector<UInt_t> vFC_Q1;
+  std::vector<unsigned int> vFC_Q1;
 #if FC_nQ>1
-  std::vector<UInt_t> vFC_Q2;
+  std::vector<unsigned int> vFC_Q2;
 #endif
 #if FC_nQ>2
-  std::vector<UInt_t> vFC_Q3;
+  std::vector<unsigned int> vFC_Q3;
 #endif
 #if FC_nQ>3
-  std::vector<UInt_t> vFC_Q4;
+  std::vector<unsigned int> vFC_Q4;
 #endif
 #endif
 
   // --- Chi-Nu Neutron detectors
 #if CHINU>0
-  UShort_t CHINU_multLG[CHINU_nDets];
-  UShort_t CHINU_multHG[CHINU_nDets];
-  std::vector<UShort_t> vCHINUlg_label;
-  std::vector<UShort_t> vCHINUhg_label;
-  std::vector<UShort_t> vCHINUlg_det;
-  std::vector<UShort_t> vCHINUhg_det;
-  //std::vector<ULong64_t> vCHINUlg_clock;
-  //std::vector<ULong64_t> vCHINUhg_clock;
+  unsigned short CHINU_multLG[CHINU_nDets];
+  unsigned short CHINU_multHG[CHINU_nDets];
+  std::vector<unsigned short> vCHINUlg_label;
+  std::vector<unsigned short> vCHINUhg_label;
+  std::vector<unsigned short> vCHINUlg_det;
+  std::vector<unsigned short> vCHINUhg_det;
+  //std::vector<unsigned long long> vCHINUlg_clock;
+  //std::vector<unsigned long long> vCHINUhg_clock;
   //std::vector<Double_t> vCHINUlg_tdc;
   //std::vector<Double_t> vCHINUhg_tdc;
   std::vector<Double_t> vCHINUlg_time;
   std::vector<Double_t> vCHINUhg_time;
-  std::vector<UInt_t> vCHINUlg_Q1;
-  std::vector<UInt_t> vCHINUhg_Q1;
+  std::vector<unsigned int> vCHINUlg_Q1;
+  std::vector<unsigned int> vCHINUhg_Q1;
 #if CHINU_nQ>1
-  std::vector<UInt_t> vCHINUlg_Q2;
-  std::vector<UInt_t> vCHINUhg_Q2;
+  std::vector<unsigned int> vCHINUlg_Q2;
+  std::vector<unsigned int> vCHINUhg_Q2;
 #endif
 #if CHINU_nQ>2
-  std::vector<UInt_t> vCHINUlg_Q3;
-  std::vector<UInt_t> vCHINUhg_Q3;
+  std::vector<unsigned int> vCHINUlg_Q3;
+  std::vector<unsigned int> vCHINUhg_Q3;
 #endif
 #if CHINU_nQ>3
-  std::vector<UInt_t> vCHINUlg_Q4;
-  std::vector<UInt_t> vCHINUhg_Q4;
+  std::vector<unsigned int> vCHINUlg_Q4;
+  std::vector<unsigned int> vCHINUhg_Q4;
 #endif
 #endif
 
   // --- B3 Neutron detectors
 #if B3>0
-  UShort_t B3_multLG[B3_nDets];
-  UShort_t B3_multHG[B3_nDets];
-  std::vector<UShort_t> vB3lg_label;
-  std::vector<UShort_t> vB3hg_label;
-  std::vector<UShort_t> vB3lg_det;
-  std::vector<UShort_t> vB3hg_det;
-  //std::vector<ULong64_t> vB3lg_clock;
-  //std::vector<ULong64_t> vB3hg_clock;
+  unsigned short B3_multLG[B3_nDets];
+  unsigned short B3_multHG[B3_nDets];
+  std::vector<unsigned short> vB3lg_label;
+  std::vector<unsigned short> vB3hg_label;
+  std::vector<unsigned short> vB3lg_det;
+  std::vector<unsigned short> vB3hg_det;
+  //std::vector<unsigned long long> vB3lg_clock;
+  //std::vector<unsigned long long> vB3hg_clock;
   //std::vector<Double_t> vB3lg_tdc;
   //std::vector<Double_t> vB3hg_tdc;
   std::vector<Double_t> vB3lg_time;
   std::vector<Double_t> vB3hg_time;
-  std::vector<UInt_t> vB3lg_Q1;
-  std::vector<UInt_t> vB3hg_Q1;
+  std::vector<unsigned int> vB3lg_Q1;
+  std::vector<unsigned int> vB3hg_Q1;
 #if B3_nQ>1
-  std::vector<UInt_t> vB3lg_Q2;
-  std::vector<UInt_t> vB3hg_Q2;
+  std::vector<unsigned int> vB3lg_Q2;
+  std::vector<unsigned int> vB3hg_Q2;
 #endif
 #if B3_nQ>2
-  std::vector<UInt_t> vB3lg_Q3;
-  std::vector<UInt_t> vB3hg_Q3;
+  std::vector<unsigned int> vB3lg_Q3;
+  std::vector<unsigned int> vB3hg_Q3;
 #endif
 #if B3_nQ>3
-  std::vector<UInt_t> vB3lg_Q4;
-  std::vector<UInt_t> vB3hg_Q4;
+  std::vector<unsigned int> vB3lg_Q4;
+  std::vector<unsigned int> vB3hg_Q4;
 #endif
 #endif
 
   // --- Pulser
 #if PULSER>0
-  std::vector<UShort_t> vPULSER_label;
-  //std::vector<ULong64_t> vPULSER_clock;
+  std::vector<unsigned short> vPULSER_label;
+  //std::vector<unsigned long long> vPULSER_clock;
   //std::vector<Double_t> vPULSER_tdc;
   std::vector<Double_t> vPULSER_time;
-  std::vector<UInt_t> vPULSER_Q1;
+  std::vector<unsigned int> vPULSER_Q1;
 #endif
 
   // --- HF Beam
 #if HF>0
-  std::vector<UShort_t> vHF_label;
-  //std::vector<ULong64_t> vHF_clock;
+  std::vector<unsigned short> vHF_label;
+  //std::vector<unsigned long long> vHF_clock;
   //std::vector<Double_t> vHF_tdc;
   std::vector<Double_t> vHF_time;
-  std::vector<UInt_t> vHF_Q1;
+  std::vector<unsigned int> vHF_Q1;
 #endif
 
   // --- Macro Pulse
 #if MACRO>0
-  std::vector<UShort_t> vMACRO_label;
-  //std::vector<ULong64_t> vMACRO_clock;
+  std::vector<unsigned short> vMACRO_label;
+  //std::vector<unsigned long long> vMACRO_clock;
   //std::vector<Double_t> vMACRO_tdc;
   std::vector<Double_t> vMACRO_time;
-  std::vector<UInt_t> vMACRO_Q1;
+  std::vector<unsigned int> vMACRO_Q1;
 #endif
 
   // === =========== === //
@@ -309,6 +307,7 @@ int main (int argc, char** argv) {
   // === =========== === //
   TString rootfilename = argv[2];
   TFile * fsave = new TFile(rootfilename,"recreate");
+  fsave->ls();
   TString RunNumber=argv[3];
   TString FileNumber=argv[4];
 #if TRIGGER_MODE==1
@@ -354,7 +353,7 @@ int main (int argc, char** argv) {
   // B3 ndet 
 #if B3>0
   t->Branch("B3lg_mult",B3_multLG,"B3lg_mult[4]/s");
-  t->Branch("B3hg_mult",B3_multHG,"B3hg_mult[4]/s");
+  //t->Branch("B3hg_mult",B3_multHG,"B3hg_mult[4]/s");
   t->Branch("vB3lg_label",&vB3lg_label);
   t->Branch("vB3hg_label",&vB3hg_label);
   t->Branch("vB3lg_det",&vB3lg_det);
@@ -443,16 +442,15 @@ int main (int argc, char** argv) {
   // === LOOP OVER THE DATA === //
   // === ================== === //
   while((data = faster_file_reader_next (file_reader))){
-    
     nevents++;
     if ((nevents%5000000)==0) cout << nevents << endl;
-
+    cout << "NEW EVENT : nevents = " << nevents << endl;
     // --- ---------------------------------- --- // 
     // --- INITIALIZATION OF OUTPUT VARIABLES --- //
     // --- ---------------------------------- --- // 
     // *** Fission Chamber *** //
 #if FC>0
-    for(UShort_t anode=0; anode<FC_nAnodes; anode++) FC_mult[anode]=0;
+    for(unsigned short anode=0; anode<FC_nAnodes; anode++) FC_mult[anode]=0;
     vFC_label.clear();
     vFC_anode.clear();
     //vFC_clock.clear();
@@ -471,7 +469,7 @@ int main (int argc, char** argv) {
 #endif
     // *** Chi-Nu Neutron Detectors *** //
 #if CHINU>0
-    for(UShort_t det=0; det<CHINU_nDets; det++) {CHINU_multLG[det]=0; CHINU_multHG[det]=0;}
+    for(unsigned short det=0; det<CHINU_nDets; det++) {CHINU_multLG[det]=0; CHINU_multHG[det]=0;}
     vCHINUlg_label.clear();
     vCHINUhg_label.clear();
     vCHINUlg_det.clear();
@@ -499,7 +497,7 @@ int main (int argc, char** argv) {
 #endif
     // *** B3 Neutron Detectors *** //
 #if B3>0
-    for(UShort_t det=0; det<B3_nDets; det++) {B3_multLG[det]=0; B3_multHG[det]=0;}
+    for(unsigned short det=0; det<B3_nDets; det++) {B3_multLG[det]=0; B3_multHG[det]=0;}
     vB3lg_label.clear();
     vB3hg_label.clear();
     vB3lg_det.clear();
@@ -538,8 +536,8 @@ int main (int argc, char** argv) {
     vHF_label.clear();
     //vHF_clock.clear();
     //vHF_tdc.clear();
-    vHF_time.clear();
     vHF_Q1.clear();
+    vHF_time.clear();
 #endif
     // *** Macro Pulse *** //
 #if MACRO>0
@@ -554,8 +552,8 @@ int main (int argc, char** argv) {
     // --- IDENTIFICATION OF THE TYPE OF THE DATA --- //
     // --- -------------------------------------- --- //
     alias_data  = faster_data_type_alias (data);
-    label_data  = faster_data_label (data);
-    clock_data  = faster_data_clock_ns(data);
+    label_data  = (unsigned short)(faster_data_label (data));
+    clock_data  = (double)faster_data_clock_ns(data);
     
     switch(alias_data){
 
@@ -568,6 +566,8 @@ int main (int argc, char** argv) {
       // COINC DATA
       if(TRIGGER_MODE!=1) cout << "ERROR, GROUP_TYPE_ALIAS FOUND WITH TRIGGER_MODE = "<< TRIGGER_MODE << " DIFFERENT OF THE EXPECTED 1 VALUE, CHECK setup_specific.h" << endl;
       nevents_coinc++;
+      cout << "      nevents_coinc = " << nevents_coinc << endl;
+
       // --- ----------------------------- --- //
       // --- OPEN THE FASTER BUFFER READER --- //
       // --- ----------------------------- --- //
@@ -579,20 +579,29 @@ int main (int argc, char** argv) {
       // --- ---------------- --- //
       if(label_data!=LABEL_GROUP) cout << "WARNING !!! SEEMS TO HAVE A MISMATCH BETWEEN GROUP_ALIAS AND GROUP_LABEL" << endl;
       while ((group_data = faster_buffer_reader_next (buffer_reader)) != NULL){
-	label = faster_data_label (group_data);
+	label = (unsigned short)(faster_data_label (group_data));
 	clock = faster_data_clock_ns (group_data);
 	detType = DetType[label-1];
+	cout << "label = " << label << " : detType = " << detType << endl;
 	switch (detType)
 	  {
 #if FC>0
 	  case 1: //--- FISSION CHAMBER --- //
 	    faster_data_load(group_data,&FCdata);
+	    cout << "1/ FISSION CHAMBER label = " << label << ",  anode = " << Label2Ch[label-1] << ", Q1 = " << FCdata.q1 << ", Q2 = " << FCdata.q2 << ", time = " << (double)(clock)+(double)(qdc_conv_dt_ns(FCdata.tdc)) << endl;
+	    cout << "vFC_label.size() = " << vFC_label.size() << endl;
 	    vFC_label.push_back(label);
-	    vFC_anode.push_back(Label2Ch[label-1]); FC_mult[Label2Ch[label-1]-1]++;
+	    cout << "2/ FISSION CHAMBER label = " << label << "  anode = " << Label2Ch[label-1] << endl;
+	    vFC_anode.push_back(Label2Ch[label-1]); 
+	    cout << "3/ FISSION CHAMBER label = " << label << "  anode = " << Label2Ch[label-1] << endl;
+	    FC_mult[Label2Ch[label-1]-1]++;
+	    cout << "FC_mult = " << FC_mult[Label2Ch[label-1]-1]++ << endl;
 	    //vFC_clock.push_back(clock);
 	    //vFC_tdc.push_back(FCdata.tdc);
 	    vFC_time.push_back((double)(clock)+(double)(qdc_conv_dt_ns(FCdata.tdc)));
+	    cout << "time = " << (double)(clock)+(double)(qdc_conv_dt_ns(FCdata.tdc)) << endl;
 	    vFC_Q1.push_back(FCdata.q1);
+	    cout << "Q1 = " << FCdata.q1 << endl;
 #if FC_nQ>1
 	    vFC_Q2.push_back(FCdata.q2);
 #endif
@@ -611,7 +620,7 @@ int main (int argc, char** argv) {
 	    switch(detSubType)
 	      {
 	      case 21: // LOW GAIN 
-		CHINU_multLG[Label2Ch[label-1]]++;
+		CHINU_multLG[Label2Ch[label-1]-1]++;
 		vCHINUlg_label.push_back(label);
 		vCHINUlg_det.push_back(Label2Ch[label-1]);
 		//vCHINUlg_clock.push_back(clock);
@@ -629,7 +638,7 @@ int main (int argc, char** argv) {
 #endif
 		break;
 	      case 22: // HIGH GAIN
-		CHINU_multHG[Label2Ch[label-1]]++;
+		CHINU_multHG[Label2Ch[label-1]-1]++;
 		vCHINUhg_label.push_back(label);
 		vCHINUhg_det.push_back(Label2Ch[label-1]);
 		//vCHINUhg_clock.push_back(clock);
@@ -658,7 +667,7 @@ int main (int argc, char** argv) {
 	    switch(detSubType)
 	      {
 	      case 21: // LOW GAIN 
-		B3_multLG[Label2Ch[label-1]]++;
+		B3_multLG[Label2Ch[label-1]-1]++;
 		vB3lg_label.push_back(label);
 		vB3lg_det.push_back(Label2Ch[label-1]);
 		//vB3lg_clock.push_back(clock);
@@ -676,7 +685,7 @@ int main (int argc, char** argv) {
 #endif
 		break;
 	      case 22: // HIGH GAIN
-		B3_multHG[Label2Ch[label-1]]++;
+		B3_multHG[Label2Ch[label-1]-1]++;
 		vB3hg_label.push_back(label);
 		vB3hg_det.push_back(Label2Ch[label-1]);
 		//vB3hg_clock.push_back(clock);
@@ -696,6 +705,7 @@ int main (int argc, char** argv) {
 	      default:
 		break;
 	      }//end of switch(detSubType)
+
 	    break;
 #endif
 #if PULSER>0
@@ -738,10 +748,13 @@ int main (int argc, char** argv) {
       // --- CLOSE THE FASTER BUFFER READER --- //
       // --- ------------------------------ --- //
       faster_buffer_reader_close(buffer_reader);
+      cout << "faster_buffer_reader_close(buffer_reader) done !" << endl;
       // --- ------------- --- //
       // --- FILL THE TREE --- //
       // --- ------------- --- //
+      cout << "Fill the tree " << endl;
       t->Fill();
+      cout << "Tree filled" << endl;
       break;// END OF COINC DATA
       
 #if (CHINU_nQ==B3_nQ)
@@ -767,7 +780,7 @@ int main (int argc, char** argv) {
 	  switch(detSubType)
 	    {
 	    case 21: // LOW GAIN 
-	      CHINU_multLG[Label2Ch[label_data-1]]++;
+	      CHINU_multLG[Label2Ch[label_data-1]-1]++;
 	      vCHINUlg_label.push_back(label_data);
 	      vCHINUlg_det.push_back(Label2Ch[label_data-1]);
 	      //vCHINUlg_clock.push_back(clock_data);
@@ -785,7 +798,7 @@ int main (int argc, char** argv) {
 #endif
 	      break;
 	    case 22: // HIGH GAIN
-	      CHINU_multHG[Label2Ch[label_data-1]]++;
+	      CHINU_multHG[Label2Ch[label_data-1]-1]++;
 	      vCHINUhg_label.push_back(label_data);
 	      vCHINUhg_det.push_back(Label2Ch[label_data-1]);
 	      //vCHINUhg_clock.push_back(clock_data);
@@ -814,7 +827,7 @@ int main (int argc, char** argv) {
 	  switch(detSubType)
 	    {
 	    case 21: // LOW GAIN 
-	      B3_multLG[Label2Ch[label_data-1]]++;
+	      B3_multLG[Label2Ch[label_data-1]-1]++;
 	      vB3lg_label.push_back(label_data);
 	      vB3lg_det.push_back(Label2Ch[label_data-1]);
 	      //vB3lg_clock.push_back(clock_data);
@@ -832,7 +845,7 @@ int main (int argc, char** argv) {
 #endif
 	      break;
 	    case 22: // HIGH GAIN
-	      B3_multHG[Label2Ch[label_data-1]]++;
+	      B3_multHG[Label2Ch[label_data-1]-1]++;
 	      vB3hg_label.push_back(label_data);
 	      vB3hg_det.push_back(Label2Ch[label_data-1]);
 	      //vB3hg_clock.push_back(clock_data);
@@ -883,7 +896,7 @@ int main (int argc, char** argv) {
 	  switch(detSubType)
 	    {
 	    case 21: // LOW GAIN 
-	      CHINU_multLG[Label2Ch[label_data-1]]++;
+	      CHINU_multLG[Label2Ch[label_data-1]-1]++;
 	      vCHINUlg_label.push_back(label_data);
 	      vCHINUlg_det.push_back(Label2Ch[label_data-1]);
 	      //vCHINUlg_clock.push_back(clock_data);
@@ -901,7 +914,7 @@ int main (int argc, char** argv) {
 #endif
 	      break;
 	    case 22: // HIGH GAIN
-	      CHINU_multHG[Label2Ch[label_data-1]]++;
+	      CHINU_multHG[Label2Ch[label_data-1]-1]++;
 	      vCHINUhg_label.push_back(label_data);
 	      vCHINUhg_det.push_back(Label2Ch[label_data-1]);
 	      //vCHINUhg_clock.push_back(clock_data);
@@ -951,7 +964,7 @@ int main (int argc, char** argv) {
 	  switch(detSubType)
 	    {
 	    case 21: // LOW GAIN 
-	      B3_multLG[Label2Ch[label_data-1]]++;
+	      B3_multLG[Label2Ch[label_data-1]-1]++;
 	      vB3lg_label.push_back(label_data);
 	      vB3lg_det.push_back(Label2Ch[label_data-1]);
 	      //vB3lg_clock.push_back(clock_data);
@@ -969,7 +982,7 @@ int main (int argc, char** argv) {
 #endif
 	      break;
 	    case 22: // HIGH GAIN
-	      B3_multHG[Label2Ch[label_data-1]]++;
+	      B3_multHG[Label2Ch[label_data-1]-1]++;
 	      vB3hg_label.push_back(label_data);
 	      vB3hg_det.push_back(Label2Ch[label_data-1]);
 	      //vB3hg_clock.push_back(clock_data);
@@ -1004,7 +1017,7 @@ int main (int argc, char** argv) {
       break;
     }// end of switch(alias)
     
-    
+    cout << "nevents = " << nevents << " ready for the next event" << endl << endl;
 
   }//end of while data
 

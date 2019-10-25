@@ -76,7 +76,7 @@ void CHINU_RawQHistos::DefineDiscriLG(UShort_t side, UShort_t ring, UShort_t ran
   UShort_t det = GetDet(side,ring,rank);
   if(!TestRank(rank,fFlagDiscriLG[ring-1+3*(side-1)])){
     sprintf(name,"DiscriQ_%s_%s_%d_LG",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank);
-    h2_DiscriLG[det-1] = new TH2F(name,name,1025,0,524800,600,0,3);
+    h2_DiscriLG[det-1] = new TH2F(name,name,450,0,300000,350,0.5,1.2);
     fFlagDiscriLG[ring-1+3*(side-1)] = fFlagDiscriLG[ring-1+3*(side-1)] | (1<<(rank-1));
   }
 }
@@ -86,7 +86,7 @@ void CHINU_RawQHistos::DefineDiscriHG(UShort_t side, UShort_t ring, UShort_t ran
   UShort_t det = GetDet(side,ring,rank);
   if(!TestRank(rank,fFlagDiscriHG[ring-1+3*(side-1)])){
     sprintf(name,"DiscriQ_%s_%s_%d_HG",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank);
-    h2_DiscriHG[det-1] = new TH2F(name,name,1025,0,524800,600,0,3);
+    h2_DiscriHG[det-1] = new TH2F(name,name,500,0,600000,350,0.5,1.2);
     fFlagDiscriHG[ring-1+3*(side-1)] = fFlagDiscriHG[ring-1+3*(side-1)] | (1<<(rank-1));
   }
 }
@@ -149,8 +149,8 @@ TCanvas * CHINU_RawQHistos::DrawHistos1DLG(UShort_t side, UShort_t ring, UShort_
   TCanvas * c = new TCanvas(name,name,1000,500);
   c->Divide(2,1);
   if(TestRank(rank,fFlag1DLG[ring-1+3*(side-1)])) {
-    c->cd(1); h1_Q1LG[det-1]->Draw();
-    c->cd(2); h1_Q2LG[det-1]->Draw();
+    c->cd(1); h1_Q1LG[det-1]->Draw(); h1_Q1LG[det-1]->SetDirectory(0);
+    c->cd(2); h1_Q2LG[det-1]->Draw(); h1_Q2LG[det-1]->SetDirectory(0);
   }
   return(c);
 }
@@ -162,8 +162,8 @@ TCanvas * CHINU_RawQHistos::DrawHistos1DHG(UShort_t side, UShort_t ring, UShort_
   TCanvas * c = new TCanvas(name,name,1000,500);
   c->Divide(2,1);
   if(TestRank(rank,fFlag1DHG[ring-1+3*(side-1)])) {
-    c->cd(1); h1_Q1HG[det-1]->Draw();
-    c->cd(2); h1_Q2HG[det-1]->Draw();
+    c->cd(1); h1_Q1HG[det-1]->Draw();h1_Q1HG[det-1]->SetDirectory(0);
+    c->cd(2); h1_Q2HG[det-1]->Draw();h1_Q2HG[det-1]->SetDirectory(0);
   }
   return(c);
 }
@@ -178,7 +178,7 @@ TCanvas * CHINU_RawQHistos::DrawHistos1DSideRingLG(UShort_t side, UShort_t ring)
   for(UShort_t rank=1; rank<=9; rank++){
     det = GetDet(side,ring,rank);
     if(TestRank(rank,fFlag1DLG[ring-1+3*(side-1)])) {
-      c->cd(rank); h1_Q2LG[det-1]->Draw(); h1_Q1LG[det-1]->Draw("same");
+      c->cd(rank); h1_Q2LG[det-1]->Draw(); h1_Q1LG[det-1]->Draw("same");h1_Q1LG[det-1]->SetDirectory(0);
     }
   }
   return(c);
@@ -194,7 +194,9 @@ TCanvas * CHINU_RawQHistos::DrawHistos1DSideRingHG(UShort_t side, UShort_t ring)
   for(UShort_t rank=1; rank<=9; rank++){
     det = GetDet(side,ring,rank);
     if(TestRank(rank,fFlag1DHG[ring-1+3*(side-1)])) {
-      c->cd(rank); h1_Q2HG[det-1]->Draw(); h1_Q1HG[det-1]->Draw("same");
+      c->cd(rank); 
+      h1_Q2HG[det-1]->Draw(); h1_Q2HG[det-1]->SetDirectory(0);
+      h1_Q1HG[det-1]->Draw("same");h1_Q1HG[det-1]->SetDirectory(0);
     }
   }
   return(c);
@@ -211,7 +213,9 @@ TCanvas * CHINU_RawQHistos::DrawHistos1DRankLG(UShort_t rank)
     for(UShort_t ring=1; ring<=3; ring++){
       det = GetDet(side,ring,rank);
       if(TestRank(rank,fFlag1DLG[ring-1+3*(side-1)])) {
-	c->cd(ring+3*(side-1)); h1_Q2LG[det-1]->Draw(); h1_Q1LG[det-1]->Draw("same");
+	c->cd(ring+3*(side-1)); 
+	h1_Q2LG[det-1]->Draw(); h1_Q2LG[det-1]->SetDirectory(0);
+	h1_Q1LG[det-1]->Draw("same");h1_Q1LG[det-1]->SetDirectory(0);
       }
     }
   }
@@ -229,7 +233,9 @@ TCanvas * CHINU_RawQHistos::DrawHistos1DRankHG(UShort_t rank)
     for(UShort_t ring=1; ring<=3; ring++){
       det = GetDet(side,ring,rank);
       if(TestRank(rank,fFlag1DHG[ring-1+3*(side-1)])) {
-	c->cd(ring+3*(side-1)); h1_Q2HG[det-1]->Draw(); h1_Q1HG[det-1]->Draw("same");
+	c->cd(ring+3*(side-1)); 
+	h1_Q2HG[det-1]->Draw(); h1_Q2HG[det-1]->SetDirectory(0);
+	h1_Q1HG[det-1]->Draw("same");h1_Q1HG[det-1]->SetDirectory(0);
       }
     }
   }
@@ -242,7 +248,9 @@ TCanvas * CHINU_RawQHistos::DrawHistoDiscriLG(UShort_t side, UShort_t ring, USho
   sprintf(name,"DiscriQ_%s_%s_%d_LG",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank);
   TCanvas * c = new TCanvas(name,name,600,500);
   c->cd();
-  if(TestRank(rank,fFlagDiscriLG[ring-1+3*(side-1)])) h2_DiscriLG[det-1]->Draw("COL");
+  if(TestRank(rank,fFlagDiscriLG[ring-1+3*(side-1)])) {
+    h2_DiscriLG[det-1]->Draw("COL"); h2_DiscriLG[det-1]->SetDirectory(0);
+  }
   return(c);
 }
 TCanvas * CHINU_RawQHistos::DrawHistoDiscriHG(UShort_t side, UShort_t ring, UShort_t rank)
@@ -252,7 +260,10 @@ TCanvas * CHINU_RawQHistos::DrawHistoDiscriHG(UShort_t side, UShort_t ring, USho
   sprintf(name,"DiscriQ_%s_%s_%d_HG",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank);
   TCanvas * c = new TCanvas(name,name,600,500);
   c->cd();
-  if(TestRank(rank,fFlagDiscriHG[ring-1+3*(side-1)])) h2_DiscriHG[det-1]->Draw("COL");
+  if(TestRank(rank,fFlagDiscriHG[ring-1+3*(side-1)])) {
+    h2_DiscriHG[det-1]->Draw("COL");
+    h2_DiscriHG[det-1]->SetDirectory(0);
+  }
   return(c);
 }
 TCanvas * CHINU_RawQHistos::DrawHistosDiscriSideRingLG(UShort_t side, UShort_t ring)
@@ -266,7 +277,8 @@ TCanvas * CHINU_RawQHistos::DrawHistosDiscriSideRingLG(UShort_t side, UShort_t r
   for(UShort_t rank=1; rank<=9; rank++){
     det = GetDet(side,ring,rank);
       if(TestRank(rank,fFlagDiscriLG[ring-1+3*(side-1)])){
-	c->cd(rank); h2_DiscriLG[det-1]->Draw("COL"); 
+	c->cd(rank); 
+	h2_DiscriLG[det-1]->Draw("COL"); h2_DiscriLG[det-1]->SetDirectory(0);
       }
   }
   return(c);
@@ -282,7 +294,9 @@ TCanvas * CHINU_RawQHistos::DrawHistosDiscriSideRingHG(UShort_t side, UShort_t r
   for(UShort_t rank=1; rank<=9; rank++){
     det = GetDet(side,ring,rank);
       if(TestRank(rank,fFlagDiscriHG[ring-1+3*(side-1)])){
-	c->cd(rank); h2_DiscriHG[det-1]->Draw("COL");
+	c->cd(rank); 
+	h2_DiscriHG[det-1]->Draw("COL");
+	h2_DiscriHG[det-1]->SetDirectory(0);
       }
   }
   return(c);
@@ -299,7 +313,9 @@ TCanvas * CHINU_RawQHistos::DrawHistosDiscriRankLG(UShort_t rank)
     for(UShort_t ring=1; ring<=3; ring++){
       det = GetDet(side,ring,rank);
       if(TestRank(rank,fFlagDiscriLG[ring-1+3*(side-1)])){
-	c->cd(ring+3*(side-1)); h2_DiscriLG[det-1]->Draw("COL");
+	c->cd(ring+3*(side-1)); 
+	h2_DiscriLG[det-1]->Draw("COL");
+	h2_DiscriLG[det-1]->SetDirectory(0);
       }
     }
   }
@@ -317,7 +333,8 @@ TCanvas * CHINU_RawQHistos::DrawHistosDiscriRankHG(UShort_t rank)
     for(UShort_t ring=1; ring<=3; ring++){
       det = GetDet(side,ring,rank);
       if(TestRank(rank,fFlagDiscriHG[ring-1+3*(side-1)])){
-	c->cd(ring+3*(side-1)); h2_DiscriHG[det-1]->Draw("COL");
+	c->cd(ring+3*(side-1)); 
+	h2_DiscriHG[det-1]->Draw("COL");h2_DiscriHG[det-1]->SetDirectory(0);
       }
     }
   }

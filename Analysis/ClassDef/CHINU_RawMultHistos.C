@@ -16,10 +16,8 @@ void CHINU_RawMultHistos::DefineHistos()
 
   h1_LG = new TH1I("CHINU_LG_mult","CHINU_LG_mult",10,-0.5,9.5);
   h1_LG->SetLineColor(kBlue);
-  h1_LG->SetDirectory(0);
   h1_HG = new TH1I("CHINU_HG_mult","CHINU_HG_mult",10,-0.5,9.5);
   h1_HG->SetLineColor(kRed);
-  h1_HG->SetDirectory(0);
 
   for(UShort_t s=0; s<2; s++){
     for(UShort_t r=0; r<3; r++){
@@ -58,14 +56,14 @@ TCanvas * CHINU_RawMultHistos::DrawHistos()
 {
   TCanvas * c = new TCanvas("MultNDET","MultNDET",0,0,1000,1500);
   c->Divide(2,4);
-  c->cd(1);  gPad->SetLogy(); h1_LG->Draw();
-  c->cd(2);  gPad->SetLogy(); h1_HG->Draw();
-  c->cd(3);  h1_HGpattern[0]->Draw(); h1_LGpattern[0]->Draw("same");
-  c->cd(4);  h1_HGpattern[3]->Draw(); h1_LGpattern[3]->Draw("same");
-  c->cd(5);  h1_HGpattern[1]->Draw(); h1_LGpattern[1]->Draw("same");
-  c->cd(6);  h1_HGpattern[4]->Draw(); h1_LGpattern[4]->Draw("same");
-  c->cd(7);  h1_HGpattern[2]->Draw(); h1_LGpattern[2]->Draw("same");
-  c->cd(8);  h1_HGpattern[5]->Draw(); h1_LGpattern[5]->Draw("same");
+  c->cd(1);  gPad->SetLogy(); h1_LG->Draw();h1_LG->SetDirectory(0);
+  c->cd(2);  gPad->SetLogy(); h1_HG->Draw();h1_HG->SetDirectory(0);
+  c->cd(3);  h1_HGpattern[0]->Draw(); h1_HGpattern[0]->SetDirectory(0); h1_LGpattern[0]->Draw("same");h1_LGpattern[0]->SetDirectory(0);
+  c->cd(4);  h1_HGpattern[3]->Draw(); h1_HGpattern[3]->SetDirectory(0); h1_LGpattern[3]->Draw("same");h1_LGpattern[3]->SetDirectory(0);
+  c->cd(5);  h1_HGpattern[1]->Draw(); h1_HGpattern[1]->SetDirectory(0); h1_LGpattern[1]->Draw("same");h1_LGpattern[1]->SetDirectory(0);
+  c->cd(6);  h1_HGpattern[4]->Draw(); h1_HGpattern[4]->SetDirectory(0); h1_LGpattern[4]->Draw("same");h1_LGpattern[4]->SetDirectory(0);
+  c->cd(7);  h1_HGpattern[2]->Draw(); h1_HGpattern[2]->SetDirectory(0); h1_LGpattern[2]->Draw("same");h1_LGpattern[2]->SetDirectory(0);
+  c->cd(8);  h1_HGpattern[5]->Draw(); h1_HGpattern[5]->SetDirectory(0); h1_LGpattern[5]->Draw("same");h1_LGpattern[5]->SetDirectory(0);
   return(c);
 
 }

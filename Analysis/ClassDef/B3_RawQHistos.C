@@ -66,7 +66,7 @@ void B3_RawQHistos::DefineDiscriLG(UShort_t side, UShort_t pos)
   UShort_t det = GetDet(side,pos);
   if(!TestDet(det,fFlagDiscriLG)){
     sprintf(name,"DiscriQ_B3_%s_%s_LG",sideVal[side-1].Data(),posVal[pos-1].Data());
-    h2_DiscriLG[det-1] = new TH2F(name,name,1025,0,524800,600,0,3);
+    h2_DiscriLG[det-1] = new TH2F(name,name,900,0,300000,350,0.5,1.2);
     fFlagDiscriLG = fFlagDiscriLG | (1<<(det-1));
   }
 }
@@ -76,7 +76,7 @@ void B3_RawQHistos::DefineDiscriHG(UShort_t side, UShort_t pos)
   UShort_t det = GetDet(side,pos);
   if(!TestDet(det,fFlagDiscriHG)){
     sprintf(name,"DiscriQ_B3_%s_%s_HG",sideVal[side-1].Data(),posVal[pos-1].Data());
-    h2_DiscriHG[det-1] = new TH2F(name,name,1025,0,524800,600,0,3);
+    h2_DiscriHG[det-1] = new TH2F(name,name,500,0,600000,350,0.5,1.2);
     fFlagDiscriHG = fFlagDiscriHG | (1<<(det-1));
   }
 }
@@ -132,8 +132,8 @@ TCanvas * B3_RawQHistos::DrawHistos1DLG(UShort_t side, UShort_t pos)
   TCanvas * c = new TCanvas(name,name,1000,500);
   c->Divide(2,1);
   if(TestDet(det,fFlag1DLG)){
-    c->cd(1); h1_Q1LG[det-1]->Draw();
-    c->cd(2); h1_Q2LG[det-1]->Draw();
+    c->cd(1); h1_Q1LG[det-1]->Draw(); h1_Q1LG[det-1]->SetDirectory(0);
+    c->cd(2); h1_Q2LG[det-1]->Draw(); h1_Q2LG[det-1]->SetDirectory(0);
   }
   return(c);
 }
@@ -145,8 +145,8 @@ TCanvas * B3_RawQHistos::DrawHistos1DHG(UShort_t side, UShort_t pos)
   TCanvas * c = new TCanvas(name,name,1000,500);
   c->Divide(2,1);
   if(TestDet(det,fFlag1DHG)){
-    c->cd(1); h1_Q1HG[det-1]->Draw();
-    c->cd(2); h1_Q2HG[det-1]->Draw();
+    c->cd(1); h1_Q1HG[det-1]->Draw();h1_Q1HG[det-1]->SetDirectory(0);
+    c->cd(2); h1_Q2HG[det-1]->Draw();h1_Q2HG[det-1]->SetDirectory(0);
   }
   return(c);
 }
@@ -161,7 +161,9 @@ TCanvas * B3_RawQHistos::DrawHistos1DSideLG(UShort_t side)
   for(UShort_t pos=1; pos<=2; pos++){
     det = GetDet(side,pos);
     if(TestDet(det,fFlag1DLG)){
-      c->cd(pos); h1_Q2LG[det-1]->Draw(); h1_Q1LG[det-1]->Draw("same");
+      c->cd(pos); 
+      h1_Q2LG[det-1]->Draw(); h1_Q2LG[det-1]->SetDirectory(0);
+      h1_Q1LG[det-1]->Draw("same");h1_Q1LG[det-1]->SetDirectory(0);
     }
   }
   return(c);
@@ -177,7 +179,9 @@ TCanvas * B3_RawQHistos::DrawHistos1DSideHG(UShort_t side)
   for(UShort_t pos=1; pos<=2; pos++){
     det = GetDet(side,pos);
     if(TestDet(det,fFlag1DHG)){
-      c->cd(pos); h1_Q2HG[det-1]->Draw(); h1_Q1HG[det-1]->Draw("same");
+      c->cd(pos); 
+      h1_Q2HG[det-1]->Draw(); h1_Q2HG[det-1]->SetDirectory(0);
+      h1_Q1HG[det-1]->Draw("same");h1_Q1HG[det-1]->SetDirectory(0);
     }
   }
   return(c);
@@ -194,7 +198,9 @@ TCanvas * B3_RawQHistos::DrawHistos1DAllLG()
     for(UShort_t pos=1; pos<=2; pos++){
       det = GetDet(side,pos);
       if(TestDet(det,fFlag1DLG)){
-	c->cd(pos+2*(side-1)); h1_Q2LG[det-1]->Draw(); h1_Q1LG[det-1]->Draw("same");
+	c->cd(pos+2*(side-1)); 
+	h1_Q2LG[det-1]->Draw(); h1_Q2LG[det-1]->SetDirectory(0);
+	h1_Q1LG[det-1]->Draw("same");h1_Q1LG[det-1]->SetDirectory(0);
       }
     }
   }
@@ -212,7 +218,9 @@ TCanvas * B3_RawQHistos::DrawHistos1DAllHG()
     for(UShort_t pos=1; pos<=2; pos++){
       det = GetDet(side,pos);
       if(TestDet(det,fFlag1DHG)){
-	c->cd(pos+2*(side-1)); h1_Q2HG[det-1]->Draw(); h1_Q1HG[det-1]->Draw("same");
+	c->cd(pos+2*(side-1)); 
+	h1_Q2HG[det-1]->Draw(); h1_Q2HG[det-1]->SetDirectory(0);
+	h1_Q1HG[det-1]->Draw("same");h1_Q1HG[det-1]->SetDirectory(0);
       }
     }
   }
@@ -225,7 +233,9 @@ TCanvas * B3_RawQHistos::DrawHistoDiscriLG(UShort_t side, UShort_t pos)
   sprintf(name,"DiscriQ_B3_%s_%s_LG",sideVal[side-1].Data(),posVal[pos-1].Data());
   TCanvas * c = new TCanvas(name,name,600,500);
   c->cd();
-  if (TestDet(det,fFlagDiscriLG))  h2_DiscriLG[det-1]->Draw("COL");
+  if (TestDet(det,fFlagDiscriLG))  {
+    h2_DiscriLG[det-1]->Draw("COL");h2_DiscriLG[det-1]->SetDirectory(0);
+  }
   return(c);
 }
 TCanvas * B3_RawQHistos::DrawHistoDiscriHG(UShort_t side, UShort_t pos)
@@ -235,7 +245,10 @@ TCanvas * B3_RawQHistos::DrawHistoDiscriHG(UShort_t side, UShort_t pos)
   sprintf(name,"DiscriQ_%s_%s_HG",sideVal[side-1].Data(),posVal[pos-1].Data());
   TCanvas * c = new TCanvas(name,name,600,500);
   c->cd();
-  if(TestDet(det,fFlagDiscriHG))  h2_DiscriHG[det-1]->Draw("COL");
+  if(TestDet(det,fFlagDiscriHG)) {
+    h2_DiscriHG[det-1]->Draw("COL");
+    h2_DiscriHG[det-1]->SetDirectory(0);
+  }
   return(c);
 }
 TCanvas * B3_RawQHistos::DrawHistosDiscriSideLG(UShort_t side)
@@ -249,7 +262,7 @@ TCanvas * B3_RawQHistos::DrawHistosDiscriSideLG(UShort_t side)
   for(UShort_t pos=1; pos<=2; pos++){
     det = GetDet(side,pos);				
     if(TestDet(det,fFlagDiscriLG)){
-      c->cd(pos); h2_DiscriLG[det-1]->Draw("COL"); 
+      c->cd(pos); h2_DiscriLG[det-1]->Draw("COL"); h2_DiscriLG[det-1]->SetDirectory(0);
     }
   }
   return(c);
@@ -265,7 +278,7 @@ TCanvas * B3_RawQHistos::DrawHistosDiscriSideHG(UShort_t side)
   for(UShort_t pos=1; pos<=2; pos++){
     det = GetDet(side,pos);
     if(TestDet(det,fFlagDiscriHG)){
-      c->cd(pos); h2_DiscriHG[det-1]->Draw("COL");
+      c->cd(pos); h2_DiscriHG[det-1]->Draw("COL");h2_DiscriHG[det-1]->SetDirectory(0);
     }
   }
   return(c);
@@ -282,7 +295,7 @@ TCanvas * B3_RawQHistos::DrawHistosDiscriAllLG()
     for(UShort_t pos=1; pos<=2; pos++){
       det = GetDet(side,pos);
       if(TestDet(det,fFlagDiscriLG)){
-	c->cd(pos+2*(side-1)); h2_DiscriLG[det-1]->Draw("COL");
+	c->cd(pos+2*(side-1)); h2_DiscriLG[det-1]->Draw("COL");h2_DiscriLG[det-1]->SetDirectory(0);
       }
     }
   }
@@ -300,7 +313,7 @@ TCanvas * B3_RawQHistos::DrawHistosDiscriAllHG()
     for(UShort_t pos=1; pos<=2; pos++){
       det = GetDet(side,pos);
       if(TestDet(det,fFlagDiscriHG)){
-	c->cd(pos+2*(side-1)); h2_DiscriHG[det-1]->Draw("COL");
+	c->cd(pos+2*(side-1)); h2_DiscriHG[det-1]->Draw("COL");h2_DiscriHG[det-1]->SetDirectory(0);
       }
     }
   }

@@ -1022,8 +1022,6 @@ int main (int argc, char** argv) {
   t->Write();
   fsave->ls();
   fsave->Close();
-  delete t;
-  delete fsave;
 
   // === =============== === //
   // === SOME STATISTICS === //

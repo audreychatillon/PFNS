@@ -25,11 +25,11 @@ void FC_RawQHistos::Define1D(UShort_t anode)
   char name[100];
   if(!TestAnode(anode,fFlag1D)){
     sprintf(name,"FC_Q1_anode%d",anode);
-    h1_Q1[anode-1] = new TH1I(name,name,4100,0,131200);
-    h1_Q1[anode-1]->SetFillColor(kBlue);
+    h1_Q1[anode-1] = new TH1I(name,name,340,0,34000);
+    h1_Q1[anode-1]->SetLineColor(kBlue);
     sprintf(name,"FC_Q2_anode%d",anode);
-    h1_Q2[anode-1] = new TH1I(name,name,1025,0,32800);
-    h1_Q2[anode-1]->SetFillColor(kRed);
+    h1_Q2[anode-1] = new TH1I(name,name,250,0,10000);
+    h1_Q2[anode-1]->SetLineColor(kRed);
     fFlag1D = fFlag1D | (1<<(anode-1));    
   }
 }
@@ -40,7 +40,7 @@ void FC_RawQHistos::DefineDiscri(UShort_t anode)
   char name[100];
   if(!TestAnode(anode,fFlagDiscri)){
     sprintf(name,"FC_Q2vsQ1_anode%d",anode);
-    h2_Q2vsQ1[anode-1] = new TH2I(name,name,2400,0,120000,600,0,30000);
+    h2_Q2vsQ1[anode-1] = new TH2I(name,name,3400,0,34000,250,0,10000);
     fFlagDiscri = fFlagDiscri | (1<<(anode-1));    
   }
 }
@@ -70,8 +70,8 @@ TCanvas * FC_RawQHistos::Draw1DHistos(UShort_t anode)
   TCanvas * c = new TCanvas(name,name,1000,500);
   c->Divide(2,1);
   if(TestAnode(anode,fFlag1D)){
-    c->cd(1); h1_Q1[anode-1]->Draw();
-    c->cd(2); h1_Q2[anode-1]->Draw();
+    c->cd(1); h1_Q1[anode-1]->Draw();h1_Q1[anode-1]->SetDirectory(0);
+    c->cd(2); h1_Q2[anode-1]->Draw();h1_Q2[anode-1]->SetDirectory(0);
   }
   return(c);
 }
@@ -83,7 +83,9 @@ TCanvas * FC_RawQHistos::Draw1DAllHistos()
   c->Divide(4,3);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     if(TestAnode(anode,fFlag1D)){
-      c->cd(anode); h1_Q2[anode-1]->Draw(); h1_Q1[anode-1]->Draw("same");
+      c->cd(anode); 
+      h1_Q2[anode-1]->Draw(); h1_Q2[anode-1]->SetDirectory(0);
+      h1_Q1[anode-1]->Draw("same");h1_Q1[anode-1]->SetDirectory(0);
     }
   }
   return(c);
@@ -94,7 +96,9 @@ TCanvas * FC_RawQHistos::DrawDiscriHisto(UShort_t anode)
   sprintf(name,"Q2vsQ1_FC%d",anode);
   TCanvas * c = new TCanvas(name,name,700,700);
   gPad->SetLogz();
-  if(TestAnode(anode,fFlagDiscri))    h2_Q2vsQ1[anode-1]->Draw("COL");
+  if(TestAnode(anode,fFlagDiscri)){
+    h2_Q2vsQ1[anode-1]->Draw("COL");h2_Q2vsQ1[anode-1]->SetDirectory(0);
+  }
   return(c);
 }
 TCanvas * FC_RawQHistos::DrawDiscriAllHistos()
@@ -106,7 +110,7 @@ TCanvas * FC_RawQHistos::DrawDiscriAllHistos()
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     if(TestAnode(anode,fFlagDiscri)){
       c->cd(anode);   gPad->SetLogz();
-      h2_Q2vsQ1[anode-1]->Draw("COL");
+      h2_Q2vsQ1[anode-1]->Draw("COL");h2_Q2vsQ1[anode-1]->SetDirectory(0);
     }
   }
   return(c);

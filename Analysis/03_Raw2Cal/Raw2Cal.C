@@ -197,7 +197,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   // general variables
   t->Branch("Event",&raw.nevents,"Event/i");
   t->Branch("Label",&raw.label_data,"Label/i");
-  t->Branch("Clock",&raw.clock_data,"Clock/l");
   // chi-nu ndet 
 #if CHINU>0
   t->Branch("CHINUlg_mult",raw.CHINU_multLG,"CHINUlg_mult[54]/s");

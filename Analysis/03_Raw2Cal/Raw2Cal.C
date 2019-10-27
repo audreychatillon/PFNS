@@ -367,7 +367,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vB3lg_det.push_back(raw.vB3lg_det->at(m));
       vB3lg_Q1.push_back(raw.vB3lg_Q1->at(m));
       vB3lg_Q2.push_back(raw.vB3lg_Q2->at(m));
-      ToF = (raw.vB3lg_time->at(m)-raw.vFC_time->at(0))+B3_OffsetToFLG[raw.vB3lg_det->at(m)-1+CHINU_nDets*(FC_anode-1)];
+      ToF = (raw.vB3lg_time->at(m)-raw.vFC_time->at(0))+B3_OffsetToFLG[raw.vB3lg_det->at(m)-1+B3_nDets*(FC_anode-1)];
       vPFN_B3lg_ToF.push_back(ToF);
       Velocity = Distance_FC_B3[raw.vB3lg_det->at(m)-1] / ToF;
       Ene = Velocity2Ene(Velocity);
@@ -382,7 +382,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vB3hg_det.push_back(raw.vB3hg_det->at(m));
       vB3hg_Q1.push_back(raw.vB3hg_Q1->at(m));
       vB3hg_Q2.push_back(raw.vB3hg_Q2->at(m));
-      ToF = (raw.vB3hg_time->at(m)-raw.vFC_time->at(0))+B3_OffsetToFHG[raw.vB3hg_det->at(m)-1+CHINU_nDets*(FC_anode-1)];
+      ToF = (raw.vB3hg_time->at(m)-raw.vFC_time->at(0))+B3_OffsetToFHG[raw.vB3hg_det->at(m)-1+B3_nDets*(FC_anode-1)];
       vPFN_B3hg_ToF.push_back(ToF);
       Velocity = Distance_FC_B3[raw.vB3hg_det->at(m)-1] / ToF;
       Ene = Velocity2Ene(Velocity);

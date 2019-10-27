@@ -6,6 +6,7 @@
 #include "math.h"
 
 //  root includes
+#include "TCutG.h"
 #include "TFile.h"
 #include "TTree.h"
 #include "TString.h"
@@ -37,7 +38,7 @@
 
 
 
-// URGENT : CALCULER L'EFFICICATE POUR R_III_9_LG ET R_II_5_LG
+// URGENT : CALCULER L'EFFICACITE POUR R_III_9_LG (det=54) ET R_II_5_LG (det=41)
 
 Double_t Beta(double v_mns)
 {
@@ -178,9 +179,11 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 #if FC>0
   std::vector<Double_t> vPFN_CHINUlg_ToF;    // PFN ToF t(CHINU) - t(FC)
   std::vector<Bool_t>   vPFN_CHINUlg_IsGammaToF;    
+  std::vector<Bool_t>   vPFN_CHINUlg_IsGammaQdiscri;    
   std::vector<Double_t> vPFN_CHINUlg_Ene;    // PFN Energy
   std::vector<Double_t> vPFN_CHINUhg_ToF;    // PFN ToF t(CHINU) - t(FC)
   std::vector<Bool_t>   vPFN_CHINUhg_IsGammaToF;    
+  std::vector<Bool_t>   vPFN_CHINUhg_IsGammaQdiscri;    
   std::vector<Double_t> vPFN_CHINUhg_Ene;    // PFN Energy
 #endif
   // TO DO IF PULSER
@@ -196,9 +199,11 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 #if FC>0
   std::vector<Double_t> vPFN_B3lg_ToF;    // PFN ToF t(B3) - t(FC)
   std::vector<Bool_t>   vPFN_B3lg_IsGammaToF;    
+  std::vector<Bool_t>   vPFN_B3lg_IsGammaQdiscri;    
   std::vector<Double_t> vPFN_B3lg_Ene;    // PFN ToF
   std::vector<Double_t> vPFN_B3hg_ToF;    // PFN ToF t(B3) - t(FC)
   std::vector<Bool_t>   vPFN_B3hg_IsGammaToF;    
+  std::vector<Bool_t>   vPFN_B3hg_IsGammaQdiscri;    
   std::vector<Double_t> vPFN_B3hg_Ene;    // PFN ToF
 #endif
   // TO DO IF PULSER
@@ -240,6 +245,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   t->Branch("vPFN_CHINUhg_ToF",&vPFN_CHINUhg_ToF);
   t->Branch("vPFN_CHINUlg_IsGammaToF",&vPFN_CHINUlg_IsGammaToF);
   t->Branch("vPFN_CHINUhg_IsGammaToF",&vPFN_CHINUhg_IsGammaToF);
+  t->Branch("vPFN_CHINUlg_IsGammaQdiscri",&vPFN_CHINUlg_IsGammaQdiscri);
+  t->Branch("vPFN_CHINUhg_IsGammaQdiscri",&vPFN_CHINUhg_IsGammaQdiscri);
   t->Branch("vPFN_CHINUlg_Ene",&vPFN_CHINUlg_Ene);
   t->Branch("vPFN_CHINUhg_Ene",&vPFN_CHINUhg_Ene);
 #endif
@@ -258,6 +265,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   t->Branch("vPFN_B3hg_ToF",&vPFN_B3hg_ToF);
   t->Branch("vPFN_B3lg_IsGammaToF",&vPFN_B3lg_IsGammaToF);
   t->Branch("vPFN_B3hg_IsGammaToF",&vPFN_B3hg_IsGammaToF);
+  t->Branch("vPFN_B3lg_IsGammaQdiscri",&vPFN_B3lg_IsGammaQdiscri);
+  t->Branch("vPFN_B3hg_IsGammaQdiscri",&vPFN_B3hg_IsGammaQdiscri);
   t->Branch("vPFN_B3lg_Ene",&vPFN_B3lg_Ene);
   t->Branch("vPFN_B3hg_Ene",&vPFN_B3hg_Ene);
 #endif
@@ -267,8 +276,12 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 
   // TO DO BACKGROUND (PULSER)
 
-
-
+  // === ================================ === //
+  // === TCUTG FILE ON THE GAMMA Q DISCRI === //
+  // === ================================ === //
+  // TCutG * cutGammaQ[];
+  //TFile * fcut_GammaQdiscri = new TFile(,"read");
+  // fcut_GammaQdiscri->Close();
 
 
   // === ===================== === //
@@ -295,6 +308,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     vPFN_CHINUhg_ToF.clear();
     vPFN_CHINUlg_IsGammaToF.clear();
     vPFN_CHINUhg_IsGammaToF.clear();
+    vPFN_CHINUlg_IsGammaQdiscri.clear();
+    vPFN_CHINUhg_IsGammaQdiscri.clear();
     vPFN_CHINUlg_Ene.clear();
     vPFN_CHINUhg_Ene.clear();
     vB3lg_det.clear();
@@ -307,6 +322,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     vPFN_B3hg_ToF.clear();
     vPFN_B3lg_IsGammaToF.clear();
     vPFN_B3hg_IsGammaToF.clear();
+    vPFN_B3lg_IsGammaQdiscri.clear();
+    vPFN_B3hg_IsGammaQdiscri.clear();
     vPFN_B3lg_Ene.clear();
     vPFN_B3hg_Ene.clear();
 
@@ -337,6 +354,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	vPFN_CHINUlg_IsGammaToF.push_back(kTRUE);
       else 	
 	vPFN_CHINUlg_IsGammaToF.push_back(kFALSE);
+      // TO DO TEST GAMMA Q DISCRI
     }
     for(UShort_t m=0; m<raw.vCHINUhg_det->size(); m++){
       vCHINUhg_det.push_back(raw.vCHINUhg_det->at(m));
@@ -351,6 +369,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	vPFN_CHINUhg_IsGammaToF.push_back(kTRUE);
       else 
 	vPFN_CHINUhg_IsGammaToF.push_back(kFALSE);
+      // TO DO TEST GAMMA Q DISCRI
+
     }
     
     for(UShort_t m=0; m<raw.vB3lg_det->size(); m++) {
@@ -366,6 +386,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	vPFN_B3lg_IsGammaToF.push_back(kTRUE);
       else 
 	vPFN_B3lg_IsGammaToF.push_back(kFALSE);
+      // TO DO TEST GAMMA Q DISCRI
+
     }
     for(UShort_t m=0; m<raw.vB3hg_det->size(); m++){
       vB3hg_det.push_back(raw.vB3hg_det->at(m));
@@ -380,6 +402,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	vPFN_B3hg_IsGammaToF.push_back(kTRUE);
       else 
 	vPFN_B3hg_IsGammaToF.push_back(kFALSE);
+      // TO DO TEST GAMMA Q DISCRI
+
     }
     
     t->Fill();

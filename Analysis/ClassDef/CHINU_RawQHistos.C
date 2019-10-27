@@ -116,6 +116,25 @@ void CHINU_RawQHistos::FillHistosLG(vector<UShort_t> * vDet, vector<UInt_t> * vQ
   }
 }
 
+void CHINU_RawQHistos::FillHistosLG(UShort_t det, UInt_t Q1, UInt_t Q2)
+{
+  Float_t ratio;
+  UShort_t side,ring,rank;
+  side = Side_ChiNu[det-1]; 
+  ring = Ring_ChiNu[det-1];
+  rank = Rank_ChiNu[det-1];
+  if(TestRank(rank,fFlag1DLG[ring-1+3*(side-1)])){
+    h1_Q1LG[det-1]->Fill(Q1);
+    h1_Q2LG[det-1]->Fill(Q2);
+  }
+  if(TestRank(rank,fFlagDiscriLG[ring-1+3*(side-1)])){
+    if(Q1>0)      ratio = (Float_t)(Q2) / (Float_t)(Q1);
+    else ratio=-1;
+    h2_DiscriLG[det-1]->Fill(Q1,ratio);
+  }
+}
+
+
 void CHINU_RawQHistos::FillHistosHG(vector<UShort_t> * vDet, vector<UInt_t> * vQ1, vector<UInt_t> *vQ2)
 {
   UShort_t  det;
@@ -138,6 +157,24 @@ void CHINU_RawQHistos::FillHistosHG(vector<UShort_t> * vDet, vector<UInt_t> * vQ
   }
 }
 
+
+void CHINU_RawQHistos::FillHistosHG(UShort_t det, UInt_t Q1, UInt_t Q2)
+{
+  Float_t ratio;
+  UShort_t side,ring,rank;
+  side = Side_ChiNu[det-1]; 
+  ring = Ring_ChiNu[det-1];
+  rank = Rank_ChiNu[det-1];
+  if(TestRank(rank,fFlag1DHG[ring-1+3*(side-1)])){
+    h1_Q1HG[det-1]->Fill(Q1);
+    h1_Q2HG[det-1]->Fill(Q2);
+  }
+  if(TestRank(rank,fFlagDiscriHG[ring-1+3*(side-1)])){
+    if(Q1>0)      ratio = (Float_t)(Q2) / (Float_t)(Q1);
+    else ratio=-1;
+    h2_DiscriHG[det-1]->Fill(Q1,ratio);
+  }
+}
 
 
 

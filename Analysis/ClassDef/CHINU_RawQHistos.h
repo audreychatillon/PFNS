@@ -26,7 +26,9 @@ class CHINU_RawQHistos{
   void DefineDiscriHG(UShort_t,UShort_t,UShort_t);
 
   void FillHistosLG(vector<UShort_t> *, vector<UInt_t> *, vector<UInt_t> *);
+  void FillHistosLG(UShort_t, UInt_t, UInt_t);
   void FillHistosHG(vector<UShort_t> *, vector<UInt_t> *, vector<UInt_t> *);
+  void FillHistosHG(UShort_t, UInt_t, UInt_t);
 
   TCanvas* DrawHistos1DLG(UShort_t, UShort_t, UShort_t); 
   TCanvas* DrawHistos1DHG(UShort_t, UShort_t, UShort_t); 

@@ -49,11 +49,13 @@ void run()
 	sprintf(name,"histo_Qdiscri_gamma_CHINUlg_%d",det);
 	hqCHINU.h2_DiscriLG[det-1]->SetName(name);
 	hqCHINU.h2_DiscriLG[det-1]->SetTitle(name);
+	hqCHINU.h2_DiscriLG[det-1]->GetYaxis()->SetRangeUser(0,1.5);
 
 	hqCHINU.DefineDiscriHG(side,ring,rank);
 	sprintf(name,"histo_Qdiscri_gamma_CHINUhg_%d",det);
 	hqCHINU.h2_DiscriHG[det-1]->SetName(name);
 	hqCHINU.h2_DiscriHG[det-1]->SetTitle(name);	
+	hqCHINU.h2_DiscriHG[det-1]->GetYaxis()->SetRangeUser(0,1.5);
       }
     }
   }
@@ -71,11 +73,13 @@ void run()
       sprintf(name,"histo_Qdiscri_gamma_B3lg_%d",det);
       hqB3.h2_DiscriLG[det-1]->SetName(name);
       hqB3.h2_DiscriLG[det-1]->SetTitle(name);
+      hqB3.h2_DiscriLG[det-1]->GetYaxis()->SetRangeUser(0,1.5);
       
       hqB3.DefineDiscriHG(side,pos);
       sprintf(name,"histo_Qdiscri_gamma_B3hg_%d",det);
       hqB3.h2_DiscriHG[det-1]->SetName(name);
       hqB3.h2_DiscriHG[det-1]->SetTitle(name);	
+      hqB3.h2_DiscriHG[det-1]->GetYaxis()->SetRangeUser(0,1.5);
     }
   }
 

@@ -54,9 +54,28 @@ void run()
     cut_CHINUhg[det-1]->SetTitle(name);
     cut_CHINUhg[det-1]->ls();
   }
-  // TO DO : AVOIR LES CUTS POUR LES DETECTEURS B3
-  //TFile * f_B3lg = new TFile("cut/cut_discri_gamma_B3lg.root","read");
-  //TFile * f_B3hg = new TFile("cut/cut_discri_gamma_B3hg.root","read");
+
+  TFile * f_B3lg = new TFile("cut/cut_discri_gamma_B3lg.root","read");
+  TFile * f_B3hg = new TFile("cut/cut_discri_gamma_B3hg.root","read");
+  TCutG * cut_B3lg[B3_nDets];
+  TCutG * cut_B3hg[B3_nDets];
+  for(det=1; det<=B3_nDets; det++){
+    sprintf(name,"cut_discri_gamma_%d",det);
+    cut_B3lg[det-1] = (TCutG*)f_B3lg->Get(name);
+    sprintf(name,"cut_discri_gamma_B3lg_%d",det);
+    cut_B3lg[det-1]->SetName(name);
+    cut_B3lg[det-1]->SetTitle(name);
+    cut_B3lg[det-1]->ls();
+
+    sprintf(name,"cut_discri_gamma_%d",det);
+    cut_B3hg[det-1] = (TCutG*)f_B3hg->Get(name);
+    sprintf(name,"cut_discri_gamma_B3hg_%d",det);
+    cut_B3hg[det-1]->SetName(name);
+    cut_B3hg[det-1]->SetTitle(name);
+    cut_B3hg[det-1]->ls();
+  }
+
+
 
   // === =========================== === //
   // === CREATE Q-DISCRI HISTOGRAMMS === //
@@ -76,18 +95,18 @@ void run()
     h2_EQ1Discri_CHINUHG[det-1] = new TH2F(name,name,1000,0,20,1025,0,524800);
   }
 
-  /*
+  
   TFile* histofile_B3LG = new TFile("histos/histo_Q1vsE_neutron_B3lg.root","update");
   TFile* histofile_B3HG = new TFile("histos/histo_Q1vsE_neutron_B3hg.root","update");
   TH2F * h2_EQ1Discri_B3LG[B3_nDets];
   TH2F * h2_EQ1Discri_B3HG[B3_nDets];
   for(UShort_t det=1; det<=B3_nDets; det++){
-    printf(name,"histo_Q1E_neutron_B3lg_%i",det);
+    sprintf(name,"histo_Q1E_neutron_B3lg_%i",det);
     h2_EQ1Discri_B3LG[det-1] = new TH2F(name,name,1025,0,524800,1000,0,20);
-    printf(name,"histo_Q1E_neutron_B3hg_%i",det);
+    sprintf(name,"histo_Q1E_neutron_B3hg_%i",det);
     h2_EQ1Discri_B3HG[det-1] = new TH2F(name,name,1025,0,524800,1000,0,20);
   }
-  */
+  
 
 
   // === ================== === //
@@ -97,7 +116,6 @@ void run()
   for(ULong64_t Entry=0; Entry<nentries; Entry++){
     
     cal.GetEntry(Entry);
-
 
     for(UShort_t m=0; m<cal.vPFN_CHINUlg_IsGammaToF->size(); m++){
       det   = cal.vCHINUlg_det->at(m);
@@ -110,8 +128,7 @@ void run()
 	h2_EQ1Discri_CHINULG[det-1]->Fill(cal.vPFN_CHINUlg_Ene->at(m),Q1);
       }
     }
-
-    
+  
     for(UShort_t m=0; m<cal.vPFN_CHINUhg_IsGammaToF->size(); m++){
       det   = cal.vCHINUhg_det->at(m);
       Q1    = cal.vCHINUhg_Q1->at(m);
@@ -124,19 +141,30 @@ void run()
       }
     }
     
-      /*
-    for(UShort_t m=0; m<cal.vPFN_B3lg_IsGammaToF->size(); m++)
-      if (cal.vPFN_B3lg_IsGammaToF->at(m)==1) {
-
+    for(UShort_t m=0; m<cal.vPFN_B3lg_IsGammaToF->size(); m++){
+      det   = cal.vB3lg_det->at(m);
+      Q1    = cal.vB3lg_Q1->at(m);
+      if (Q1>0) ratio = (Float_t)cal.vB3lg_Q2->at(m) / (Float_t)Q1;
+      else ratio=-1;
+      if ( (!cut_B3lg[det-1]->IsInside(Q1,ratio))&&
+	   (cal.vPFN_B3lg_ToF->at(m)>15)&&
+	   (cal.FC_Q1>1700) ){
+	h2_EQ1Discri_B3LG[det-1]->Fill(cal.vPFN_B3lg_Ene->at(m),Q1);
       }
-
-
-    for(UShort_t m=0; m<cal.vPFN_B3hg_IsGammaToF->size(); m++)
-      if (cal.vPFN_B3hg_IsGammaToF->at(m)==1) {
-
+    }
+  
+    for(UShort_t m=0; m<cal.vPFN_B3hg_IsGammaToF->size(); m++){
+      det   = cal.vB3hg_det->at(m);
+      Q1    = cal.vB3hg_Q1->at(m);
+      if (Q1>0) ratio = (Float_t)cal.vB3hg_Q2->at(m) / (Float_t)Q1;
+      else ratio=-1;
+      if ( (!cut_B3hg[det-1]->IsInside(Q1,ratio))&&
+	   (cal.vPFN_B3hg_ToF->at(m)>15)&&
+	   (cal.FC_Q1>1700) ){
+	h2_EQ1Discri_B3HG[det-1]->Fill(cal.vPFN_B3hg_Ene->at(m),Q1);
       }
-      */
-
+    }
+ 
   }// end of loop over the entries
 
 
@@ -148,16 +176,16 @@ void run()
     histofile_CHINULG->cd(); h2_EQ1Discri_CHINULG[det]->Write();
     histofile_CHINUHG->cd(); h2_EQ1Discri_CHINUHG[det]->Write();
   }
-/*
+
   for(UShort_t det=0; det<B3_nDets; det++){
-    histofile_B3LG->cd(); hqB3.h2_DiscriLG[det]->Write();
-    histofile_B3HG->cd(); hqB3.h2_DiscriHG[det]->Write();
+    histofile_B3LG->cd(); h2_EQ1Discri_B3LG[det]->Write();
+    histofile_B3HG->cd(); h2_EQ1Discri_B3HG[det]->Write();
   }
-*/
+
   histofile_CHINULG->ls(); histofile_CHINULG->Close();
   histofile_CHINUHG->ls(); histofile_CHINUHG->Close();
-//histofile_B3LG->ls(); histofile_B3LG->Close();
-// histofile_B3HG->ls(); histofile_B3HG->Close();
+  histofile_B3LG->ls(); histofile_B3LG->Close();
+  histofile_B3HG->ls(); histofile_B3HG->Close();
 
 
 }

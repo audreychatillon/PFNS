@@ -276,14 +276,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 
   // TO DO BACKGROUND (PULSER)
 
-  // === ================================ === //
-  // === TCUTG FILE ON THE GAMMA Q DISCRI === //
-  // === ================================ === //
-  // TCutG * cutGammaQ[];
-  //TFile * fcut_GammaQdiscri = new TFile(,"read");
-  // fcut_GammaQdiscri->Close();
-
-
   // === ===================== === //
   // === LOOP OVER THE ENTRIES === //
   // === ===================== === //
@@ -354,7 +346,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	vPFN_CHINUlg_IsGammaToF.push_back(kTRUE);
       else 	
 	vPFN_CHINUlg_IsGammaToF.push_back(kFALSE);
-      // TO DO TEST GAMMA Q DISCRI
     }
     for(UShort_t m=0; m<raw.vCHINUhg_det->size(); m++){
       vCHINUhg_det.push_back(raw.vCHINUhg_det->at(m));
@@ -369,7 +360,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	vPFN_CHINUhg_IsGammaToF.push_back(kTRUE);
       else 
 	vPFN_CHINUhg_IsGammaToF.push_back(kFALSE);
-      // TO DO TEST GAMMA Q DISCRI
 
     }
     
@@ -386,7 +376,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	vPFN_B3lg_IsGammaToF.push_back(kTRUE);
       else 
 	vPFN_B3lg_IsGammaToF.push_back(kFALSE);
-      // TO DO TEST GAMMA Q DISCRI
 
     }
     for(UShort_t m=0; m<raw.vB3hg_det->size(); m++){
@@ -402,8 +391,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	vPFN_B3hg_IsGammaToF.push_back(kTRUE);
       else 
 	vPFN_B3hg_IsGammaToF.push_back(kFALSE);
-      // TO DO TEST GAMMA Q DISCRI
-
     }
     
     t->Fill();

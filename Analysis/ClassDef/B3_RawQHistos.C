@@ -103,6 +103,20 @@ void B3_RawQHistos::FillHistosLG(vector<UShort_t> * vDet, vector<UInt_t> * vQ1, 
   }
 }
 
+void B3_RawQHistos::FillHistosLG(UShort_t det, UInt_t Q1, UInt_t Q2)
+{
+  Float_t ratio;
+  if(TestDet(det,fFlag1DLG)){
+    h1_Q1LG[det-1]->Fill(Q1);
+    h1_Q2LG[det-1]->Fill(Q2);
+  }
+  if(TestDet(det,fFlagDiscriLG)){
+    if(Q1>0)      ratio = (Float_t)(Q2) / (Float_t)(Q1);
+    else ratio=-1;
+    h2_DiscriLG[det-1]->Fill(Q1,ratio);
+  }
+}
+
 void B3_RawQHistos::FillHistosHG(vector<UShort_t> * vDet, vector<UInt_t> * vQ1, vector<UInt_t> *vQ2)
 {
   UShort_t  det;
@@ -122,7 +136,19 @@ void B3_RawQHistos::FillHistosHG(vector<UShort_t> * vDet, vector<UInt_t> * vQ1, 
 }
 
 
-
+void B3_RawQHistos::FillHistosHG(UShort_t det, UInt_t Q1, UInt_t Q2)
+{
+  Float_t ratio;
+  if(TestDet(det,fFlag1DHG)){
+    h1_Q1HG[det-1]->Fill(Q1);
+    h1_Q2HG[det-1]->Fill(Q2);
+  }
+  if(TestDet(det,fFlagDiscriHG)){
+    if(Q1>0)      ratio = (Float_t)(Q2) / (Float_t)(Q1);
+    else ratio=-1;
+    h2_DiscriHG[det-1]->Fill(Q1,ratio);
+  }
+}
 
 TCanvas * B3_RawQHistos::DrawHistos1DLG(UShort_t side, UShort_t pos)
 {

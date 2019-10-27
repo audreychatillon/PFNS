@@ -26,7 +26,9 @@ class B3_RawQHistos{
   void DefineDiscriHG(UShort_t,UShort_t);
   
   void FillHistosLG(vector<UShort_t> *, vector<UInt_t> *, vector<UInt_t> *);
+  void FillHistosLG(UShort_t, UInt_t, UInt_t);
   void FillHistosHG(vector<UShort_t> *, vector<UInt_t> *, vector<UInt_t> *);
+  void FillHistosHG(UShort_t, UInt_t, UInt_t);
   
   TCanvas* DrawHistos1DLG(UShort_t, UShort_t);
   TCanvas* DrawHistos1DHG(UShort_t, UShort_t);
@@ -42,12 +44,14 @@ class B3_RawQHistos{
   TCanvas* DrawHistosDiscriAllLG();
   TCanvas* DrawHistosDiscriAllHG();
 
+ public :
+  UShort_t  GetDet(UShort_t,UShort_t);
+
  private :
   UChar_t fFlag1DLG;
   UChar_t fFlag1DHG;
   UChar_t fFlagDiscriLG;
   UChar_t fFlagDiscriHG;
-  UShort_t  GetDet(UShort_t,UShort_t);
   Bool_t    TestDet(UShort_t,UChar_t);
 };
 

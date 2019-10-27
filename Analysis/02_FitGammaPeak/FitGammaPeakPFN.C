@@ -215,6 +215,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	      fGaussianHG->SetName(name);
 	      fGaussianHG->SetTitle(name);
 	      GammaPeak_HG_Mean[det-1+CHINU_nDets*(anode-1)]=fGaussianHG->GetParameter(1);
+	      OffsetCHINUHG[det-1+CHINU_nDets*(anode-1)]=RealTimeCHINU[det-1]-GammaPeak_HG_Mean[det-1+CHINU_nDets*(anode-1)];
 	      delete fGaussianHG;
 	    }// end of if(histo)
 	  }//end of for(rank)

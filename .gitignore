@@ -5,5 +5,3 @@ histos/
 *.d
 *.pcm
 Faster2Root/fast2root
-Analysis/macro/histo/*.root
-Analysis/04_CreateTCutG/histos/

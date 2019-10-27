@@ -22,7 +22,7 @@
 static int Side_ChiNu[CHINU_nDets] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2};
 static int Ring_ChiNu[CHINU_nDets] = {1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3};
 static int Rank_ChiNu[CHINU_nDets] = {1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9};
-static float Distance_FC_ChiNu[CHINU_nDets] = {
+static double Distance_FC_ChiNu[CHINU_nDets] = {
   1., 1., 1., 1., 1., 1., 1., 1., 1., //L_I
   1., 1., 1., 1., 1., 1., 1., 1., 1., //L_II
   1., 1., 1., 1., 1., 1., 1., 1., 1., //L_III
@@ -30,15 +30,23 @@ static float Distance_FC_ChiNu[CHINU_nDets] = {
   1., 1., 1., 1., 1., 1., 1., 1., 1., //R_II
   1., 1., 1., 1., 1., 1., 1., 1., 1.  //R_III
 };
+// CALIBRATED ToF GAMMA
+#define CHINU_GammaToFmin 1.85
+#define CHINU_GammaToFmax 4.8
+
 
 // B3 DETECTORS 
 #define B3_nDets 4
 static int Side_B3[B3_nDets] = {1,1,2,2};
 static int Pos_B3[B3_nDets] = {1,2,1,2};
-static float Distance_FC_B3[B3_nDets] = {
+static double Distance_FC_B3[B3_nDets] = {
   1.3, 1.3, // LEFT
   1.3, 1.3  // RIGHT
 };
+#define B3_GammaToFmin 2.85
+#define B3_GammaToFmax 5.8
+
+
 
 // FOR DETECTOR NAMEING PURPOSE
 TString sideVal[2] = {"L","R"};

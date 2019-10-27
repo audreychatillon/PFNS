@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
+#include "math.h"
 
 //  root includes
 #include "TFile.h"
@@ -14,23 +15,54 @@
 
 //  include specific 
 #include "../RunRefs/RunRefs.h"
-#include "../Faster2Root/ReadPid/pid.h"
+#include "../../Faster2Root/ReadPid/pid.h"
 #include "../../SetupSpecific/setup_specific.h"
 #if FC>0 && CHINU>0
-#include "../../SetupSpecific/FC_to_CHINUlg_GammaPeak.h"
-#include "../../SetupSpecific/FC_to_CHINUhg_GammaPeak.h"
+#include "../../SetupSpecific/CHINUlg_OffsetToF.h"
+#include "../../SetupSpecific/CHINUhg_OffsetToF.h"
 #endif
 #if FC>0 && B3>0
-#include "../../SetupSpecific/FC_to_B3lg_GammaPeak.h"
-#include "../../SetupSpecific/FC_to_B3hg_GammaPeak.h"
+#include "../../SetupSpecific/B3lg_OffsetToF.h"
+#include "../../SetupSpecific/B3hg_OffsetToF.h"
 #endif
 
+#include "../ClassDef/CHINU_RawQHistos.h"
+#include "../ClassDef/B3_RawQHistos.h"
+
+
+
+
+#define SPEED_OF_LIGHT_MNS 0.299792458  // m.ns-1
+#define NEUTRON_MASS_MeV   939.565430   //MeV
+
+
+
+// URGENT : CALCULER L'EFFICICATE POUR R_III_9_LG ET R_II_5_LG
+
+Double_t Beta(double v_mns)
+{
+  return ( v_mns / SPEED_OF_LIGHT_MNS ) ;
+}
+
+Double_t Gamma(Double_t beta){
+  return ( 1.0 / sqrt(1.0 - pow(beta,2)) ) ;
+}
+
+Double_t Velocity2Ene(double_t v_mns)
+{
+  double BETA = Beta(v_mns);
+  double GAMMA = Gamma(BETA);
+  return (NEUTRON_MASS_MeV * (GAMMA - 1));
+}
 
 
 
 void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 {
+
+  char name[500];
   
+
   // === ================ === //
   // === TYPE OF THE DATA === //
   // === ================ === //
@@ -119,215 +151,244 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   ULong64_t nentries = ch->GetEntries();
   
  
-  // === ========================================== === //
-  // === OUTPUT DATA CONCERNING THE TIMES oF FLIGHT === //
-  // === ========================================== === //
-
+  // === ===================================================== === //
+  // === OUTPUT DATA CONCERNING THE TIMES oF FLIGHT AND ENERGY === //
+  // === ===================================================== === //
+  UInt_t Event;
 
   // --- BEAM
-#if HF>0
+  // TO DO if HF
+  // TO DO IF HF AND PULSER
+
 #if FC>0
-  std::vector<UShort_t> vBEAM_FCanode; 
-  std::vector<Double_t> vBEAM_ToFraw; // NEUTRON BEAM ToF t(FC)-t(HF)
-  std::vector<Double_t> vBEAM_ToF;    // NEUTRON BEAM ToF
-#endif
-#if PULSER>0
-  std::vector<Double_t> vBkgBEAM_ToFraw; // Background NEUTRON BEAM ToF t(PULSER)-t(HF)
-  std::vector<Double_t> vBkgBEAM_ToF;    // Background NEUTRON BEAM ToF 
-#endif
+  UShort_t FC_anode;
+  UInt_t   FC_Q1;
+  UInt_t   FC_Q2;
 #endif
 
   // --- PROMT FISSION NEUTRONS...
   // --- ... DETECTED BY CHI-NU
 #if CHINU>0
+  std::vector<unsigned short> vCHINUlg_det;
+  std::vector<unsigned short> vCHINUhg_det;
+  std::vector<unsigned int> vCHINUlg_Q1;
+  std::vector<unsigned int> vCHINUhg_Q1;
+  std::vector<unsigned int> vCHINUlg_Q2;
+  std::vector<unsigned int> vCHINUhg_Q2;
 #if FC>0
-  std::vector<UShort_t> vPFN_CHINUlg_det; 
-  std::vector<UShort_t> vPFN_CHINUlg_anode; 
-  std::vector<Double_t> vPFN_CHINUlg_ToFraw;    // PFN ToF t(CHINU) - t(FC)
-  std::vector<Double_t> vPFN_CHINUlg_ToFcal;    // PFN ToF
-  std::vector<UShort_t> vPFN_CHINUhg_det; 
-  std::vector<UShort_t> vPFN_CHINUhg_anode; 
-  std::vector<Double_t> vPFN_CHINUhg_ToFraw;    // PFN ToF t(CHINU) - t(FC)
-  std::vector<Double_t> vPFN_CHINUhg_ToFcal;    // PFN ToF
+  std::vector<Double_t> vPFN_CHINUlg_ToF;    // PFN ToF t(CHINU) - t(FC)
+  std::vector<Bool_t>   vPFN_CHINUlg_IsGammaToF;    
+  std::vector<Double_t> vPFN_CHINUlg_Ene;    // PFN Energy
+  std::vector<Double_t> vPFN_CHINUhg_ToF;    // PFN ToF t(CHINU) - t(FC)
+  std::vector<Bool_t>   vPFN_CHINUhg_IsGammaToF;    
+  std::vector<Double_t> vPFN_CHINUhg_Ene;    // PFN Energy
 #endif
-#if PULSER>0
-  std::vector<UShort_t> vBkgPFN_CHINUlg_det; 
-  std::vector<Double_t> vBkgPFN_CHINUlg_ToFraw;    // PFN ToF t(CHINU) - t(FC)
-  std::vector<Double_t> vBkgPFN_CHINUlg_ToFcal;    // PFN ToF
-  std::vector<UShort_t> vBkgPFN_CHINUhg_det; 
-  std::vector<Double_t> vBkgPFN_CHINUhg_ToFraw;    // PFN ToF t(CHINU) - t(FC)
-  std::vector<Double_t> vBkgPFN_CHINUhg_ToFcal;    // PFN ToF
-#endif
+  // TO DO IF PULSER
 #endif
   // --- ... DETECTED BY B3 DETECTORS
 #if B3>0
+  std::vector<unsigned short> vB3lg_det;
+  std::vector<unsigned short> vB3hg_det;
+  std::vector<unsigned int> vB3lg_Q1;
+  std::vector<unsigned int> vB3hg_Q1;
+  std::vector<unsigned int> vB3lg_Q2;
+  std::vector<unsigned int> vB3hg_Q2;
 #if FC>0
-  std::vector<UShort_t> vPFN_B3lg_det; 
-  std::vector<UShort_t> vPFN_B3lg_anode; 
-  std::vector<Double_t> vPFN_B3lg_ToFraw;    // PFN ToF t(B3) - t(FC)
-  std::vector<Double_t> vPFN_B3lg_ToFcal;    // PFN ToF
-  std::vector<UShort_t> vPFN_B3hg_det; 
-  std::vector<UShort_t> vPFN_B3hg_anode; 
-  std::vector<Double_t> vPFN_B3hg_ToFraw;    // PFN ToF t(B3) - t(FC)
-  std::vector<Double_t> vPFN_B3hg_ToFcal;    // PFN ToF
+  std::vector<Double_t> vPFN_B3lg_ToF;    // PFN ToF t(B3) - t(FC)
+  std::vector<Bool_t>   vPFN_B3lg_IsGammaToF;    
+  std::vector<Double_t> vPFN_B3lg_Ene;    // PFN ToF
+  std::vector<Double_t> vPFN_B3hg_ToF;    // PFN ToF t(B3) - t(FC)
+  std::vector<Bool_t>   vPFN_B3hg_IsGammaToF;    
+  std::vector<Double_t> vPFN_B3hg_Ene;    // PFN ToF
 #endif
-#if PULSER>0
-  std::vector<UShort_t> vBkgPFN_B3lg_det; 
-  std::vector<Double_t> vBkgPFN_B3lg_ToFraw;    // PFN ToF t(B3) - t(FC)
-  std::vector<Double_t> vBkgPFN_B3lg_ToFcal;    // PFN ToF
-  std::vector<UShort_t> vBkgPFN_B3hg_det; 
-  std::vector<Double_t> vBkgPFN_B3hg_ToFraw;    // PFN ToF t(B3) - t(FC)
-  std::vector<Double_t> vBkgPFN_B3hg_ToFcal;    // PFN ToF
-#endif
+  // TO DO IF PULSER
 #endif
 
 
   // === =========== === //
   // === OUTPUT TREE === //
   // === =========== === //
-
-  TString RunNumber=argv[3];
-  TString FileNumber=argv[4];
-  sprintf(name,"Run %d File %d - SORT DATA - MULT NDET>0 AND MULT FC==1",RunNumber.Atoi(),FileNumber.Atoi());
-  TTree * t = new TTree("SortData",name);
+  sprintf(name,"../../data/Cal/Cf252/R%d_to_R%d.root",runFirst,runLast);
+  TFile * fsaveTree = new TFile(name,"recreate");
+  fsaveTree->ls();
+  sprintf(name,"Run %d File %d - Cal Data - ATTENTION ONLY EVENTS WITH MULT NDET>0",runFirst,runLast);
+  TTree * t = new TTree("CalData",name);
 
   // --- ------------------ --- //
   // --- KEEP SOME RAW DATA --- //
   // --- ------------------ --- //
   // general variables
-  t->Branch("Event",&raw.nevents,"Event/i");
-  t->Branch("Label",&raw.label_data,"Label/i");
+  t->Branch("Event",&Event,"Event/i");
+
+  // fission chamber
+#if FC>0
+  t->Branch("FC_anode",&FC_anode,"FC_anode/s");
+  t->Branch("FC_Q1",&FC_Q1,"FC_Q1/s");
+  t->Branch("FC_Q2",&FC_Q2,"FC_Q2/s");
+#endif
+
   // chi-nu ndet 
 #if CHINU>0
-  t->Branch("CHINUlg_mult",raw.CHINU_multLG,"CHINUlg_mult[54]/s");
-  t->Branch("CHINUhg_mult",raw.CHINU_multHG,"CHINUhg_mult[54]/s");
-  t->Branch("vCHINUlg_det",&raw.vCHINUlg_det);
-  t->Branch("vCHINUhg_det",&raw.vCHINUhg_det);
-  t->Branch("vCHINUlg_time",&raw.vCHINUlg_time);
-  t->Branch("vCHINUhg_time",&raw.vCHINUhg_time);
-  t->Branch("vCHINUlg_Q1",&raw.vCHINUlg_Q1);
-  t->Branch("vCHINUhg_Q1",&raw.vCHINUhg_Q1);
-#if CHINU_nQ>1
-  t->Branch("vCHINUlg_Q2",&raw.vCHINUlg_Q2);
-  t->Branch("vCHINUhg_Q2",&raw.vCHINUhg_Q2);
-#endif
-#if CHINU_nQ>2
-  t->Branch("vCHINUlg_Q3",&raw.vCHINUlg_Q3);
-  t->Branch("vCHINUhg_Q3",&raw.vCHINUhg_Q3);
-#endif
-#if CHINU_nQ>3
-  t->Branch("vCHINUlg_Q4",&raw.vCHINUlg_Q4);
-  t->Branch("vCHINUhg_Q4",&raw.vCHINUhg_Q4);
+  t->Branch("vCHINUlg_det",&vCHINUlg_det);
+  t->Branch("vCHINUhg_det",&vCHINUhg_det);
+  t->Branch("vCHINUlg_Q1",&vCHINUlg_Q1);
+  t->Branch("vCHINUhg_Q1",&vCHINUhg_Q1);
+  t->Branch("vCHINUlg_Q2",&vCHINUlg_Q2);
+  t->Branch("vCHINUhg_Q2",&vCHINUhg_Q2);
+#if FC>0
+  t->Branch("vPFN_CHINUlg_ToF",&vPFN_CHINUlg_ToF); //calibrated ToF
+  t->Branch("vPFN_CHINUhg_ToF",&vPFN_CHINUhg_ToF);
+  t->Branch("vPFN_CHINUlg_IsGammaToF",&vPFN_CHINUlg_IsGammaToF);
+  t->Branch("vPFN_CHINUhg_IsGammaToF",&vPFN_CHINUhg_IsGammaToF);
+  t->Branch("vPFN_CHINUlg_Ene",&vPFN_CHINUlg_Ene);
+  t->Branch("vPFN_CHINUhg_Ene",&vPFN_CHINUhg_Ene);
 #endif
 #endif
+
   // B3 ndet 
 #if B3>0
-  t->Branch("B3lg_mult",raw.B3_multLG,"B3lg_mult[4]/s");
-  t->Branch("B3hg_mult",raw.B3_multHG,"B3hg_mult[4]/s");
-  t->Branch("vB3lg_det",&raw.vB3lg_det);
-  t->Branch("vB3hg_det",&raw.vB3hg_det);
-  t->Branch("vB3lg_time",&raw.vB3lg_time);
-  t->Branch("vB3hg_time",&raw.vB3hg_time);
-  t->Branch("vB3lg_Q1",&raw.vB3lg_Q1);
-  t->Branch("vB3hg_Q1",&raw.vB3hg_Q1);
-#if B3_nQ>1
-  t->Branch("vB3lg_Q2",&raw.vB3lg_Q2);
-  t->Branch("vB3hg_Q2",&raw.vB3hg_Q2);
-#endif
-#if B3_nQ>2
-  t->Branch("vB3lg_Q3",&raw.vB3lg_Q3);
-  t->Branch("vB3hg_Q3",&raw.vB3hg_Q3);
-#endif
-#if B3_nQ>3
-  t->Branch("vB3lg_Q4",&raw.vB3lg_Q4);
-  t->Branch("vB3hg_Q4",&raw.vB3hg_Q4);
-#endif
-#endif
+  t->Branch("vB3lg_det",&vB3lg_det);
+  t->Branch("vB3hg_det",&vB3hg_det);
+  t->Branch("vB3lg_Q1",&vB3lg_Q1);
+  t->Branch("vB3hg_Q1",&vB3hg_Q1);
+  t->Branch("vB3lg_Q2",&vB3lg_Q2);
+  t->Branch("vB3hg_Q2",&vB3hg_Q2);
 #if FC>0
-  t->Branch("anode",&raw.FC_anode[0],"FC_anode/s");
-  t->Branch("FC_time",&raw.FC_time[0],"FC_time/l");
-  t->Branch("FC_Q1",&raw.FC_Q1[0],"FC_Q1/i");
-#if FC_nQ>1
-  t->Branch("FC_Q2",&raw.FC_Q2[0],"FC_Q2/i");
-#endif
-#if FC_nQ>2
-  t->Branch("FC_Q3",&raw.FC_Q3[0],"FC_Q3/i");
-#endif
-#if FC_nQ>3
-  t->Branch("FC_Q4",&raw.FC_Q4[0],"FC_Q4/i");
+  t->Branch("vPFN_B3lg_ToF",&vPFN_B3lg_ToF);
+  t->Branch("vPFN_B3hg_ToF",&vPFN_B3hg_ToF);
+  t->Branch("vPFN_B3lg_IsGammaToF",&vPFN_B3lg_IsGammaToF);
+  t->Branch("vPFN_B3hg_IsGammaToF",&vPFN_B3hg_IsGammaToF);
+  t->Branch("vPFN_B3lg_Ene",&vPFN_B3lg_Ene);
+  t->Branch("vPFN_B3hg_Ene",&vPFN_B3hg_Ene);
 #endif
 #endif
-  // Pulser
-#if PULSER>0
-  t->Branch("PULSER_time",&raw.PULSER_time[0],"PULSER_time/l");
-  t->Branch("PULSER_Q1",&raw.PULSER_Q1[0],"PULSER_Q1/i");
-#endif
-  // HF Beam
-#if HF>0
-  t->Branch("vHF_time",&raw.vHF_time[0],"HF_time/l");
-  t->Branch("vHF_Q1",&raw.vHF_Q1[0],"HF_Q1/i");
-#endif
-  // Macro Pulse
-#if MACRO>0
-  t->Branch("vMACRO_time",&raw.vMACRO_time[0],"MACRO_time\l");
-  t->Branch("vMACRO_Q1",&raw.vMACRO_Q1[0],"MACRO_Q1\i");
-#endif
-  // --- -------------------- --- //
-  // --- Times of Flight data --- //
-  // --- -------------------- --- //
-  // --- PROMT FISSION NEUTRONS DETECTED BY CHI-NU
-#if CHINU>0
-#if FC>0
-  t->Branch("vPFN_CHINUlg_det",&vPFN_CHINUlg_det); 
-  t->Branch("vPFN_CHINUlg_ToFraw",&vPFN_CHINUlg_ToFraw);    // PFN ToF t(CHINU) - t(FC)
-  t->Branch("vPFN_CHINUlg_ToFcal",&vPFN_CHINUlg_ToFcal);    // PFN ToF
-  t->Branch("vPFN_CHINUhg_det",&vPFN_CHINUhg_det); 
-  t->Branch("vPFN_CHINUhg_ToFraw",&vPFN_CHINUhg_ToFraw);    // PFN ToF t(CHINU) - t(FC)
-  t->Branch("vPFN_CHINUhg_ToFcal",&vPFN_CHINUhg_ToFcal);    // PFN ToF
-#endif
-#if PULSER>0
-  t->Branch("vBkgPFN_CHINUlg_det",&vBkgPFN_CHINUlg_det); 
-  t->Branch("vBkgPFN_CHINUlg_ToFraw",&vBkgPFN_CHINUlg_ToFraw);    // PFN ToF t(CHINU) - t(FC)
-  t->Branch("vBkgPFN_CHINUlg_ToFcal",&vBkgPFN_CHINUlg_ToFcal);    // PFN ToF
-  t->Branch("vBkgPFN_CHINUhg_det",&vBkgPFN_CHINUhg_det); 
-  t->Branch("vBkgPFN_CHINUhg_ToFraw",&vBkgPFN_CHINUhg_ToFraw);    // PFN ToF t(CHINU) - t(FC)
-  t->Branch("vBkgPFN_CHINUhg_ToFcal",&vBkgPFN_CHINUhg_ToFcal);    // PFN ToF
-#endif
-#endif
-  // --- PROMPT FISSION NEUTRONS DETECTED BY B3 DETECTORS
-#if B3>0
-#if FC>0
-  t->Branch("vPFN_B3lg_det",&vPFN_B3lg_det); 
-  t->Branch("vPFN_B3lg_ToFraw",&vPFN_B3lg_ToFraw);    // PFN ToF t(B3) - t(FC)
-  t->Branch("vPFN_B3lg_ToFcal",&vPFN_B3lg_ToFcal);    // PFN ToF
-  t->Branch("vPFN_B3hg_det",&vPFN_B3hg_det); 
-  t->Branch("vPFN_B3hg_ToFraw",&vPFN_B3hg_ToFraw);    // PFN ToF t(B3) - t(FC)
-  t->Branch("vPFN_B3hg_ToFcal",&vPFN_B3hg_ToFcal);    // PFN ToF
-#endif
-#if PULSER>0
-  t->Branch("vBkgPFN_B3lg_det",&vBkgPFN_B3lg_det); 
-  t->Branch("vBkgPFN_B3lg_ToFraw",&vBkgPFN_B3lg_ToFraw);    // PFN ToF t(B3) - t(FC)
-  t->Branch("vBkgPFN_B3lg_ToFcal",&vBkgPFN_B3lg_ToFcal);    // PFN ToF
-  t->Branch("vBkgPFN_B3hg_det",&vBkgPFN_B3lg_det); 
-  t->Branch("vBkgPFN_B3hg_ToFraw",&vBkgPFN_B3lg_ToFraw);    // PFN ToF t(B3) - t(FC)
-  t->Branch("vBkgPFN_B3hg_ToFcal",&vBkgPFN_B3lg_ToFcal);    // PFN ToF
-#endif
-#endif
-  // --- NEUTRON BEAM
-#if HF>0
-#if FC>0
-  t->Branch("vBEAM_ToFraw",&vBEAM_ToFraw); // NEUTRON BEAM ToF t(FC)-t(HF)
-  t->Branch("vBEAM_ToF",&vBEAM_ToF);       // NEUTRON BEAM ToF
-#endif
-#if PULSER>0
-  t->Branch("vBkgBEAM_ToFraw",&vBkgBEAM_ToFrawm); // Background NEUTRON BEAM ToF t(PULSER)-t(HF)
-  t->Branch("vBkgBEAM_ToF",&vBkgBEAM_ToF);        // Background NEUTRON BEAM ToF 
-#endif
-#endif
+
+  // TO DO : BEAM (HF)
+
+  // TO DO BACKGROUND (PULSER)
 
 
 
 
 
-  
+  // === ===================== === //
+  // === LOOP OVER THE ENTRIES === //
+  // === ===================== === //
+  Double_t ToF, Velocity, Ene;
+  //for(ULong64_t Entry=0; Entry<20000000; Entry++){
+  for(ULong64_t Entry=0; Entry<nentries; Entry++){
+    
+    // --- ----------------------------------------------------- --- //
+    // --- Initialization of the vector dedicated to ToF and Ene --- //
+    // --- ----------------------------------------------------- --- //
+    Event=0;
+    FC_anode=0;
+    FC_Q1=0;
+    FC_Q2=0;
+    vCHINUlg_det.clear();
+    vCHINUhg_det.clear();
+    vCHINUlg_Q1.clear();
+    vCHINUhg_Q1.clear();
+    vCHINUlg_Q2.clear();
+    vCHINUhg_Q2.clear();
+    vPFN_CHINUlg_ToF.clear();
+    vPFN_CHINUhg_ToF.clear();
+    vPFN_CHINUlg_IsGammaToF.clear();
+    vPFN_CHINUhg_IsGammaToF.clear();
+    vPFN_CHINUlg_Ene.clear();
+    vPFN_CHINUhg_Ene.clear();
+    vB3lg_det.clear();
+    vB3hg_det.clear();
+    vB3lg_Q1.clear();
+    vB3hg_Q1.clear();
+    vB3lg_Q2.clear();
+    vB3hg_Q2.clear();
+    vPFN_B3lg_ToF.clear();
+    vPFN_B3hg_ToF.clear();
+    vPFN_B3lg_IsGammaToF.clear();
+    vPFN_B3hg_IsGammaToF.clear();
+    vPFN_B3lg_Ene.clear();
+    vPFN_B3hg_Ene.clear();
+
+    // --- ----------------------------- --- //
+    // --- Read each entry of the TChain --- //
+    // --- ----------------------------- --- //
+    raw.GetEntry(Entry);
+    if((Entry%1000000)==0) cout << Entry << endl;
+
+    if((raw.vB3lg_det->size()==0) && (raw.vB3hg_det->size()==0) && (raw.vCHINUlg_det->size()==0) && (raw.vCHINUhg_det->size()==0)) continue;
+    if (raw.vFC_anode->size()!=1) continue;
+    
+    Event = raw.Event;
+    FC_anode = raw.vFC_anode->at(0);
+    FC_Q1 = raw.vFC_Q1->at(0);
+    FC_Q2 = raw.vFC_Q2->at(0);
+    
+    for(UShort_t m=0; m<raw.vCHINUlg_det->size(); m++) {
+      vCHINUlg_det.push_back(raw.vCHINUlg_det->at(m));
+      vCHINUlg_Q1.push_back(raw.vCHINUlg_Q1->at(m));
+      vCHINUlg_Q2.push_back(raw.vCHINUlg_Q2->at(m));
+      ToF = (raw.vCHINUlg_time->at(m)-raw.vFC_time->at(0))+CHINU_OffsetToFLG[raw.vCHINUlg_det->at(m)-1+CHINU_nDets*(FC_anode-1)];
+      vPFN_CHINUlg_ToF.push_back(ToF);
+      Velocity = Distance_FC_ChiNu[raw.vCHINUlg_det->at(m)-1] / ToF;
+      Ene = Velocity2Ene(Velocity);
+      vPFN_CHINUlg_Ene.push_back(Ene);
+      if((CHINU_GammaToFmin<=ToF) && (ToF<=CHINU_GammaToFmax)) 	
+	vPFN_CHINUlg_IsGammaToF.push_back(kTRUE);
+      else 	
+	vPFN_CHINUlg_IsGammaToF.push_back(kFALSE);
+    }
+    for(UShort_t m=0; m<raw.vCHINUhg_det->size(); m++){
+      vCHINUhg_det.push_back(raw.vCHINUhg_det->at(m));
+      vCHINUhg_Q1.push_back(raw.vCHINUhg_Q1->at(m));
+      vCHINUhg_Q2.push_back(raw.vCHINUhg_Q2->at(m));
+      ToF = (raw.vCHINUhg_time->at(m)-raw.vFC_time->at(0))+CHINU_OffsetToFHG[raw.vCHINUhg_det->at(m)-1+CHINU_nDets*(FC_anode-1)];
+      vPFN_CHINUhg_ToF.push_back(ToF);
+      Velocity = Distance_FC_ChiNu[raw.vCHINUhg_det->at(m)-1] / ToF;
+      Ene = Velocity2Ene(Velocity);
+      vPFN_CHINUhg_Ene.push_back(Ene);
+      if((CHINU_GammaToFmin<=ToF) && (ToF<=CHINU_GammaToFmax)) 
+	vPFN_CHINUhg_IsGammaToF.push_back(kTRUE);
+      else 
+	vPFN_CHINUhg_IsGammaToF.push_back(kFALSE);
+    }
+    
+    for(UShort_t m=0; m<raw.vB3lg_det->size(); m++) {
+      vB3lg_det.push_back(raw.vB3lg_det->at(m));
+      vB3lg_Q1.push_back(raw.vB3lg_Q1->at(m));
+      vB3lg_Q2.push_back(raw.vB3lg_Q2->at(m));
+      ToF = (raw.vB3lg_time->at(m)-raw.vFC_time->at(0))+B3_OffsetToFLG[raw.vB3lg_det->at(m)-1+CHINU_nDets*(FC_anode-1)];
+      vPFN_B3lg_ToF.push_back(ToF);
+      Velocity = Distance_FC_B3[raw.vB3lg_det->at(m)-1] / ToF;
+      Ene = Velocity2Ene(Velocity);
+      vPFN_B3lg_Ene.push_back(Ene);
+      if((B3_GammaToFmin<=ToF) && (ToF<=B3_GammaToFmax)) 
+	vPFN_B3lg_IsGammaToF.push_back(kTRUE);
+      else 
+	vPFN_B3lg_IsGammaToF.push_back(kFALSE);
+    }
+    for(UShort_t m=0; m<raw.vB3hg_det->size(); m++){
+      vB3hg_det.push_back(raw.vB3hg_det->at(m));
+      vB3hg_Q1.push_back(raw.vB3hg_Q1->at(m));
+      vB3hg_Q2.push_back(raw.vB3hg_Q2->at(m));
+      ToF = (raw.vB3hg_time->at(m)-raw.vFC_time->at(0))+B3_OffsetToFHG[raw.vB3hg_det->at(m)-1+CHINU_nDets*(FC_anode-1)];
+      vPFN_B3hg_ToF.push_back(ToF);
+      Velocity = Distance_FC_B3[raw.vB3hg_det->at(m)-1] / ToF;
+      Ene = Velocity2Ene(Velocity);
+      vPFN_B3hg_Ene.push_back(Ene);
+      if((B3_GammaToFmin<=ToF) && (ToF<=B3_GammaToFmax)) 
+	vPFN_B3hg_IsGammaToF.push_back(kTRUE);
+      else 
+	vPFN_B3hg_IsGammaToF.push_back(kFALSE);
+    }
+    
+    t->Fill();
+  }    
+
+  fsaveTree->cd();
+  t->Write();
+  fsaveTree->ls();
+  fsaveTree->Close();
+
+
 }

@@ -207,15 +207,8 @@ int main (int argc, char** argv) {
   //std::vector<Double_t> vFC_tdc;
   std::vector<Double_t> vFC_time;
   std::vector<unsigned int> vFC_Q1;
-#if FC_nQ>1
   std::vector<unsigned int> vFC_Q2;
-#endif
-#if FC_nQ>2
   std::vector<unsigned int> vFC_Q3;
-#endif
-#if FC_nQ>3
-  std::vector<unsigned int> vFC_Q4;
-#endif
 #endif
 
   // --- Chi-Nu Neutron detectors

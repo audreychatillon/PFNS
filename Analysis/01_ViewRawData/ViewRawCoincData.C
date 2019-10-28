@@ -147,6 +147,9 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   // --- define ToFraw histo for one anode --- //
   //htFC.DefineOneAnode(6);
   // --- the same for all anodes --- //
+  //for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+  //  htFC.DefineOneAnode(anode);
+  //}
 #endif
 #endif
 
@@ -308,8 +311,10 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     //hmFC.FillHistos(raw.vFC_anode,raw.FC_mult);
     // CHARGE FC
     //hqFC.FillHistos(raw.vFC_anode,raw.vFC_Q1,raw.vFC_Q2);
+#if HF>0
     // ToF beam
-    //
+    //htFC.FillHistos_FCmult1(raw.vHF_time,raw.vFC_anode,raw.vFC_time);
+#endif
 #endif
 
 
@@ -377,6 +382,10 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   //TCanvas * can4 = hqFC.DrawDiscriHisto(6);               can4->Write(); // FC charge 2D spectrum for one anode
   //TCanvas * can5 = hqFC.Draw1DAllHistos();                can5->Write(); // FC charge 1D spectra for all anodes
   //TCanvas * can6 = hqFC.DrawDiscriAllHistos();            can6->Write(); // FC charge 2D spectra for all anodes
+#if HF>0
+  //TCanvas * can6a = htFC.DrawOneAnode(6);                  can6a->Write(); // ToF beam from HF to one anode 
+  //TCanvas * can6b = htFC.DrawAllAnodes();                  can6b->Write(); // ToF beam from HF to each anode 
+#endif
 #endif
 #if CHINU>0
   //  CHINU mult

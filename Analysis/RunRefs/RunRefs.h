@@ -8,7 +8,7 @@ UInt_t tot_T0ref[TOT_NRUNS]={2,2};
 #define Cf_NRUNS 2
 UInt_t Cf_numRun[Cf_NRUNS]={2,5};
 UInt_t Cf_nFiles[Cf_NRUNS]={2,5};
-UInt_t Cf_T0ref[U_NRUNS]={2,2};
+UInt_t Cf_T0ref[Cf_NRUNS]={2,2};
 
 #define BdF_NRUNS 0
 

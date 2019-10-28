@@ -105,7 +105,7 @@ outp.write('\n#define Cf_NRUNS '+str(Val_nRunsCf)+'\n')
 if (Val_nRunsCf>0):
     outp.write('UInt_t Cf_numRun[Cf_NRUNS]='+Str_numRunCf+';\n')
     outp.write('UInt_t Cf_nFiles[Cf_NRUNS]='+Str_nFilesCf+';\n')
-    outp.write('UInt_t Cf_T0ref[U_NRUNS]='+Str_T0refCf+';\n')
+    outp.write('UInt_t Cf_T0ref[Cf_NRUNS]='+Str_T0refCf+';\n')
 outp.write('\n#define BdF_NRUNS '+str(Val_nRunsBdF)+'\n')
 if (Val_nRunsBdF>0):
     outp.write('UInt_t BdF_numRun[BdF_NRUNS]='+Str_numRunBdF+';\n')

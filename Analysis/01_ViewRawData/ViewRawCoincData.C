@@ -141,6 +141,13 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   //  hqFC.Define1D(anode);
   //  hqFC.DefineDiscri(anode);
   //}
+#if HF>0
+  // *** ToF BEAM *** //
+  //FC_RawToFHistos htFC;
+  // --- define ToFraw histo for one anode --- //
+  //htFC.DefineOneAnode(6);
+  // --- the same for all anodes --- //
+#endif
 #endif
 
 #if CHINU>0
@@ -287,8 +294,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   // === ===================== === //
   UInt_t cpt_NDETlg=0;
   UInt_t cpt_NDEThg=0;
-  for(ULong64_t Entry=0; Entry<20000000; Entry++){
-  //  for(ULong64_t Entry=0; Entry<nentries; Entry++){
+  //for(ULong64_t Entry=0; Entry<20000000; Entry++){
+  for(ULong64_t Entry=0; Entry<nentries; Entry++){
     
     // --- ----------------------------- --- //
     // --- Read each entry of the TChain --- //
@@ -301,6 +308,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     //hmFC.FillHistos(raw.vFC_anode,raw.FC_mult);
     // CHARGE FC
     //hqFC.FillHistos(raw.vFC_anode,raw.vFC_Q1,raw.vFC_Q2);
+    // ToF beam
+    //
 #endif
 
 

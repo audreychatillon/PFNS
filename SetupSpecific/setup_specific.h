@@ -16,6 +16,7 @@
 
 // FISSION CHAMBER
 #define FC_nAnodes 11
+#define Distance_FC_Target4 22 //m
 
 // CHI-NU DETECTORS 
 #define CHINU_nDets 54

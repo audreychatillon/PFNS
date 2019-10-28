@@ -610,12 +610,7 @@ int main (int argc, char** argv) {
 #endif
 #if MACRO>0
 	  case 6: //--- MACRO PULSE --- //
-	    faster_data_load(group_data,&MACROdata);
-	    vMACRO_label.push_back(label);
-	    //vMACRO_clock.push_back(clock);
-	    //vMACRO_tdc.push_back(MACROdata.tdc);
-	    vMACRO_time.push_back((Double_t)(clock)+(Double_t)(qdc_conv_dt_ns((int)MACROdata.tdc)));
-	    vMACRO_Q1.push_back(MACROdata.q1);
+	    cout << "WARNING : IN THIS FILE, MACRO DATA IS IN THE GROUP" << endl;
 	    break;
 #endif
 	  default:
@@ -628,19 +623,31 @@ int main (int argc, char** argv) {
       // --- ------------- --- //
       // --- FILL THE TREE --- //
       // --- ------------- --- //
-      t->Fill();
+      t->Fill(); // for the coinc data
 
       // --- ------------------------------ --- //
       // --- CLOSE THE FASTER BUFFER READER --- //
       // --- ------------------------------ --- //
       faster_buffer_reader_close(buffer_reader);
       break;// END OF COINC DATA
-      
-#if (CHINU_nQ==B3_nQ)
-      
-#if CHINU_nQ==1
+
+
     case QDC_TDC_X1_TYPE_ALIAS:
-#elif CHINU_nQ==2
+#if MACRO>0
+      //MACRO 
+      if((TRIGGER_MODE!=0) && (label_data==Label_MACRO)&&(DetType[label_data-1]==6)){
+	faster_data_load(group_data,&MACROdata);
+	vMACRO_label.push_back(label);
+	vMACRO_time.push_back((Double_t)(clock)+(Double_t)(qdc_conv_dt_ns((int)MACROdata.tdc)));
+	vMACRO_Q1.push_back(MACROdata.q1);
+	t->Fill(); // for the macro data
+      }
+#endif
+      break;
+      
+#if (CHINU_nQ==B3_nQ) // CHINU and B3 HAVE AT LEAST TWO CHARGES
+      
+#if CHINU_nQ==2
     case QDC_TDC_X2_TYPE_ALIAS:
 #elif CHINU_nQ==3
     case QDC_TDC_X3_TYPE_ALIAS:
@@ -648,7 +655,6 @@ int main (int argc, char** argv) {
     case QDC_TDC_X4_TYPE_ALIAS:
 #endif
       nevents_source++; cout << nevents_source << endl;
-      if(TRIGGER_MODE!=0) cout << "ERROR, QDC_TDC_X"<<CHINU_nQ<<"_TYPE_ALIAS FOUND WITH TRIGGER_MODE = "<< TRIGGER_MODE << " DIFFERENT OF THE EXPECTED 0 VALUE" << endl;
       detType = DetType[label_data-1];
       switch (detType)
 	{
@@ -723,9 +729,7 @@ int main (int argc, char** argv) {
       
 #else // CHINU_nQ DIFFERS FROM B3_nQ
 #if CHINU>0
-#if CHINU_nQ==1
-    case QDC_TDC_X1_TYPE_ALIAS:
-#elif CHINU_nQ==2
+#if CHINU_nQ==2
     case QDC_TDC_X2_TYPE_ALIAS:
 #elif CHINU_nQ==3
     case QDC_TDC_X3_TYPE_ALIAS:
@@ -775,9 +779,7 @@ int main (int argc, char** argv) {
       break; // END OF TRIGGERLESS DATA FROM CHI-NU NDET
 #endif
 #if B3>0
-#if B3_nQ==1
-    case QDC_TDC_X1_TYPE_ALIAS:
-#elif B3_nQ==2
+#if B3_nQ==2
     case QDC_TDC_X2_TYPE_ALIAS:
 #elif B3_nQ==3
     case QDC_TDC_X3_TYPE_ALIAS:

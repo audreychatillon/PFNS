@@ -77,9 +77,9 @@ void run()
 
 
 
-  // === =========================== === //
-  // === CREATE Q-DISCRI HISTOGRAMMS === //
-  // === =========================== === //
+  // === ================================= === //
+  // === CREATE Q1 vs E DISCRI HISTOGRAMMS === //
+  // === ================================= === //
   
   TFile* histofile_CHINULG = new TFile("histos/histo_Q1vsE_neutron_CHINUlg.root","recreate");
   TFile* histofile_CHINUHG = new TFile("histos/histo_Q1vsE_neutron_CHINUhg.root","recreate");
@@ -102,9 +102,9 @@ void run()
   TH2F * h2_EQ1Discri_B3HG[B3_nDets];
   for(UShort_t det=1; det<=B3_nDets; det++){
     sprintf(name,"histo_Q1E_neutron_B3lg_%i",det);
-    h2_EQ1Discri_B3LG[det-1] = new TH2F(name,name,1025,0,524800,1000,0,20);
+    h2_EQ1Discri_B3LG[det-1] = new TH2F(name,name,1000,0,20,1025,0,524800);
     sprintf(name,"histo_Q1E_neutron_B3hg_%i",det);
-    h2_EQ1Discri_B3HG[det-1] = new TH2F(name,name,1025,0,524800,1000,0,20);
+    h2_EQ1Discri_B3HG[det-1] = new TH2F(name,name,1000,0,20,1025,0,524800);
   }
   
 

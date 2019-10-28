@@ -92,7 +92,7 @@ void run()
     sprintf(name,"histo_Q1E_neutron_CHINUlg_%i",det);
     h2_EQ1Discri_CHINULG[det-1] = new TH2F(name,name,1000,0,20,1025,0,524800);
     sprintf(name,"histo_Q1E_neutron_CHINUhg_%i",det);
-    h2_EQ1Discri_CHINUHG[det-1] = new TH2F(name,name,1000,0,20,1025,0,524800);
+    h2_EQ1Discri_CHINUHG[det-1] = new TH2F(name,name,1200,0,12,2000,0,800000);
   }
 
   
@@ -104,7 +104,7 @@ void run()
     sprintf(name,"histo_Q1E_neutron_B3lg_%i",det);
     h2_EQ1Discri_B3LG[det-1] = new TH2F(name,name,1000,0,20,1025,0,524800);
     sprintf(name,"histo_Q1E_neutron_B3hg_%i",det);
-    h2_EQ1Discri_B3HG[det-1] = new TH2F(name,name,1000,0,20,1025,0,524800);
+    h2_EQ1Discri_B3HG[det-1] = new TH2F(name,name,1000,0,12,2000,0,800000);
   }
   
 
@@ -147,7 +147,7 @@ void run()
       if (Q1>0) ratio = (Float_t)cal.vB3lg_Q2->at(m) / (Float_t)Q1;
       else ratio=-1;
       if ( (!cut_B3lg[det-1]->IsInside(Q1,ratio))&&
-	   (cal.vPFN_B3lg_ToF->at(m)>15)&&
+	   (cal.vPFN_B3lg_ToF->at(m)>16)&&
 	   (cal.FC_Q1>1700) ){
 	h2_EQ1Discri_B3LG[det-1]->Fill(cal.vPFN_B3lg_Ene->at(m),Q1);
       }
@@ -159,7 +159,7 @@ void run()
       if (Q1>0) ratio = (Float_t)cal.vB3hg_Q2->at(m) / (Float_t)Q1;
       else ratio=-1;
       if ( (!cut_B3hg[det-1]->IsInside(Q1,ratio))&&
-	   (cal.vPFN_B3hg_ToF->at(m)>15)&&
+	   (cal.vPFN_B3hg_ToF->at(m)>16)&&
 	   (cal.FC_Q1>1700) ){
 	h2_EQ1Discri_B3HG[det-1]->Fill(cal.vPFN_B3hg_Ene->at(m),Q1);
       }

@@ -3,7 +3,9 @@
 #ifndef SETUP_SPEC__H
 #define SETUP_SPEC__H
 
+// *** ************************************** *** //
 // *** You should change the following define *** //
+// *** ************************************** *** //
 #define TRIGGER_MODE 1      //0: TRIGGER LESS 1: COINC
 #define LABEL_GROUP 3000
 #define FC_nQ     3
@@ -17,6 +19,25 @@
 // FISSION CHAMBER
 #define FC_nAnodes 11
 #define Distance_FC_Target4 22 //m
+
+// *** ******************************************************************* *** //
+// *** A COMPLETER EN REGARDANT LE SPECTRE BRUT Q1 DE LA CHAMBRE A FISSION *** //
+// *** ******************************************************************* *** //
+static unsigned int FC_CutAlpha[FC_nAnodes] = {
+  0, //anode 1
+  0, //anode 2
+  0, //anode 3
+  0, //anode 4
+  0, //anode 5
+  1700, //anode 6
+  0, //anode 7
+  0, //anode 8
+  0, //anode 9
+  0, //anode 10
+  0  //anode 11
+};
+#define ToFcutPFN 15 // 15ns = 24 MeV
+
 
 // CHI-NU DETECTORS 
 #define CHINU_nDets 54

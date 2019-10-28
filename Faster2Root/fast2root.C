@@ -633,16 +633,18 @@ int main (int argc, char** argv) {
 
 
     case QDC_TDC_X1_TYPE_ALIAS:
-#if MACRO>0
-      //MACRO 
-      if((TRIGGER_MODE!=0) && (label_data==Label_MACRO)&&(DetType[label_data-1]==6)){
-	faster_data_load(group_data,&MACROdata);
-	vMACRO_label.push_back(label);
-	vMACRO_time.push_back((Double_t)(clock)+(Double_t)(qdc_conv_dt_ns((int)MACROdata.tdc)));
-	vMACRO_Q1.push_back(MACROdata.q1);
-	t->Fill(); // for the macro data
-      }
-#endif
+      /* // NEED TO DEBUG
+	 #if MACRO>0
+	 //MACRO 
+	 if((TRIGGER_MODE!=0) && (label_data==Label_MACRO)&&(DetType[label_data-1]==6)){
+	 faster_data_load(group_data,&MACROdata);
+	 vMACRO_label.push_back(label);
+	 vMACRO_time.push_back((Double_t)(clock)+(Double_t)(qdc_conv_dt_ns((int)MACROdata.tdc)));
+	 vMACRO_Q1.push_back(MACROdata.q1);
+	 t->Fill(); // for the macro data
+	 }
+	 #endif
+      */
       break;
       
 #if (CHINU_nQ==B3_nQ) // CHINU and B3 HAVE AT LEAST TWO CHARGES

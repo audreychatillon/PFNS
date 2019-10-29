@@ -10,6 +10,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TString.h"
+#include "TH1.h"
 
 //  include class of data format
 #include "../ClassDef/RawCoincData.h"
@@ -26,6 +27,9 @@
 #include "../../SetupSpecific/B3lg_OffsetToF.h"
 #include "../../SetupSpecific/B3hg_OffsetToF.h"
 #endif
+
+#include "Cf_Carlson.h"
+
 
 #define SPEED_OF_LIGHT_MNS 0.299792458  // m.ns-1
 #define NEUTRON_MASS_MeV   939.565430   //MeV
@@ -54,7 +58,6 @@ Float_t Velocity2Ene(double_t v_mns)
 
 void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 {
-
   char name[500];
   UShort_t CHINUlg_mult[CHINU_nDets];
   UShort_t CHINUhg_mult[CHINU_nDets];
@@ -349,6 +352,58 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 #endif
 #endif
 
+
+
+  // === ========== === //
+  // === HISTOGRAMS === //
+  // === ========== === //
+  //kinetic energy
+  TH1F * h1_Ene_CHINUlg[CHINU_nDets*FC_nAnodes];
+  TH1F * h1_Ene_CHINUhg[CHINU_nDets*FC_nAnodes];
+  TH1F * h1_Ene_B3lg[B3_nDets*FC_nAnodes];
+  TH1F * h1_Ene_B3hg[B3_nDets*FC_nAnodes];
+  //efficiency (kinetic energy / Manhart)
+  TH1F * h1_Eff_CHINUlg[CHINU_nDets*FC_nAnodes];
+  TH1F * h1_Eff_CHINUhg[CHINU_nDets*FC_nAnodes];
+  TH1F * h1_Eff_B3lg[B3_nDets*FC_nAnodes];
+  TH1F * h1_Eff_B3hg[B3_nDets*FC_nAnodes];
+  for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+    for(UShort_t side=1; side<=2; side++){
+      for(UShort_t ring=1; ring<=3; ring++){
+	for(UShort_t rank=1; rank<=9; rank++){
+	  det=rank + 9*(ring-1) + 27*(side-1);
+	  sprintf(name,"ENERGY_CHINU_LOW_GAIN_%s_%s_%d_fromFC%d",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank,anode);
+	  h1_Ene_CHINUlg[det-1+CHINU_nDets*(anode-1)] = new TH1F(name,name,nBinsEne,binEdges);
+	  h1_Ene_CHINUlg[det-1+CHINU_nDets*(anode-1)]->SetDirectory(0);
+	  sprintf(name,"ENERGY_CHINU_HIGH_GAIN_%s_%s_%d_fromFC%d",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank,anode);
+	  h1_Ene_CHINUhg[det-1+CHINU_nDets*(anode-1)] = new TH1F(name,name,nBinsEne,binEdges);
+	  h1_Ene_CHINUhg[det-1+CHINU_nDets*(anode-1)]->SetDirectory(0);
+	  sprintf(name,"EFFICIENCY_CHINU_LOW_GAIN_%s_%s_%d_fromFC%d",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank,anode);
+	  h1_Eff_CHINUlg[det-1+CHINU_nDets*(anode-1)] = new TH1F(name,name,nBinsEne,binEdges);
+	  h1_Eff_CHINUlg[det-1+CHINU_nDets*(anode-1)]->SetDirectory(0);
+	  sprintf(name,"EFFICIENCY_CHINU_HIGH_GAIN_%s_%s_%d_fromFC%d",sideVal[side-1].Data(),ringVal[ring-1].Data(),rank,anode);
+	  h1_Eff_CHINUhg[det-1+CHINU_nDets*(anode-1)] = new TH1F(name,name,nBinsEne,binEdges);
+	  h1_Eff_CHINUhg[det-1+CHINU_nDets*(anode-1)]->SetDirectory(0);
+	}
+      }
+      for(UShort_t pos=1; pos<=2; pos++){
+	det=pos + 2*(side-1);
+	sprintf(name,"ENERGY_B3_LOW_GAIN_%s_%d_fromFC%d",sideVal[side-1].Data(),pos,anode);
+	h1_Ene_B3lg[det-1+B3_nDets*(anode-1)] = new TH1F(name,name,nBinsEne,binEdges);
+	h1_Ene_B3lg[det-1+B3_nDets*(anode-1)]->SetDirectory(0);
+	sprintf(name,"ENERGY_B3_HIGH_GAIN_%s_%d_fromFC%d",sideVal[side-1].Data(),pos,anode);
+	h1_Ene_B3hg[det-1+B3_nDets*(anode-1)] = new TH1F(name,name,nBinsEne,binEdges);
+	h1_Ene_B3hg[det-1+B3_nDets*(anode-1)]->SetDirectory(0);
+	sprintf(name,"EFFICIENCY_B3_LOW_GAIN_%s_%d_fromFC%d",sideVal[side-1].Data(),pos,anode);
+	h1_Eff_B3lg[det-1+B3_nDets*(anode-1)] = new TH1F(name,name,nBinsEne,binEdges);
+	h1_Eff_B3lg[det-1+B3_nDets*(anode-1)]->SetDirectory(0);
+	sprintf(name,"EFFICIENCY_B3_HIGH_GAIN_%s_%d_fromFC%d",sideVal[side-1].Data(),pos,anode);
+	h1_Eff_B3hg[det-1+B3_nDets*(anode-1)] = new TH1F(name,name,nBinsEne,binEdges);
+	h1_Eff_B3hg[det-1+B3_nDets*(anode-1)]->SetDirectory(0);
+      }
+    }
+  }
+
   // === ===================== === //
   // === LOOP OVER THE ENTRIES === //
   // === ===================== === //
@@ -421,9 +476,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     // TO DO: calculate the beam ToF
     // TO DO: calculate the beam energy
 
-
-
-
     // === CHINU - LOW GAIN === //
     for(UShort_t m=0; m<raw.vCHINUlg_det->size(); m++) {
       if(CHINUlg_mult[raw.vCHINUlg_det->at(m)-1]>0) continue; // if this detector has alredy a hit recorded, do not take it into account
@@ -451,6 +503,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vCHINUlg_Q2.push_back(Q2);
       vPFN_CHINUlg_ToF.push_back(ToF);
       vPFN_CHINUlg_Ene.push_back(Ene);
+      h1_Ene_CHINUlg[det-1+CHINU_nDets*(FC_anode-1)]->Fill(Ene);
       // flag that neutron detecteur number det has been taken into account
       CHINUlg_mult[det-1]++;
     }
@@ -482,6 +535,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vCHINUhg_Q2.push_back(Q2);
       vPFN_CHINUhg_ToF.push_back(ToF);
       vPFN_CHINUhg_Ene.push_back(Ene);
+      h1_Ene_CHINUhg[det-1+CHINU_nDets*(FC_anode-1)]->Fill(Ene);
       // flag that neutron detecteur number det has been taken into account
       CHINUhg_mult[det-1]++;
     }
@@ -515,6 +569,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vB3lg_Q2.push_back(Q2);
       vPFN_B3lg_ToF.push_back(ToF);
       vPFN_B3lg_Ene.push_back(Ene);
+      h1_Ene_B3lg[det-1+B3_nDets*(FC_anode-1)]->Fill(Ene);
       // flag that neutron detecteur number det has been taken into account
       B3lg_mult[det-1]++;
     }
@@ -546,6 +601,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vB3hg_Q2.push_back(Q2);
       vPFN_B3hg_ToF.push_back(ToF);
       vPFN_B3hg_Ene.push_back(Ene);
+      h1_Ene_B3hg[det-1+B3_nDets*(FC_anode-1)]->Fill(Ene);
       // flag that neutron detecteur number det has been taken into account
       B3hg_mult[det-1]++;
     }
@@ -560,4 +616,49 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   t->Write();
   fsaveTree->ls();
   fsaveTree->Close();
+
+  switch (fType)
+    {
+    case 1:
+      sprintf(name,"../../histos/U235_PFN_Ene_Eff_R%d_to_R%d.root",runFirst,runLast);
+      break;
+    case 2:
+      sprintf(name,"../../histos/Cf252_PFN_Ene_Eff_R%d_to_R%d.root",runFirst,runLast);
+      break;
+    default:
+      sprintf(name,"NO/TYPE/RECOGNIZED.root");
+      break;
+    }
+  TFile * fHistos = new TFile(name,"recreate");
+  fHistos->cd();
+  for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+    for(det=1; det<=CHINU_nDets; det++){
+      for(UShort_t bin=1; bin<=h1_Ene_CHINUlg[det-1+CHINU_nDets*(anode-1)]->GetNbinsX();bin++){
+	h1_Eff_CHINUlg[det-1+CHINU_nDets*(anode-1)]->SetBinContent(bin,h1_Ene_CHINUlg[det-1+CHINU_nDets*(anode-1)]->GetBinContent(bin)/binContent[bin-1]);
+	h1_Ene_CHINUlg[det-1+CHINU_nDets*(anode-1)]->SetBinContent(bin,h1_Ene_CHINUlg[det-1+CHINU_nDets*(anode-1)]->GetBinContent(bin)/h1_Ene_CHINUlg[det-1+CHINU_nDets*(anode-1)]->GetBinWidth(bin));      
+	h1_Eff_CHINUhg[det-1+CHINU_nDets*(anode-1)]->SetBinContent(bin,h1_Ene_CHINUhg[det-1+CHINU_nDets*(anode-1)]->GetBinContent(bin)/binContent[bin-1]);
+	h1_Ene_CHINUhg[det-1+CHINU_nDets*(anode-1)]->SetBinContent(bin,h1_Ene_CHINUhg[det-1+CHINU_nDets*(anode-1)]->GetBinContent(bin)/h1_Ene_CHINUhg[det-1+CHINU_nDets*(anode-1)]->GetBinWidth(bin));   
+      }
+      h1_Ene_CHINUlg[det-1+CHINU_nDets*(anode-1)]->Write();      
+      h1_Eff_CHINUlg[det-1+CHINU_nDets*(anode-1)]->Write();      
+      h1_Ene_CHINUhg[det-1+CHINU_nDets*(anode-1)]->Write();      
+      h1_Eff_CHINUhg[det-1+CHINU_nDets*(anode-1)]->Write();      
+    }
+    for(det=1; det<=B3_nDets; det++){
+      for(UShort_t bin=1; bin<=h1_Ene_B3lg[det-1+B3_nDets*(anode-1)]->GetNbinsX();bin++){
+	h1_Eff_B3lg[det-1+B3_nDets*(anode-1)]->SetBinContent(bin,h1_Ene_B3lg[det-1+B3_nDets*(anode-1)]->GetBinContent(bin)/binContent[bin-1]);
+	h1_Ene_B3lg[det-1+B3_nDets*(anode-1)]->SetBinContent(bin,h1_Ene_B3lg[det-1+B3_nDets*(anode-1)]->GetBinContent(bin)/h1_Ene_B3lg[det-1+B3_nDets*(anode-1)]->GetBinWidth(bin));    
+	h1_Eff_B3hg[det-1+B3_nDets*(anode-1)]->SetBinContent(bin,h1_Ene_B3hg[det-1+B3_nDets*(anode-1)]->GetBinContent(bin)/binContent[bin-1]);
+	h1_Ene_B3hg[det-1+B3_nDets*(anode-1)]->SetBinContent(bin,h1_Ene_B3hg[det-1+B3_nDets*(anode-1)]->GetBinContent(bin)/h1_Ene_B3hg[det-1+B3_nDets*(anode-1)]->GetBinWidth(bin));   
+      }
+      h1_Ene_B3lg[det-1+B3_nDets*(anode-1)]->Write();      
+      h1_Eff_B3lg[det-1+B3_nDets*(anode-1)]->Write();      
+      h1_Ene_B3hg[det-1+B3_nDets*(anode-1)]->Write();      
+      h1_Eff_B3hg[det-1+B3_nDets*(anode-1)]->Write();      
+    }
+  }  
+
+  fHistos->ls();
+  fHistos->Close();
+
 }

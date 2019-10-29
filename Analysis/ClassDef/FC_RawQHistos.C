@@ -40,7 +40,7 @@ void FC_RawQHistos::DefineDiscri(UShort_t anode)
   char name[100];
   if(!TestAnode(anode,fFlagDiscri)){
     sprintf(name,"FC_Q2vsQ1_anode%d",anode);
-    h2_Q2vsQ1[anode-1] = new TH2I(name,name,3400,0,34000,250,0,10000);
+    h2_Q2vsQ1[anode-1] = new TH2I(name,name,2500,0,50000,500,0,10000);
     fFlagDiscri = fFlagDiscri | (1<<(anode-1));    
   }
 }

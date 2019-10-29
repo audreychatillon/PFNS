@@ -39,10 +39,10 @@ void FC_RawToFHistos::DefineOneAnode(UShort_t anode)
 
 
 
-void FC_RawToFHistos::FillHistos_FCmult1(Double_t HF_time, UShort_t FC_anode, Double_t FC_time)
+void FC_RawToFHistos::FillHistos_FCmult1(vector<Double_t>* vHF_time, UShort_t FC_anode, Double_t FC_time)
 {
   if (TestAnode(FC_anode,fFlag)){
-    h1_RawToF[FC_anode-1]->Fill(FC_time - HF_time);
+    h1_RawToF[FC_anode-1]->Fill(FC_time - vHF_time->at(vHF_time->size()-1));
   }
 }
 

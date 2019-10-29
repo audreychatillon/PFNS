@@ -5,6 +5,7 @@
 
 #include <TCanvas.h>
 #include <TChain.h>
+#include <TCutG.h>
 #include <TF1.h>
 #include <TH1.h>
 #include <TString.h>
@@ -19,6 +20,23 @@
 
 void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 {
+  char name[100];
+
+  // === ========================== === //
+  // === ALPHA / NEUTRON TCutG FILE === //
+  // === ========================== === //
+  sprintf(name,"cut/cutFC_Q2vsQ1_R102.root");
+  cout <<"TCutG FOR ALPHA DISCRI IS : " << name << endl;
+  TFile * cutfile = new TFile(name,"read");
+  TCutG * cut[FC_nAnodes];
+  for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+    sprintf(name,"cut_Q2vsQ1_neutron_FC_%i",anode);
+    cut[anode-1] = (TCutG*)cutfile->Get(name);
+    cut[anode-1]->ls();
+  }
+  cutfile->Close();
+  
+
   // === ================ === //
   // === TYPE OF THE DATA === //
   // === ================ === //
@@ -138,7 +156,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 #endif
 
 
-
   // === ====================================================== === //
   // === LOOP OVER THE ENTRIES AND FILL THE RAW ToF HISTOGRAMMS === //
   // === ====================================================== === //
@@ -148,6 +165,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     
 #if FC>0
     if(raw.vFC_anode->size()!=1) continue;    
+    if(!cut[raw.vFC_anode->at(0)-1]->IsInside(raw.vFC_Q1->at(0),raw.vFC_Q2->at(0))) continue;
 #if CHINU>0
     if(!raw.vCHINUlg_det->empty()) 
       htCHINU.FillHistosLG_FCmult1(raw.vFC_anode->at(0), raw.vFC_time->at(0),raw.vCHINUlg_det,raw.vCHINUlg_time,raw.CHINUlg_mult);
@@ -171,7 +189,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   // === FIT THE GAMMA PEAK AND WRITE THE MEAN VALUE IN AN ARRAY COPIED IN .h FILES === //
   // === ========================================================================== === //
 
-  char name[100];
   UShort_t det;
   Int_t    binMax;
 
@@ -421,8 +438,13 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   can6->Divide(4,3);
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     can5->cd(anode);
+    binMax=htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetMaximumBin();
+    htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetXaxis()->SetRangeUser(htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)-5,htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)+5);
     htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->Draw();  
     can6->cd(anode);
+    binMax=htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetMaximumBin();
+    htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->SetLineColor(kBlack);  
+    htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetXaxis()->SetRangeUser(htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*5]->GetBinLowEdge(binMax)-5,htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)+5);
     htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Draw();  
   }
 #endif
@@ -436,10 +458,13 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
     for(UShort_t det=1; det<=B3_nDets; det++){
 
+      htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->SetDirectory(0);
       binMax=htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetMaximumBin();
       htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetXaxis()->SetRangeUser(htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)-5,htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)+5);
       can3->cd(anode+11*(det-1)); htB3.h1_RawToF_LG[det-1+B3_nDets*(anode-1)]->Draw();
 
+      htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->SetDirectory(0);
+      htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->SetLineColor(kBlack);
       binMax=htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetMaximumBin();
       htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetXaxis()->SetRangeUser(htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)-5,htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->GetBinLowEdge(binMax)+5);
       can4->cd(anode+11*(det-1)); htB3.h1_RawToF_HG[det-1+B3_nDets*(anode-1)]->Draw();

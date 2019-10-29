@@ -317,10 +317,10 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     hqFC.FillHistos(raw.vFC_anode,raw.vFC_Q1,raw.vFC_Q2);
 #if HF>0
     // ToF beam
-    //if((raw.vFC_anode->size()==1) && (raw.vHF_time->size()==1))
-    //htFC.FillHistos_FCmult1(raw.vHF_time->at(0),raw.vFC_anode->at(0),raw.vFC_time->at(0));
-    if(raw.vHF_time->size()>0)
-      htFC.FillHistos(raw.vHF_time,raw.vFC_anode,raw.vFC_time);
+    if((raw.vFC_anode->size()==1) && (raw.vHF_time->size()>0))
+      htFC.FillHistos_FCmult1(raw.vHF_time,raw.vFC_anode->at(0),raw.vFC_time->at(0));
+    //if(raw.vHF_time->size()>0)
+    //htFC.FillHistos(raw.vHF_time,raw.vFC_anode,raw.vFC_time);
 #endif
 #endif
 

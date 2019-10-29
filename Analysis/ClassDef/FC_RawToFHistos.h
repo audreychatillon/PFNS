@@ -17,7 +17,7 @@ class FC_RawToFHistos{
 
   void DefineOneAnode(UShort_t);
 
-  void FillHistos_FCmult1(Double_t, UShort_t, Double_t);
+  void FillHistos_FCmult1(vector<Double_t>*, UShort_t, Double_t);
   void FillHistos(vector<Double_t>*, vector<UShort_t>*, vector<Double_t>*);
 
   TCanvas * DrawOneAnode(UShort_t);

@@ -131,8 +131,10 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     hqFC.h2_Q2vsQ1[anode-1]->Draw("COL");
     TCutG* cutg = (TCutG*)gPad->WaitPrimitive("CUTG","CutG");
     cutg->SetName(Form("cut_Q2vsQ1_neutron_FC_%i",anode));
+    cutg->SetLineColor(kRed);
     cutfile->cd();
     cutg->Write();
+    hqFC.h2_Q2vsQ1[anode-1]->Write(); hqFC.h2_Q2vsQ1[anode-1]->SetDirectory(0);
   }
   cutfile->Close();
 

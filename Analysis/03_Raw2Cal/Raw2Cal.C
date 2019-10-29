@@ -63,7 +63,20 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 
   char name[500];
   
-
+  // === ========================== === //
+  // === ALPHA / NEUTRON TCutG FILE === //
+  // === ========================== === //
+  sprintf(name,"../02_AlphaDiscri_n_GammaPeak/cut/cutFC_Q2vsQ1_R102.root");
+  cout <<"TCutG FOR ALPHA DISCRI IS : " << name << endl;
+  TFile * cutfile = new TFile(name,"read");
+  TCutG * cut[FC_nAnodes];
+  for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+    sprintf(name,"cut_Q2vsQ1_neutron_FC_%i",anode);
+    cut[anode-1] = (TCutG*)cutfile->Get(name);
+    cut[anode-1]->ls();
+  }
+  cutfile->Close();
+  
   // === ================ === //
   // === TYPE OF THE DATA === //
   // === ================ === //
@@ -272,9 +285,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 #endif
 #endif
 
-  // TO DO : BEAM (HF)
-
-  // TO DO BACKGROUND (PULSER)
 
   // === ===================== === //
   // === LOOP OVER THE ENTRIES === //
@@ -327,6 +337,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 
     if((raw.vB3lg_det->size()==0) && (raw.vB3hg_det->size()==0) && (raw.vCHINUlg_det->size()==0) && (raw.vCHINUhg_det->size()==0)) continue;
     if (raw.vFC_anode->size()!=1) continue;
+    if(!cut[raw.vFC_anode->at(0)-1]->IsInside(raw.vFC_Q1->at(0),raw.vFC_Q2->at(0))) continue;
     
     Event = raw.Event;
     FC_anode = raw.vFC_anode->at(0);

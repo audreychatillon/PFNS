@@ -66,7 +66,22 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   UShort_t det;
   UInt_t   Q1,Q2;
   Float_t  Qratio;
+  UInt_t   Ndet_multTot;
 
+  // === ========================== === //
+  // === ALPHA / NEUTRON TCutG FILE === //
+  // === ========================== === //
+  sprintf(name,"../02_AlphaDiscri_n_GammaPeak/cut/cutFC_Q2vsQ1_R102.root");
+  cout <<"TCutG FOR ALPHA DISCRI IS : " << name << endl;
+  TFile * cutfile = new TFile(name,"read");
+  TCutG * cut[FC_nAnodes];
+  for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
+    sprintf(name,"cut_Q2vsQ1_neutron_FC_%i",anode);
+    cut[anode-1] = (TCutG*)cutfile->Get(name);
+    cut[anode-1]->ls();
+  }
+  cutfile->Close();
+  
   // === ================ === //
   // === TYPE OF THE DATA === //
   // === ================ === //
@@ -423,6 +438,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       B3lg_mult[det]=0;
       B3hg_mult[det]=0;      
     }
+    Ndet_multTot=0;
 
     // --- ----------------------------------------------------- --- //
     // --- Initialization of the vector dedicated to ToF and Ene --- //
@@ -461,8 +477,9 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     if((Entry%1000000)==0)    cout << Entry << endl;
 
     if (raw.vFC_anode->size()!=1) continue;
+    if(!cut[raw.vFC_anode->at(0)-1]->IsInside(raw.vFC_Q1->at(0),raw.vFC_Q2->at(0))) continue;
     if((raw.vB3lg_det->size()==0) && (raw.vB3hg_det->size()==0) && (raw.vCHINUlg_det->size()==0) && (raw.vCHINUhg_det->size()==0)) continue;
-    if(FC_Q1<FC_CutAlpha[FC_anode-1]) continue;
+
 
     Event = raw.Event;
 
@@ -472,8 +489,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     FC_Q1 = raw.vFC_Q1->at(0);
     FC_Q2 = raw.vFC_Q2->at(0);
     // test if the data is below the alpha cut
-    if (raw.vFC_anode->size()==1) {
-      BEAM_ToF = raw.vFC_time->at(0) - raw.vHF_time->at(0); // this is ToFraw = FC_time-HF_time, TO DO transform into ToFcal
+    if ((raw.vFC_anode->size()==1)&&(raw.vHF_time->size()>0)) {
+      BEAM_ToF = raw.vFC_time->at(0) - raw.vHF_time->at(raw.vHF_time->size()-1); // this is ToFraw = FC_time-HF_time, TO DO transform into ToFcal
       // TO DO: calculate the beam energy 
     }
 
@@ -506,6 +523,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vPFN_CHINUlg_Ene.push_back(Ene);
       h1_Ene_CHINUlg[det-1+CHINU_nDets*(FC_anode-1)]->Fill(Ene);
       // flag that neutron detecteur number det has been taken into account
+      Ndet_multTot++;
       CHINUlg_mult[det-1]++;
     }
 
@@ -538,6 +556,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vPFN_CHINUhg_Ene.push_back(Ene);
       h1_Ene_CHINUhg[det-1+CHINU_nDets*(FC_anode-1)]->Fill(Ene);
       // flag that neutron detecteur number det has been taken into account
+      Ndet_multTot++;
       CHINUhg_mult[det-1]++;
     }
 
@@ -572,6 +591,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vPFN_B3lg_Ene.push_back(Ene);
       h1_Ene_B3lg[det-1+B3_nDets*(FC_anode-1)]->Fill(Ene);
       // flag that neutron detecteur number det has been taken into account
+      Ndet_multTot++;
       B3lg_mult[det-1]++;
     }
 
@@ -604,12 +624,14 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       vPFN_B3hg_Ene.push_back(Ene);
       h1_Ene_B3hg[det-1+B3_nDets*(FC_anode-1)]->Fill(Ene);
       // flag that neutron detecteur number det has been taken into account
+      Ndet_multTot++;
       B3hg_mult[det-1]++;
     }
 
     // --- ------------- --- //
     // --- FILL THE TREE --- //
     // --- ------------- --- //
+    if(Ndet_multTot==0) continue;
     t->Fill();
   }    
 

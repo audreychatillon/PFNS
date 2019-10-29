@@ -8,6 +8,7 @@
 #include <TCutG.h>
 #include <TF1.h>
 #include <TH1.h>
+#include <TGraph.h>
 #include <TString.h>
 
 #include "../../Faster2Root/ReadPid/pid.h"
@@ -203,6 +204,26 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   Double_t RealTimeCHINU[CHINU_nDets];
   Double_t OffsetCHINULG[CHINU_nDets*FC_nAnodes];
   Double_t OffsetCHINUHG[CHINU_nDets*FC_nAnodes];
+  TGraph * grCHINUlg[FC_nAnodes];
+  TGraph * grCHINUhg[FC_nAnodes];
+  UShort_t ptlg[FC_nAnodes];
+  UShort_t pthg[FC_nAnodes];
+  for(UShort_t anode=0; anode<FC_nAnodes; anode++){
+    grCHINUlg[anode] = new TGraph();
+    sprintf(name,"CHINUlg_FC%d_SigmaPeak",anode+1);
+    grCHINUlg[anode]->SetName(name);
+    grCHINUlg[anode]->SetTitle(name);
+    grCHINUlg[anode]->SetMarkerColor(kBlue);
+    grCHINUlg[anode]->SetMarkerStyle(20);
+    grCHINUhg[anode] = new TGraph();
+    ptlg[anode]=0;
+    sprintf(name,"CHINUhg_FC%d_SigmaPeak",anode+1);
+    grCHINUhg[anode]->SetName(name);
+    grCHINUhg[anode]->SetTitle(name);
+    grCHINUhg[anode]->SetMarkerColor(kRed );
+    grCHINUhg[anode]->SetMarkerStyle(20);
+    pthg[anode]=0;
+  }
   for(UShort_t side=1; side<=2; side ++){
     for(UShort_t ring=1; ring<=3; ring++){
       for(UShort_t rank=1; rank<=9; rank++){
@@ -221,8 +242,10 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	      fGaussianLG->SetName(name);
 	      fGaussianLG->SetTitle(name);
 	      GammaPeak_LG_Mean[det-1+CHINU_nDets*(anode-1)]=fGaussianLG->GetParameter(1);
+	      grCHINUlg[anode-1]->SetPoint(ptlg[anode-1],det,fGaussianLG->GetParameter(2));
 	      OffsetCHINULG[det-1+CHINU_nDets*(anode-1)]=RealTimeCHINU[det-1]-GammaPeak_LG_Mean[det-1+CHINU_nDets*(anode-1)];
 	      delete fGaussianLG;
+	      ptlg[anode-1]++;
 	    }// end of if(histo)
 	    if((htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Integral())>1000) {
 	      binMax=htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetMaximumBin();
@@ -232,8 +255,10 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	      fGaussianHG->SetName(name);
 	      fGaussianHG->SetTitle(name);
 	      GammaPeak_HG_Mean[det-1+CHINU_nDets*(anode-1)]=fGaussianHG->GetParameter(1);
+	      grCHINUhg[anode-1]->SetPoint(pthg[anode-1],det,fGaussianHG->GetParameter(2));
 	      OffsetCHINUHG[det-1+CHINU_nDets*(anode-1)]=RealTimeCHINU[det-1]-GammaPeak_HG_Mean[det-1+CHINU_nDets*(anode-1)];
 	      delete fGaussianHG;
+	      pthg[anode-1]++;
 	    }// end of if(histo)
 	  }//end of for(rank)
       }//end of for(ring)
@@ -408,8 +433,19 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 
 
 
-  // --- DRAW --- //
+  // --- DRAW --- //s
 #if CHINU>0 && FC>0
+
+  TCanvas * canSigmaLG = new TCanvas("Sigma_GammaPeak_CHINULG","Sigma_GammaPeak_CHINULG",0,0,2000,1800);
+  canSigmaLG->Divide(4,3);
+  TCanvas * canSigmaHG = new TCanvas("Sigma_GammaPeak_CHINUHG","Sigma_GammaPeak_CHINUHG",0,0,2000,1800);
+  canSigmaHG->Divide(4,3);
+  for(UShort_t anode=1; anode<FC_nAnodes; anode++){
+    canSigmaLG->cd(anode);  gPad->SetGridx();  gPad->SetGridy();  grCHINUlg[anode-1]->Draw("ALP");
+    canSigmaHG->cd(anode);  gPad->SetGridx();  gPad->SetGridy();  grCHINUhg[anode-1]->Draw("ALP");
+  }
+
+
   TCanvas * can1 = new TCanvas("FitGammaPeak_FC6_CHINUlg","FitGammaPeak_FC6_CHINUlg",0,0,2000,1600);
   can1->Divide(9,6);
   TCanvas * can2 = new TCanvas("FitGammaPeak_FC6_CHINUhg","FitGammaPeak_FC6_CHINUhg",0,0,2000,1600);

@@ -196,7 +196,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	    OffsetCHINUHG[det-1+CHINU_nDets*(anode-1)] = 0;
 	    GammaPeak_LG_Mean[det-1+CHINU_nDets*(anode-1)]=0.;
 	    GammaPeak_HG_Mean[det-1+CHINU_nDets*(anode-1)]=0.;
-	    if((htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->Integral())>100) {
+	    if((htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->Integral())>1000) {
 	      binMax=htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetMaximumBin();
 	      htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->Fit("gaus","","",htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)-1.5,htCHINU.h1_RawToF_LG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)+1.5);
 	      TF1 * fGaussianLG = (TF1*)gDirectory->FindObject("gaus");
@@ -207,7 +207,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 	      OffsetCHINULG[det-1+CHINU_nDets*(anode-1)]=RealTimeCHINU[det-1]-GammaPeak_LG_Mean[det-1+CHINU_nDets*(anode-1)];
 	      delete fGaussianLG;
 	    }// end of if(histo)
-	    if((htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Integral())>100) {
+	    if((htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Integral())>1000) {
 	      binMax=htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetMaximumBin();
 	      htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->Fit("gaus","","",htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)-1.5,htCHINU.h1_RawToF_HG[det-1+CHINU_nDets*(anode-1)]->GetBinLowEdge(binMax)+1.5);
 	      TF1 * fGaussianHG = (TF1*)gDirectory->FindObject("gaus");

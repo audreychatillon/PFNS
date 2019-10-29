@@ -2,3 +2,6 @@
 # run number   number of files   data type   T0 ref run
    2         | 2               | Cf        | 2
    5         | 8               | Cf        | 2
+ 100         | 1               | U         | 100
+ 101         | 1               | U         | 100
+ 102         | 1               | U         | 100

@@ -1,11 +1,17 @@
-=== ================= ===
-=== REPERTOIRE RunRef ===
-=== ================= ===
+=== ================= ===\ 
+=== REPERTOIRE RunRef ===\ 
+=== ================= ===\ 
 
 Remplir le fichier RunRefs.dat
+
     COLONNE 1: NUMERO DU RUN
+
     COLONNE 2: NOMBRE DE FICHIER
+
     COLONNE 3: type de données à choisir entre U, Cf, BdF, Cs
+
+    COLONNE 4: numéro du dernier run où les cartes faster ont été redémarrées
+
 Execuer le script readRunRefs.py qui va créer le fichier RunRefs.h
 
 
@@ -15,13 +21,20 @@ Execuer le script readRunRefs.py qui va créer le fichier RunRefs.h
 === ========================= ===
 
 * Les codes ViewRawCoincData.C et ViewRawSourceData.C ont plusieurs include: vérifier les chemins
+
 * Commenter les lignes correspondant aux histos qui ne doivent pas être tracés
+
 root [0] .L ViewRawCoincData.C+ ou .L ViewRawSourceData.C+
+
 root [1] run(arg1,arg2,arg3,arg4)
+
 avec arg1: numéro du premier run à traiter
+
      arg2: numéro du dernier run à traiter
+
      arg3: type de données: "U", "Cf", "BdF", "Cs"
-     arg4: path to the root file, for example "../data/Raw/U235"
+
+     arg4: path to the root file, for example "../../data/Raw/U235"
 
 
 
@@ -29,13 +42,24 @@ avec arg1: numéro du premier run à traiter
 === REPERTOIRE 02_FitGammaPeak ===
 === ========================== ===
 
+ATTENTION : A CHAQUE FOIS QU'UNE CARTE EST REDEMARREE, LE SPECTRE EN TEMPS VA SE DECALER ET IL FAUT REFAIRE LE FIT DES PICS GAMMAS QUE CE SOIT POUR LES NEUTRONS DE FISSION PROMPTS OU POUR LE FAISCEAU.
+
+* Pour les neutrons de fission prompts:
+
 root [0] .L FitGammaPeakPFN.C+
+
 root [1] run(20,21,"Cf","../../data/Raw/Cf252/") : à adapter selon les runs utilisés et le chemin vers les données.
+
 Ce code va créer quatre fichiers qui seront inclus ensuite pour calibrer le ToF et calculer l'énergie des PFN
+
 ../../SetupSpecific/FC_to_CHINUlg_GammaPeak.h
+
 ../../SetupSpecific/FC_to_CHINUhg_GammaPeak.h
+
 ../../SetupSpecific/FC_to_B3lg_GammaPeak.h
+
 ../../SetupSpecific/FC_to_B3hg_GammaPeak.h
+
 Modifier le code à votre convenance pour adapter les chemins.
 
 
@@ -46,10 +70,10 @@ Modifier le code à votre convenance pour adapter les chemins.
 Dans cette étape, création d'un arbre root avec tous les temps de vol et énergie pour les neutrons incidents et prompts. 
 On garde également les valeurs de certaines variables brutes dont les charges.
 
-!!! !!!!!!!!! !!!
-!!! ATTENTION !!!
-!!! !!!!!!!!! !!!
-!!! J'ai volontairement enlevé tous les évévenements où 
-!!! aucun détecteur neutron ne répond 
-!!! Je garde cependant trace du numéro d'événement originel.
+!!! !!!!!!!!! !!!\ 
+!!! ATTENTION !!!\ 
+!!! !!!!!!!!! !!!\ 
+!!! J'ai volontairement enlevé tous les évévenements où \ 
+!!! aucun détecteur neutron ne répond \ 
+!!! Je garde cependant trace du numéro d'événement originel.\ 
 

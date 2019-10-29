@@ -67,7 +67,7 @@ void B3_RawToFHistos::FillHistosLG_FCmult1(UShort_t FC_anode, Double_t FC_time, 
   for(UShort_t m=0; m<vN_det->size(); m++){
     if (TestDet(vN_det->at(m),fFlagLG[FC_anode-1])){
       if(Nmult[vN_det->at(m)-1]>1) continue;
-      h1_RawToF_LG[(vN_det->at(m)-1)+B3_nDets*(FC_anode-1)]->Fill(vN_time->at(m) - FC_time);
+      h1_RawToF_LG[(vN_det->at(m)-1)+B3_nDets*(FC_anode-1)]->Fill((float)(vN_time->at(m) - FC_time));
     }
   }// end of loop over the neutron multiplicity
 }
@@ -76,7 +76,7 @@ void B3_RawToFHistos::FillHistosHG_FCmult1(UShort_t FC_anode, Double_t FC_time, 
   for(UShort_t m=0; m<vN_det->size(); m++){
     if (TestDet(vN_det->at(m),fFlagHG[FC_anode-1])){
       if(Nmult[vN_det->at(m)-1]>1) continue;
-      h1_RawToF_HG[(vN_det->at(m)-1)+B3_nDets*(FC_anode-1)]->Fill(vN_time->at(m) - FC_time);
+      h1_RawToF_HG[(vN_det->at(m)-1)+B3_nDets*(FC_anode-1)]->Fill((float)(vN_time->at(m) - FC_time));
     }
   }// end of loop over the neutron multiplicity
 }

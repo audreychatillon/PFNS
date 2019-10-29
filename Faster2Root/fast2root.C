@@ -455,8 +455,8 @@ int main (int argc, char** argv) {
     vHF_label.clear();
     //vHF_clock.clear();
     //vHF_tdc.clear();
-    vHF_Q1.clear();
     vHF_time.clear();
+    vHF_Q1.clear();
 #endif
     // *** Macro Pulse *** //
 #if MACRO>0
@@ -496,9 +496,9 @@ int main (int argc, char** argv) {
       // --- READOUT THE data --- //
       // --- ---------------- --- //
       if(label_data!=LABEL_GROUP) cout << "WARNING !!! SEEMS TO HAVE A MISMATCH BETWEEN GROUP_ALIAS AND GROUP_LABEL" << endl;
-      while ((group_data = faster_buffer_reader_next (buffer_reader)) != NULL){
-	label = (unsigned short)(faster_data_label (group_data));
-	clock = faster_data_clock_ns (group_data);
+      while ((group_data=faster_buffer_reader_next(buffer_reader)) != NULL){
+	label = (unsigned short)(faster_data_label(group_data));
+	clock = faster_data_clock_ns(group_data);
 	detType = DetType[label-1];
 	switch (detType)
 	  {
@@ -510,9 +510,7 @@ int main (int argc, char** argv) {
 	    FC_mult[Label2Ch[label-1]-1]++;
 	    //vFC_clock.push_back(clock);
 	    //vFC_tdc.push_back(FCdata.tdc);
-	    tdc = (int)FCdata.tdc;
-	    dt  = (double)qdc_conv_dt_ns(tdc);
-	    vFC_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (FCdata.tdc)));
+	    vFC_time.push_back((double)clock + (double)(qdc_conv_dt_ns(FCdata.tdc)));
 	    vFC_Q1.push_back(FCdata.q1);
 	    vFC_Q2.push_back(FCdata.q2);
 	    break;
@@ -529,9 +527,7 @@ int main (int argc, char** argv) {
 		vCHINUlg_det.push_back(Label2Ch[label-1]);
 		//vCHINUlg_clock.push_back(clock);
 		//vCHINUlg_tdc.push_back(CHINUdata.tdc);
-		tdc = (int)CHINUdata.tdc;
-		dt  = (double)qdc_conv_dt_ns(tdc);
-		vCHINUlg_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (CHINUdata.tdc)));
+		vCHINUlg_time.push_back((double)clock + (double)(qdc_conv_dt_ns(CHINUdata.tdc)));
 		vCHINUlg_Q1.push_back(CHINUdata.q1);
 		vCHINUlg_Q2.push_back(CHINUdata.q2);
 		break;
@@ -541,9 +537,7 @@ int main (int argc, char** argv) {
 		vCHINUhg_det.push_back(Label2Ch[label-1]);
 		//vCHINUhg_clock.push_back(clock);
 		//vCHINUhg_tdc.push_back(CHINUdata.tdc);
-		tdc = (int)CHINUdata.tdc;
-		dt  = (double)qdc_conv_dt_ns(tdc);
-		vCHINUhg_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (CHINUdata.tdc)));
+		vCHINUhg_time.push_back((double)clock + (double)(qdc_conv_dt_ns(CHINUdata.tdc)));
 		vCHINUhg_Q1.push_back(CHINUdata.q1);
 		vCHINUhg_Q2.push_back(CHINUdata.q2);
 		break;
@@ -564,9 +558,7 @@ int main (int argc, char** argv) {
 		vB3lg_det.push_back(Label2Ch[label-1]);
 		//vB3lg_clock.push_back(clock);
 		//vB3lg_tdc.push_back(B3data.tdc);
-		tdc = (int)B3data.tdc;
-		dt  = (double)qdc_conv_dt_ns(tdc);
-		vB3lg_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (B3data.tdc)));
+		vB3lg_time.push_back((double)clock + (double)(qdc_conv_dt_ns(B3data.tdc)));
 		vB3lg_Q1.push_back(B3data.q1);
 		vB3lg_Q2.push_back(B3data.q2);
 		break;
@@ -576,9 +568,7 @@ int main (int argc, char** argv) {
 		vB3hg_det.push_back(Label2Ch[label-1]);
 		//vB3hg_clock.push_back(clock);
 		//vB3hg_tdc.push_back(B3data.tdc);
-		tdc = (int)B3data.tdc;
-		dt  = (double)qdc_conv_dt_ns(tdc);
-		vB3hg_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (B3data.tdc)));
+		vB3hg_time.push_back((double)clock + (double)(qdc_conv_dt_ns(B3data.tdc)));
 		vB3hg_Q1.push_back(B3data.q1);
 		vB3hg_Q2.push_back(B3data.q2);
 		break;
@@ -594,7 +584,7 @@ int main (int argc, char** argv) {
 	    vPULSER_label.push_back(label);
 	    //vPULSER_clock.push_back(clock);
 	    //vPULSER_tdc.push_back(PULSERdata.tdc);
-	    vPULSER_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (PULSERdata.tdc)));
+	    vPULSER_time.push_back((double)clock + (double)(qdc_conv_dt_ns(PULSERdata.tdc)));
 	    vPULSER_Q1.push_back(PULSERdata.q1);
 	    break;
 #endif
@@ -604,7 +594,7 @@ int main (int argc, char** argv) {
 	    vHF_label.push_back(label);
 	    //vHF_clock.push_back(clock);
 	    //vHF_tdc.push_back(HFdata.tdc);
-	    vHF_time.push_back((double)((ULong64_t)clock + (double)qdc_conv_dt_ns (HFdata.tdc)));
+	    vHF_time.push_back((double)clock + (double)(qdc_conv_dt_ns(HFdata.tdc)));
 	    vHF_Q1.push_back(HFdata.q1);
 	    break;
 #endif
@@ -638,6 +628,7 @@ int main (int argc, char** argv) {
 	 //MACRO 
 	 if((TRIGGER_MODE!=0) && (label_data==Label_MACRO)&&(DetType[label_data-1]==6)){
 	 faster_data_load(group_data,&MACROdata);
+	 clock = faster_data_clock_ns(group_data);
 	 vMACRO_label.push_back(label);
 	 vMACRO_time.push_back((Double_t)(clock)+(Double_t)(qdc_conv_dt_ns((int)MACROdata.tdc)));
 	 vMACRO_Q1.push_back(MACROdata.q1);

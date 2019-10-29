@@ -14,6 +14,7 @@ class FC_RawMultHistos{
  public :
   TH1I * h1_FC;
   TH1I * h1_FCpattern;
+  TH1I * h1_multPerAnode[FC_nAnodes];
   TH2I * h2_MultTot_vs_MultAnode[FC_nAnodes];
 
   FC_RawMultHistos();
@@ -21,6 +22,7 @@ class FC_RawMultHistos{
   void DefineHistos();
   void FillHistos(vector<UShort_t> *,UShort_t*);
   TCanvas * Draw1DHistos();
+  TCanvas * DrawMultPerAnode();
   TCanvas * Draw2DHistos();
 
 };

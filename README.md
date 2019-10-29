@@ -11,10 +11,11 @@ AVANT TOUTES CHOSES, IL FAUT COMPILER LES LIBRAIRIES DANS :
 
 	root Process.C
 
-----------------------------------------------------------------
 
 Ce code permet de 
-* convertir les fichiers .fast en fichier .root
+----------------------------------------------------------------
+
+* convertir les fichiers .fast en fichier .root\ 
 --> Faster2Root
 
 ----------------------------------------------------------------
@@ -33,5 +34,5 @@ Ce code permet de
 
 ----------------------------------------------------------------
 
-* Une fois toutes les conditions déterminées convertir les arbres bruts en arbre prêts à tracer les énergies des PFNs
+* convertir les arbres bruts en arbre prêts à tracer les énergies des PFNs, une fois toutes les conditions déterminées 
 --> 05_Raw2Ana

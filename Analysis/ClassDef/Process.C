@@ -1,5 +1,6 @@
 {
   gROOT->ProcessLine(".L RawCoincData.C+");
+  gROOT->ProcessLine(".L CalCoincData.C+");
   gROOT->ProcessLine(".L FC_RawMultHistos.C+");
   gROOT->ProcessLine(".L FC_RawQHistos.C+");
   gROOT->ProcessLine(".L FC_RawToFHistos.C+");

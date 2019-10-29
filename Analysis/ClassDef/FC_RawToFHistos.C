@@ -28,7 +28,7 @@ void FC_RawToFHistos::DefineOneAnode(UShort_t anode)
   char name[100];
   if(!TestAnode(anode,fFlag)){
     sprintf(name,"RawToF_FC%d_HF",anode);
-    h1_RawToF[anode-1] = new TH1F(name,name,10000,-5000,5000);
+    h1_RawToF[anode-1] = new TH1F(name,name,30000,-1000,2000);
     h1_RawToF[anode-1]->GetXaxis()->SetTitle("raw ToF [ns, 100ps/bin]");
     h1_RawToF[anode-1]->GetXaxis()->SetTitleOffset(1.4);
     h1_RawToF[anode-1]->SetLineColor(kBlue);
@@ -42,12 +42,21 @@ void FC_RawToFHistos::DefineOneAnode(UShort_t anode)
 void FC_RawToFHistos::FillHistos_FCmult1(Double_t HF_time, UShort_t FC_anode, Double_t FC_time)
 {
   if (TestAnode(FC_anode,fFlag)){
-    h1_RawToF[FC_anode-1]->Fill(HF_time-FC_time);
+    h1_RawToF[FC_anode-1]->Fill(FC_time - HF_time);
   }
 }
 
 
-
+void FC_RawToFHistos::FillHistos(vector<Double_t>* vHF_time, vector<UShort_t>* vFC_anode, vector<Double_t>* vFC_time)
+{
+  for(UShort_t m=0; m<vFC_anode->size(); m++){
+    if (TestAnode(vFC_anode->at(m),fFlag)){
+      h1_RawToF[vFC_anode->at(m)-1]->Fill((float)(vFC_time->at(m) - vHF_time->at(vHF_time->size()-1)));
+      //for(UShort_t n=0; n<vHF_time->size(); n++)
+      //h1_RawToF[vFC_anode->at(m)-1]->Fill((float)(vFC_time->at(m) - vHF_time->at(n)));
+    }
+  }
+}
 
 
 TCanvas * FC_RawToFHistos::DrawOneAnode(UShort_t anode)

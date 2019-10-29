@@ -242,7 +242,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   UInt_t   FC_Q1;
   UInt_t   FC_Q2;
 #if HF>0
-  //Double_t BEAM_ToF;
+  Double_t BEAM_ToF;
   //Double_t BEAM_Ene;
 #endif
   // TO DO IF PULSER
@@ -314,10 +314,10 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   t->Branch("FC_anode",&FC_anode,"FC_anode/s");
   t->Branch("FC_Q1",&FC_Q1,"FC_Q1/s");
   t->Branch("FC_Q2",&FC_Q2,"FC_Q2/s");
-  //#if HF>0
-  //t->Branch("BEAM_ToF",&BEAM_ToF,"BEAM_ToF/F");
+#if HF>0
+  t->Branch("BEAM_ToF",&BEAM_ToF,"BEAM_ToF/F");
   //t->Branch("BEAM_ToF",&BEAM_Ene,"BEAM_Ene/F");
-  //#endif
+#endif
 #endif
 
   // chi-nu ndet 
@@ -431,7 +431,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     FC_anode=0;
     FC_Q1=0;
     FC_Q2=0;
-    //    BEAM_ToF=0;
+    BEAM_ToF=0;
     //    BEAM_Ene=0;
     vCHINUlg_det.clear();
     vCHINUhg_det.clear();
@@ -460,7 +460,6 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     raw.GetEntry(Entry);
     if((Entry%1000000)==0)    cout << Entry << endl;
 
-
     if (raw.vFC_anode->size()!=1) continue;
     if((raw.vB3lg_det->size()==0) && (raw.vB3hg_det->size()==0) && (raw.vCHINUlg_det->size()==0) && (raw.vCHINUhg_det->size()==0)) continue;
     if(FC_Q1<FC_CutAlpha[FC_anode-1]) continue;
@@ -473,8 +472,10 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     FC_Q1 = raw.vFC_Q1->at(0);
     FC_Q2 = raw.vFC_Q2->at(0);
     // test if the data is below the alpha cut
-    // TO DO: calculate the beam ToF
-    // TO DO: calculate the beam energy
+    if (raw.vFC_anode->size()==1) {
+      BEAM_ToF = raw.vFC_time->at(0) - raw.vHF_time->at(0); // this is ToFraw = FC_time-HF_time, TO DO transform into ToFcal
+      // TO DO: calculate the beam energy 
+    }
 
     // === CHINU - LOW GAIN === //
     for(UShort_t m=0; m<raw.vCHINUlg_det->size(); m++) {

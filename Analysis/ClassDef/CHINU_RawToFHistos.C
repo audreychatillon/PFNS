@@ -83,7 +83,7 @@ void CHINU_RawToFHistos::FillHistosLG_FCmult1(UShort_t FC_anode, Double_t FC_tim
     rank = Rank_ChiNu[det-1];
     if (TestRank(rank,fFlagLG[ring-1+3*(side-1)+6*(FC_anode-1)])){
       if(Nmult[det-1]>1) continue;
-      h1_RawToF_LG[(det-1)+CHINU_nDets*(FC_anode-1)]->Fill(vN_time->at(m) - FC_time);
+      h1_RawToF_LG[(det-1)+CHINU_nDets*(FC_anode-1)]->Fill((float)(vN_time->at(m) - FC_time));
     }
   }// end of loop over the neutron multiplicity
 }
@@ -97,7 +97,7 @@ void CHINU_RawToFHistos::FillHistosHG_FCmult1(UShort_t FC_anode, Double_t FC_tim
     rank = Rank_ChiNu[det-1];
     if (TestRank(rank, fFlagHG[ring-1+3*(side-1)+6*(FC_anode-1)])){
       if(Nmult[det-1]>1) continue;
-      h1_RawToF_HG[(det-1)+CHINU_nDets*(FC_anode-1)]->Fill(vN_time->at(m) - FC_time);
+      h1_RawToF_HG[(det-1)+CHINU_nDets*(FC_anode-1)]->Fill((float)(vN_time->at(m) - FC_time));
     }
   }// end of loop over the neutron multiplicity
 }

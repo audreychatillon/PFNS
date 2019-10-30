@@ -21,6 +21,20 @@
 #define Distance_FC_Target4 22 //m
 #define ToFcutPFN 15 // 15ns = 24 MeV
 
+static float GammaFlash_Mean[11] = {
+  -7.99389e+02,
+  0,
+  0,
+  -7.93712e+02,
+  -7.94610e+02,
+  -7.94183e+02,
+  -7.92085e+02,
+  -7.91687e+02,
+  -7.95208e+02,
+  -7.94937e+02,
+  -7.93481e+02
+};
+
 
 // CHI-NU DETECTORS 
 #define CHINU_nDets 54

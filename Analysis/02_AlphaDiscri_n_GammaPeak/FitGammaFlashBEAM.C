@@ -5,6 +5,7 @@
 
 #include <TCanvas.h>
 #include <TChain.h>
+#include <TCutG.h>
 #include <TF1.h>
 #include <TH1.h>
 #include <TString.h>
@@ -33,6 +34,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     cut[anode-1]->ls();
   }
   cutfile->Close();
+
+
   // === ================ === //
   // === TYPE OF THE DATA === //
   // === ================ === //
@@ -142,66 +145,22 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     if((Entry%1000000)==0) cout << Entry << endl;
     
 #if FC>0 && HF>0
-    if((raw.vFC_anode->size()!=1) || (raw.vHF_label->size())) continue;    
-    htFC.FillHistos_FCmult1(raw.vHF_time->at(0),raw.vFC_anode->at(0),raw.vFC_time->at(0));
+    if((raw.vFC_anode->size()!=1) || (raw.vHF_label->size()==0)) continue;    
+    if(!cut[raw.vFC_anode->at(0)-1]->IsInside(raw.vFC_Q1->at(0),raw.vFC_Q2->at(0))) continue;    
+    htFC.FillHistos_FCmult1(raw.vHF_time,raw.vFC_anode->at(0),raw.vFC_time->at(0));
 #endif
   }//end of for(Entry)
 
 
-  // === ========================================================================== === //
-  // === FIT THE GAMMA PEAK AND WRITE THE MEAN VALUE IN AN ARRAY COPIED IN .h FILES === //
-  // === ========================================================================== === //
-
-  char name[100];
-  UShort_t det;
-  Int_t    binMax;
-
-
-#if FC>0 && HF>0
-  ofstream BEAM_GammaFlash("../../SetupSpecific/FC_to_HF_GammaFlash.h",ios::out | ios::trunc);
-  ofstream BEAM_OffsetToF("../../SetupSpecific/BEAM_OffsetToF.h",ios::out | ios::trunc);
-  Float_t GammaFlash_Mean[FC_nAnodes];
-  Double_t RealTimeFC = Distance_FC_Target4 / SPEED_OF_LIGHT_MNS;
-  Double_t OffsetFC[FC_nAnodes];
-  for(UShort_t anode=1; anode<=FC_nAnodes; anode++){
-    GammaFlash_Mean[anode-1] = 0;
-    OffsetFC[anode-1] = 0;
-    if( htFC.h1_RawToF[anode-1]->Integral()>100) {
-    }
-  }
-
-  // --- write Gamma Flash mean  --- //
-  BEAM_GammaFlash << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl<<endl;
-  BEAM_GammaFlash << "#ifndef _FCHF_GAMMA_FLASH__H_" << endl;
-  BEAM_GammaFlash << "#define _FCHF_GAMMA_FLASH__H_" << endl;
-  BEAM_GammaFlash << "Float_t BEAM_GammaFlash["<<FC_nAnodes<<"] = {" << endl;
-  for(UShort_t anode=0; anode<FC_nAnodes-1; anode++){
-    BEAM_GammaFlash << GammaFlash_Mean[anode] << "," ;
-  }
-  BEAM_GammaFlash << GammaFlash_Mean[FC_nAnodes-1] << endl ;
-  BEAM_GammaFlash << "};" << endl;
-  BEAM_GammaFlash <<  endl;
-  BEAM_GammaFlash << "#endif //_FCHF_GAMMA_FLASH__H_" << endl;
-
-  // --- write Offset ToF LG --- //
-  BEAM_OffsetToF << "// File automatically generated from " << dataType.Data() << " runs (R"<< runFirst << " to R"<< runLast <<")" << endl<<endl;
-  BEAM_OffsetToF << "#ifndef _BEAM_OFFSET_TOF__H_" << endl;
-  BEAM_OffsetToF << "#define _BEAM_OFFSET_TOF__H_" << endl;
-  BEAM_OffsetToF << "Float_t BEAM_OffsetToF["<<FC_nAnodes<<"] = {" << endl;
-  for(UShort_t anode=0; anode<FC_nAnodes-1; anode++){
-    BEAM_OffsetToF << OffsetFC[anode] << "," ;
-  }
-  BEAM_OffsetToF << OffsetFC[FC_nAnodes-1] << endl ;
-  BEAM_OffsetToF << "};" << endl;
-  BEAM_OffsetToF <<  endl;
-  BEAM_OffsetToF << "#endif //_BEAM_OFFSET_TOF__H_" << endl;
-
-
-#endif
-  
-
-
-  // --- DRAW --- //
-  TCanvas * can = htFC.DrawAllAnodes();
-
+  TCanvas * can1 = htFC.DrawOneAnode(1);
+  TCanvas * can2 = htFC.DrawOneAnode(2);
+  TCanvas * can3 = htFC.DrawOneAnode(3);
+  TCanvas * can4 = htFC.DrawOneAnode(4);
+  TCanvas * can5 = htFC.DrawOneAnode(5);
+  TCanvas * can6 = htFC.DrawOneAnode(6);
+  TCanvas * can7 = htFC.DrawOneAnode(7);
+  TCanvas * can8 = htFC.DrawOneAnode(8);
+  TCanvas * can9 = htFC.DrawOneAnode(9);
+  TCanvas * can10 = htFC.DrawOneAnode(10);
+  TCanvas * can11 = htFC.DrawOneAnode(11);
 }

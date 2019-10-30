@@ -16,8 +16,7 @@
 #include "../ClassDef/RawCoincData.h"
 #include "../ClassDef/CHINU_RawToFHistos.h"
 #include "../ClassDef/B3_RawToFHistos.h"
-
-#define SPEED_OF_LIGHT_MNS       0.299792458       // m.ns-1
+#include "../../SetupSpecific/setup_specific.h"
 
 void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
 {

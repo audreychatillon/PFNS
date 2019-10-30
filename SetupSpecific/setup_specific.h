@@ -3,6 +3,10 @@
 #ifndef SETUP_SPEC__H
 #define SETUP_SPEC__H
 
+#define SPEED_OF_LIGHT_MNS 0.299792458  // m.ns-1
+#define NEUTRON_MASS_MeV   939.565430   //MeV
+
+
 // *** ************************************** *** //
 // *** You should change the following define *** //
 // *** ************************************** *** //
@@ -18,7 +22,7 @@
 
 // FISSION CHAMBER
 #define FC_nAnodes 11
-#define Distance_FC_Target4 22 //m
+#define Distance_FC_Target4 22.0 //m
 #define ToFcutPFN 15 // 15ns = 24 MeV
 
 //RUN 102
@@ -68,11 +72,6 @@ static float GammaFlash_Sigma[11] =
     1.52894e+00,
     1.49861e+00
   };
-
-
-
-
-
 
 
 // CHI-NU DETECTORS 

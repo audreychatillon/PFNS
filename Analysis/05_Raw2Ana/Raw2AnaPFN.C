@@ -19,6 +19,7 @@
 #include "../RunRefs/RunRefs.h"
 #include "../../Faster2Root/ReadPid/pid.h"
 #include "../../SetupSpecific/setup_specific.h"
+#include "../../SetupSpecific/BEAM_OffsetToF.h"
 #if FC>0 && CHINU>0
 #include "../../SetupSpecific/CHINUlg_OffsetToF.h"
 #include "../../SetupSpecific/CHINUhg_OffsetToF.h"
@@ -31,26 +32,24 @@
 #include "Cf_Carlson.h"
 
 
-#define SPEED_OF_LIGHT_MNS 0.299792458  // m.ns-1
-#define NEUTRON_MASS_MeV   939.565430   //MeV
 
 
 
 // URGENT : CALCULER L'EFFICACITE POUR R_III_9_LG (det=54) ET R_II_5_LG (det=41)
 
-Double_t Beta(double v_mns)
+Float_t Beta(float v_mns)
 {
   return ( v_mns / SPEED_OF_LIGHT_MNS ) ;
 }
 
-Double_t Gamma(Double_t beta){
+Float_t Gamma(Double_t beta){
   return ( 1.0 / sqrt(1.0 - pow(beta,2)) ) ;
 }
 
-Float_t Velocity2Ene(double_t v_mns)
+Float_t Velocity2Ene(Float_t v_mns)
 {
-  double BETA = Beta(v_mns);
-  double GAMMA = Gamma(BETA);
+  float BETA = Beta(v_mns);
+  float GAMMA = Gamma(BETA);
   return ((Float_t)(NEUTRON_MASS_MeV * (GAMMA - 1)));
 }
 
@@ -257,8 +256,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   UInt_t   FC_Q1;
   UInt_t   FC_Q2;
 #if HF>0
-  Double_t BEAM_ToF;
-  //Double_t BEAM_Ene;
+  Float_t BEAM_ToF;
+  Float_t BEAM_Ene;
 #endif
   // TO DO IF PULSER
 #endif
@@ -273,8 +272,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   std::vector<unsigned int> vCHINUlg_Q2;
   std::vector<unsigned int> vCHINUhg_Q2;
 #if FC>0
-  std::vector<Double_t> vPFN_CHINUlg_ToF;    // PFN ToF t(CHINU) - t(FC)
-  std::vector<Double_t> vPFN_CHINUhg_ToF;    // PFN ToF t(CHINU) - t(FC)
+  std::vector<Float_t> vPFN_CHINUlg_ToF;    // PFN ToF t(CHINU) - t(FC)
+  std::vector<Float_t> vPFN_CHINUhg_ToF;    // PFN ToF t(CHINU) - t(FC)
   std::vector<Float_t> vPFN_CHINUlg_Ene;    // PFN Energy
   std::vector<Float_t> vPFN_CHINUhg_Ene;    // PFN Energy
 #endif
@@ -289,8 +288,8 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   std::vector<unsigned int> vB3lg_Q2;
   std::vector<unsigned int> vB3hg_Q2;
 #if FC>0
-  std::vector<Double_t> vPFN_B3lg_ToF;    // PFN ToF t(B3) - t(FC)
-  std::vector<Double_t> vPFN_B3hg_ToF;    // PFN ToF t(B3) - t(FC)
+  std::vector<Float_t> vPFN_B3lg_ToF;    // PFN ToF t(B3) - t(FC)
+  std::vector<Float_t> vPFN_B3hg_ToF;    // PFN ToF t(B3) - t(FC)
   std::vector<Float_t> vPFN_B3lg_Ene;    // PFN ToF
   std::vector<Float_t> vPFN_B3hg_Ene;    // PFN ToF
 #endif
@@ -331,7 +330,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   t->Branch("FC_Q2",&FC_Q2,"FC_Q2/s");
 #if HF>0
   t->Branch("BEAM_ToF",&BEAM_ToF,"BEAM_ToF/F");
-  //t->Branch("BEAM_ToF",&BEAM_Ene,"BEAM_Ene/F");
+  t->Branch("BEAM_Ene",&BEAM_Ene,"BEAM_Ene/F");
 #endif
 #endif
 
@@ -490,8 +489,9 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
     FC_Q2 = raw.vFC_Q2->at(0);
     // test if the data is below the alpha cut
     if ((raw.vFC_anode->size()==1)&&(raw.vHF_time->size()>0)) {
-      BEAM_ToF = raw.vFC_time->at(0) - raw.vHF_time->at(raw.vHF_time->size()-1); // this is ToFraw = FC_time-HF_time, TO DO transform into ToFcal
-      // TO DO: calculate the beam energy 
+      BEAM_ToF = (float)(raw.vFC_time->at(0) - raw.vHF_time->at(raw.vHF_time->size()-1)) + BEAM_OffsetToF[FC_anode-1]; 
+      Velocity = (float)Distance_FC_Target4 / BEAM_ToF;
+      BEAM_Ene = Velocity2Ene(Velocity);
     }
 
     // === CHINU - LOW GAIN === //
@@ -501,7 +501,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       det = raw.vCHINUlg_det->at(m);
       Q1  = raw.vCHINUlg_Q1->at(m);
       Q2  = raw.vCHINUlg_Q2->at(m);
-      ToF = (raw.vCHINUlg_time->at(m)-raw.vFC_time->at(0))+CHINU_OffsetToFLG[det-1+CHINU_nDets*(FC_anode-1)];
+      ToF = (float)(raw.vCHINUlg_time->at(m)-raw.vFC_time->at(0))+CHINU_OffsetToFLG[det-1+CHINU_nDets*(FC_anode-1)];
       Velocity = Distance_FC_ChiNu[raw.vCHINUlg_det->at(m)-1] / ToF;
       Ene = Velocity2Ene(Velocity);
 
@@ -534,7 +534,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
       det = raw.vCHINUhg_det->at(m);
       Q1  = raw.vCHINUhg_Q1->at(m);
       Q2  = raw.vCHINUhg_Q2->at(m);
-      ToF = (raw.vCHINUhg_time->at(m)-raw.vFC_time->at(0))+CHINU_OffsetToFHG[det-1+CHINU_nDets*(FC_anode-1)];
+      ToF = (float)(raw.vCHINUhg_time->at(m)-raw.vFC_time->at(0))+CHINU_OffsetToFHG[det-1+CHINU_nDets*(FC_anode-1)];
       Velocity = Distance_FC_ChiNu[raw.vCHINUhg_det->at(m)-1] / ToF;
       Ene = Velocity2Ene(Velocity);
 

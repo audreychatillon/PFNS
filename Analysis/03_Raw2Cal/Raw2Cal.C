@@ -33,12 +33,6 @@
 
 
 
-#define SPEED_OF_LIGHT_MNS 0.299792458  // m.ns-1
-#define NEUTRON_MASS_MeV   939.565430   //MeV
-
-
-
-// URGENT : CALCULER L'EFFICACITE POUR R_III_9_LG (det=54) ET R_II_5_LG (det=41)
 
 Double_t Beta(double v_mns)
 {

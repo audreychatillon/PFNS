@@ -21,6 +21,8 @@
 #define Distance_FC_Target4 22 //m
 #define ToFcutPFN 15 // 15ns = 24 MeV
 
+//RUN 102
+/*
 static float GammaFlash_Mean[11] = {
   -7.99389e+02,
   0,
@@ -34,6 +36,43 @@ static float GammaFlash_Mean[11] = {
   -7.94937e+02,
   -7.93481e+02
 };
+*/
+
+//RUN 103
+static float GammaFlash_Mean[11] = 
+  {
+    -8.00392e+02,
+    0,
+    -7.95102e+02,
+    -7.93581e+02,
+    -7.94597e+02,
+    -7.93983e+02,
+    -7.91993e+02,
+    -7.92007e+02,
+    -7.95080e+02,
+    -7.94383e+02,
+    -7.93319e+02
+  };
+
+static float GammaFlash_Sigma[11] = 
+  {
+    3.61925e-01,
+    0,
+    4.10208e-01,
+    1.50834e+00,
+    5.21320e-01,
+    1.62029e+00,
+    1.86833e+00,
+    8.81608e-01,
+    1.67800e+00,
+    1.52894e+00,
+    1.49861e+00
+  };
+
+
+
+
+
 
 
 // CHI-NU DETECTORS 

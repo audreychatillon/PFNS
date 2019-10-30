@@ -26,7 +26,7 @@ void run(UInt_t runFirst, UInt_t runLast, TString dataType, TString dirpath)
   // === ========================== === //
   // === ALPHA / NEUTRON TCutG FILE === //
   // === ========================== === //
-  sprintf(name,"cut/cutFC_Q2vsQ1_R102.root");
+  sprintf(name,"cut/cutFC_Q2vsQ1_R103.root");
   cout <<"TCutG FOR ALPHA DISCRI IS : " << name << endl;
   TFile * cutfile = new TFile(name,"read");
   TCutG * cut[FC_nAnodes];
